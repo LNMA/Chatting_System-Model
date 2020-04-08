@@ -17,8 +17,8 @@ public class Client extends Users {
     private String telephone;
     private String email;
     private String country;
-    private String city;
-    private String street;
+    private String state;
+    private String address;
 
     public Client() {
     }
@@ -97,35 +97,35 @@ public class Client extends Users {
         this.country = country;
     }
 
-    public String getCity() {
-        return city;
+    public String getState() {
+        return state;
     }
 
-    public void setCity(String city) {
-        this.city = city;
+    public void setState(String state) {
+        this.state = state;
     }
 
-    public String getStreet() {
-        return street;
+    public String getAddress() {
+        return address;
     }
 
-    public void setStreet(String street) {
-        this.street = street;
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     @Override
     public String toString() {
-        return super.toString() + ", Client{" +
+        return "Client{" +
                 "firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", birthday=" + birthday +
                 ", age='" + age + '\'' +
-                ", gender=" + gender +
+                ", gender='" + gender + '\'' +
                 ", telephone='" + telephone + '\'' +
                 ", email='" + email + '\'' +
                 ", country='" + country + '\'' +
-                ", city='" + city + '\'' +
-                ", street='" + street + '\'' +
+                ", state='" + state + '\'' +
+                ", address='" + address + '\'' +
                 '}';
     }
 }

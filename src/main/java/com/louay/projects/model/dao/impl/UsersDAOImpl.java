@@ -58,10 +58,10 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
             Client client = (Client) user;
             try {
                 result = this.pool.updateQuery("INSERT INTO `account_detail`(`username`, `firstName`, `lastName`, " +
-                                "`birthday`, `age`, `gender`, `telephone`, `email`, `country`, `city`, `street`) " +
+                                "`birthday`, `age`, `gender`, `telephone`, `email`, `country`, `state`, `address`) " +
                                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);", client.getUsername(), client.getFirstName(),
                         client.getLastName(), client.getBirthday(), client.getAge(), client.getGender(), client.getTelephone(),
-                        client.getEmail(), client.getCountry(), client.getCity(), client.getStreet());
+                        client.getEmail(), client.getCountry(), client.getState(), client.getAddress());
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -198,10 +198,11 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
             Client client = (Client) user;
             try {
                 result = this.pool.updateQuery("UPDATE `account_detail` SET `firstName` = ?, `lastName` = ?, " +
-                                "`birthday` = ?, `age` = ?, `gender` = ?, `telephone` = ?, `email` = ?, `country` = ?, " +
-                                "`city` = ?, `street` = ? WHERE `username` = ?;", client.getFirstName(), client.getLastName(),
+                        "`birthday` = ?, `age` = ?, `gender` = ?, `telephone` = ?, `email` = ?, `country` = ?, " +
+                        "`state` = ?, `address` = ? WHERE `username` = ?;", client.getFirstName(), client.getLastName(),
                         client.getBirthday(), client.getAge(), client.getGender(), client.getTelephone(),
-                        client.getEmail(), client.getCountry(), client.getCity(), client.getUsername());
+                        client.getEmail(), client.getCountry(), client.getState(),client.getAddress(),
+                        client.getUsername());
             } catch (SQLException e) {
                 System.out.println(e.getMessage());
             }
@@ -336,8 +337,8 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
             user.setTelephone(resultSet.getString(7));
             user.setEmail(resultSet.getString(8));
             user.setCountry(resultSet.getString(9));
-            user.setCity(resultSet.getString(10));
-            user.setStreet(resultSet.getString(11));
+            user.setState(resultSet.getString(10));
+            user.setAddress(resultSet.getString(11));
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
