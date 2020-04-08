@@ -11,21 +11,12 @@ import java.util.Objects;
 @Component
 @Scope("prototype")
 public class GroupPicture {
-    private Long idPicture;
     private String idGroup;
     private java.sql.Blob picture;
     private String pictureName;
     private java.sql.Timestamp uploadDate;
 
     public GroupPicture() {
-    }
-
-    public Long getIdPicture() {
-        return idPicture;
-    }
-
-    public void setIdPicture(Long idPicture) {
-        this.idPicture = idPicture;
     }
 
     public String getIdGroup() {
@@ -64,20 +55,19 @@ public class GroupPicture {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof GroupPicture)) return false;
-        GroupPicture that = (GroupPicture) o;
-        return getIdPicture().equals(that.getIdPicture());
+        GroupPicture picture = (GroupPicture) o;
+        return getIdGroup().compareTo(picture.getIdGroup()) == 0;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getIdPicture());
+        return Objects.hash(getIdGroup());
     }
 
     @Override
     public String toString() {
         return "GroupPicture{" +
-                "idPicture=" + idPicture +
-                ", idGroup='" + idGroup + '\'' +
+                "idGroup='" + idGroup + '\'' +
                 ", picture=" + picture +
                 ", pictureName='" + pictureName + '\'' +
                 ", uploadDate=" + uploadDate +

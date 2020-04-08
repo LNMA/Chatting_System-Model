@@ -21,7 +21,7 @@ public interface DeleteGroupDAO {
 
     int deleteGroupMemberByIdGroupAndUsername(GroupMembers member);
 
-    int deleteGroupPictureByIdPicture(GroupPicture picture);
+    int deleteGroupPictureByIdGroup(GroupPicture picture);
 
     int deleteGroupRequestByIdGroupAndUsername(GroupRequest request);
 

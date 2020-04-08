@@ -7,5 +7,5 @@ public interface UpdateGroupPostDAO {
 
     int updateGroupCommentsByIdComment(GroupComments comment);
 
-    int updateGroupPictureByIdPicture(GroupPicture picture);
+    int updateGroupPictureByIdGroup(GroupPicture picture);
 }

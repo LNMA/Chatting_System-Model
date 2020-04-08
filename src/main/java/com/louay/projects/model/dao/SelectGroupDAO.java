@@ -30,8 +30,6 @@ public interface SelectGroupDAO {
 
     Map<Long, GroupMembers> findGroupMemberByUsername(GroupMembers member);
 
-    Collection<GroupPicture> findGroupPictureByIdPicture(GroupPicture picture);
-
     Collection<GroupPicture> findGroupPictureByIdGroup(GroupPicture picture);
 
     Map<Long, GroupRequest> findGroupRequestByIdGroup(GroupRequest request);

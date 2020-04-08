@@ -115,7 +115,7 @@ public class Client extends Users {
 
     @Override
     public String toString() {
-        return "Client{" +
+        return super.toString() + ", Client{" +
                 "firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", birthday=" + birthday +

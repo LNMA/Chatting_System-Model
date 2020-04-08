@@ -10,5 +10,5 @@ public interface UpdateUserPostDAO {
 
     int updateAccountMassageByIdMessage(AccountMessage message);
 
-    int updateAccountPictureByIdPicture(AccountPicture picture);
+    int updateAccountPictureByUsername(AccountPicture picture);
 }

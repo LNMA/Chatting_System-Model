@@ -11,4 +11,8 @@ public class Admin extends Users {
     public Admin() {
     }
 
+    @Override
+    public String toString() {
+        return super.toString() + ", Admin{}";
+    }
 }

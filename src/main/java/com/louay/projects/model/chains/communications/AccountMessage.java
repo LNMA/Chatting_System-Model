@@ -73,7 +73,7 @@ public class AccountMessage {
         if (this == o) return true;
         if (!(o instanceof AccountMessage)) return false;
         AccountMessage that = (AccountMessage) o;
-        return getIdMessage().equals(that.getIdMessage());
+        return getIdMessage().compareTo(that.getIdMessage()) == 0;
     }
 
     @Override

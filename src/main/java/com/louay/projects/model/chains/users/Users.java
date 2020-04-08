@@ -49,7 +49,7 @@ public abstract class Users {
         if (this == o) return true;
         if (!(o instanceof Users)) return false;
         Users users = (Users) o;
-        return getUsername().equals(users.getUsername());
+        return this.getUsername().compareTo(users.getUsername()) == 0;
     }
 
     @Override
@@ -59,11 +59,11 @@ public abstract class Users {
 
     @Override
     public String toString() {
-        return "Admin{" +
+        return "Users{" +
                 "username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 ", dateCreate=" + dateCreate +
-                ", accountPermission=" + accountPermission +
+                ", accountPermission='" + accountPermission + '\'' +
                 '}';
     }
 }

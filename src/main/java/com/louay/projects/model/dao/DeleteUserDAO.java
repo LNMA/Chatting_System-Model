@@ -19,7 +19,7 @@ public interface DeleteUserDAO {
 
     int deleteAccountMessageByIdMessage(AccountMessage message);
 
-    int deleteAccountPictureByIdPicture(AccountPicture picture);
+    int deleteAccountPictureByUsername(AccountPicture picture);
 
     int deleteAccountStatusByUsername(AccountStatus status);
 

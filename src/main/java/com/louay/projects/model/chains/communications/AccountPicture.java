@@ -10,7 +10,6 @@ import java.util.Objects;
 @Component
 @Scope("prototype")
 public class AccountPicture {
-    private Long idPicture;
     private String username;
     private java.sql.Blob picture;
     private String pictureName;
@@ -19,13 +18,6 @@ public class AccountPicture {
     public AccountPicture() {
     }
 
-    public Long getIdPicture() {
-        return idPicture;
-    }
-
-    public void setIdPicture(Long idPicture) {
-        this.idPicture = idPicture;
-    }
 
     public String getUsername() {
         return username;
@@ -64,19 +56,18 @@ public class AccountPicture {
         if (this == o) return true;
         if (!(o instanceof AccountPicture)) return false;
         AccountPicture that = (AccountPicture) o;
-        return getIdPicture().equals(that.getIdPicture());
+        return getUsername().compareTo(that.getUsername()) == 0;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getIdPicture());
+        return Objects.hash(getUsername());
     }
 
     @Override
     public String toString() {
         return "AccountPicture{" +
-                "idPicture=" + idPicture +
-                ", username='" + username + '\'' +
+                "username='" + username + '\'' +
                 ", picture=" + picture +
                 ", pictureName='" + pictureName + '\'' +
                 ", uploadDate=" + uploadDate +

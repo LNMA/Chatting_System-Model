@@ -28,8 +28,6 @@ public interface SelectUsersDAO {
 
     Collection<AccountMessage> findUserMessageByReceiver(AccountMessage message);
 
-    Collection<AccountPicture> findPictureByIdPicture(AccountPicture picture);
-
     Collection<AccountPicture> findPictureByUsername(AccountPicture picture);
 
     Collection<AccountStatus> findUserStatusByUsername(AccountStatus status);

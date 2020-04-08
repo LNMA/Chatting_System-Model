@@ -44,7 +44,7 @@ public class AccountStatus {
         if (this == o) return true;
         if (!(o instanceof AccountStatus)) return false;
         AccountStatus that = (AccountStatus) o;
-        return getUsername().equals(that.getUsername());
+        return getUsername().compareTo(that.getUsername()) == 0;
     }
 
     @Override

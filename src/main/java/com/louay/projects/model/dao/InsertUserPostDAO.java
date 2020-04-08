@@ -11,5 +11,5 @@ public interface InsertUserPostDAO {
 
     Long insertAccountMassage(AccountMessage message);
 
-    Long insertAccountPicture(AccountPicture picture);
+    int insertAccountPicture(AccountPicture picture);
 }

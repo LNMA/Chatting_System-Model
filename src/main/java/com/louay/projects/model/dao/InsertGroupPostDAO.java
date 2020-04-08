@@ -7,5 +7,5 @@ public interface InsertGroupPostDAO {
 
     Long insertGroupComments(GroupComments comment);
 
-    Long insertGroupPicture(GroupPicture picture);
+    int insertGroupPicture(GroupPicture picture);
 }

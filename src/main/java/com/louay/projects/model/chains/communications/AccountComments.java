@@ -54,7 +54,7 @@ public class AccountComments {
         if (this == o) return true;
         if (!(o instanceof AccountComments)) return false;
         AccountComments that = (AccountComments) o;
-        return getIdComment().equals(that.getIdComment());
+        return getIdComment().compareTo(that.getIdComment()) == 0;
     }
 
     @Override

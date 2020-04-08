@@ -55,7 +55,7 @@ public class GroupsDetail {
         if (this == o) return true;
         if (!(o instanceof GroupsDetail)) return false;
         GroupsDetail that = (GroupsDetail) o;
-        return getIdGroup().equals(that.getIdGroup());
+        return getIdGroup().compareTo(that.getIdGroup()) == 0;
     }
 
     @Override

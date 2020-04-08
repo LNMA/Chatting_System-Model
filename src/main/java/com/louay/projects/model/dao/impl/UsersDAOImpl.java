@@ -118,26 +118,16 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
     }
 
     @Override
-    public Long insertAccountPicture(AccountPicture picture) {
+    public int insertAccountPicture(AccountPicture picture) {
+        int result = 0;
         try {
-            ConnectionWrapper wrapper = this.pool.getConnection();
-            PreparedStatement insert = wrapper.getConnection().prepareStatement("INSERT INTO `account_pic`(`username`" +
-                    ", `pic`,`picName`, `uploadDate`) VALUES (?, ?, ?, ?);", Statement.RETURN_GENERATED_KEYS);
-            insert.setString(1, picture.getUsername());
-            insert.setBlob(2, picture.getPicture());
-            insert.setString(3, picture.getPictureName());
-            insert.setTimestamp(4, picture.getUploadDate());
-            insert.executeUpdate();
-
-            ResultSet resultSet = insert.getGeneratedKeys();
-            if (resultSet.next()) {
-                picture.setIdPicture(resultSet.getLong(1));
-            }
-            this.pool.release(wrapper);
+            result = this.pool.updateQuery("INSERT INTO `account_pic`(`username`, `pic`,`picName`, `uploadDate`) " +
+                    "VALUES (?, ?, ?, ?);", picture.getUsername(), picture.getPicture(), picture.getPictureName(),
+                    picture.getUploadDate());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-        return picture.getIdPicture();
+        return result;
     }
 
     @Override
@@ -249,12 +239,12 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
     }
 
     @Override
-    public int updateAccountPictureByIdPicture(AccountPicture picture) {
+    public int updateAccountPictureByUsername(AccountPicture picture) {
         int result = 0;
         try {
-            result = this.pool.updateQuery("UPDATE `account_pic` SET `username` = ?, `pic` = ?, `picName` = ?,  " +
-                            "`uploadDate` = ? WHERE `idPic` = ?;", picture.getUsername(), picture.getPicture(),
-                    picture.getPictureName(), picture.getUploadDate(), picture.getIdPicture());
+            result = this.pool.updateQuery("UPDATE `account_pic` SET `pic` = ?, `picName` = ?,  " +
+                            "`uploadDate` = ? WHERE `username` = ?;", picture.getPicture(),
+                    picture.getPictureName(), picture.getUploadDate(), picture.getUsername());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -499,11 +489,10 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
     private AccountPicture buildAccountPicture(ResultSet resultSet) {
         AccountPicture picture = new AccountPicture();
         try {
-            picture.setIdPicture(resultSet.getLong(1));
-            picture.setUsername(resultSet.getString(2));
-            picture.setPicture(resultSet.getBlob(3));
-            picture.setPictureName(resultSet.getString(4));
-            picture.setUploadDate(resultSet.getTimestamp(5));
+            picture.setUsername(resultSet.getString(1));
+            picture.setPicture(resultSet.getBlob(2));
+            picture.setPictureName(resultSet.getString(3));
+            picture.setUploadDate(resultSet.getTimestamp(4));
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -518,20 +507,6 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-    }
-
-    @Override
-    public Collection<AccountPicture> findPictureByIdPicture(AccountPicture picture) {
-        @SuppressWarnings(value = "unchecked")
-        Collection<AccountPicture> container = (Collection<AccountPicture>) ac.getBean("accountPictureContainer");
-        try {
-            ResultSet resultSet = this.pool.selectResult("SELECT * FROM `account_pic` WHERE `idPic` = ? ORDER BY " +
-                    "`account_pic`.`uploadDate` DESC;", picture.getIdPicture());
-            buildAccountPicture(resultSet, container);
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-        return container;
     }
 
     @Override
@@ -773,10 +748,10 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
     }
 
     @Override
-    public int deleteAccountPictureByIdPicture(AccountPicture picture) {
+    public int deleteAccountPictureByUsername(AccountPicture picture) {
         int result = 0;
         try {
-            result = this.pool.updateQuery("DELETE FROM `account_pic` WHERE `idPic` = ?;", picture.getIdPicture());
+            result = this.pool.updateQuery("DELETE FROM `account_pic` WHERE `username` = ?;", picture.getUsername());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
