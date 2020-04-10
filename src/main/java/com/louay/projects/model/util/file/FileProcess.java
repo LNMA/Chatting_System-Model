@@ -1,10 +1,14 @@
 package com.louay.projects.model.util.file;
 
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
 
+@Configuration
 @Component
+@Scope("prototype")
 public class FileProcess {
 
     public byte[] readAPicture(String path) throws IOException {

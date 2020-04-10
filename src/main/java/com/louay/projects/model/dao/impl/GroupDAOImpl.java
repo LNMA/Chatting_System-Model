@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -25,8 +27,10 @@ import java.sql.Statement;
 import java.util.Collection;
 import java.util.Map;
 
-@Component
+@Configuration
+@Component("groupDAO")
 @Scope("prototype")
+@ComponentScan(basePackages = { "com.louay.projects.model"})
 public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, CirclesGroupDAO, UpdateGroupDAO, UpdateGroupPostDAO,
         SelectGroupDAO, DeleteGroupDAO {
 
@@ -198,7 +202,7 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
     }
 
     private GroupsDetail buildGroupDetail(ResultSet resultSet) {
-        GroupsDetail group = new GroupsDetail();
+        GroupsDetail group = ac.getBean(GroupsDetail.class);
         try {
             group.setIdGroup(resultSet.getString(1));
             group.setGroupPrivacy(resultSet.getString(2));
@@ -236,7 +240,7 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
     }
 
     private GroupComments buildGroupComment(ResultSet resultSet) {
-        GroupComments comment = new GroupComments();
+        GroupComments comment = ac.getBean(GroupComments.class);
         try {
             comment.setIdComment(resultSet.getLong(1));
             comment.setIdGroup(resultSet.getString(2));
@@ -317,7 +321,7 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
     }
 
     private GroupInvite buildGroupInvite(ResultSet resultSet) {
-        GroupInvite invite = new GroupInvite();
+        GroupInvite invite = ac.getBean(GroupInvite.class);
         try {
             invite.setSourceIdGroup(resultSet.getString(1));
             invite.setTargetAccount(resultSet.getString(2));
@@ -369,7 +373,7 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
     }
 
     private GroupMembers buildGroupMembers(ResultSet resultSet) {
-        GroupMembers member = new GroupMembers();
+        GroupMembers member = ac.getBean(GroupMembers.class);
         try {
             member.setIdGroup(resultSet.getString(1));
             member.setMember(resultSet.getString(2));
@@ -421,7 +425,7 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
     }
 
     private GroupPicture buildGroupPicture(ResultSet resultSet) {
-        GroupPicture picture = new GroupPicture();
+        GroupPicture picture = ac.getBean(GroupPicture.class);
         try {
             picture.setIdGroup(resultSet.getString(1));
             picture.setPicture(resultSet.getBlob(2));
@@ -458,7 +462,7 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
     }
 
     private GroupRequest buildGroupRequest(ResultSet resultSet) {
-        GroupRequest request = new GroupRequest();
+        GroupRequest request = ac.getBean(GroupRequest.class);
         try {
             request.setIdGroup(resultSet.getString(1));
             request.setRequestTarget(resultSet.getString(2));

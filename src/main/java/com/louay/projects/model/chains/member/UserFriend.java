@@ -1,10 +1,12 @@
 package com.louay.projects.model.chains.member;
 
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.sql.Timestamp;
 
+@Configuration
 @Component
 @Scope("prototype")
 public class UserFriend {

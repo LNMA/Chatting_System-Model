@@ -18,6 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -25,15 +27,16 @@ import java.sql.*;
 import java.util.Collection;
 import java.util.Map;
 
-@Component
+@Configuration
+@Component("usersDAO")
 @Scope("prototype")
+@ComponentScan(basePackages = { "com.louay.projects.model"})
 public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountStatusDAO, CirclesUsersDAO, UpdateUsersDAO,
         UpdateUserPostDAO, SelectUsersDAO, DeleteUserDAO {
 
     @Autowired
     @Qualifier("pool")
     private MyConnectionPool pool;
-
     private ApplicationContext ac = new AnnotationConfigApplicationContext(BeansFactory.class);
 
 
@@ -289,7 +292,7 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
     }
 
     private Users buildUser(ResultSet resultSet) {
-        Users user = new Admin();
+        Users user = ac.getBean(Admin.class);
         try {
             user.setUsername(resultSet.getString(1));
             user.setPassword(resultSet.getString(2));
@@ -326,7 +329,7 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
     }
 
     private Client buildClient(ResultSet resultSet) {
-        Client user = new Client();
+        Client user = ac.getBean(Client.class);
         try {
             user.setUsername(resultSet.getString(1));
             user.setFirstName(resultSet.getString(2));
@@ -370,7 +373,7 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
     }
 
     private AccountComments buildAccountComment(ResultSet resultSet) {
-        AccountComments comments = new AccountComments();
+        AccountComments comments = ac.getBean(AccountComments.class);
         try {
             comments.setIdComment(resultSet.getLong(1));
             comments.setIdUsername(resultSet.getString(2));
@@ -421,7 +424,7 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
     }
 
     private AccountMessage buildAccountMessage(ResultSet resultSet) {
-        AccountMessage message = new AccountMessage();
+        AccountMessage message = ac.getBean(AccountMessage.class);
         try {
             message.setIdMessage(resultSet.getLong(1));
             message.setSourceUser(resultSet.getString(2));
@@ -488,7 +491,7 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
     }
 
     private AccountPicture buildAccountPicture(ResultSet resultSet) {
-        AccountPicture picture = new AccountPicture();
+        AccountPicture picture = ac.getBean(AccountPicture.class);
         try {
             picture.setUsername(resultSet.getString(1));
             picture.setPicture(resultSet.getBlob(2));
@@ -526,7 +529,7 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
     }
 
     private AccountStatus buildAccountStatus(ResultSet resultSet) {
-        AccountStatus status = new AccountStatus();
+        AccountStatus status = ac.getBean(AccountStatus.class);
         try {
             status.setUsername(resultSet.getString(1));
             status.setSignIn(resultSet.getBoolean(2));
@@ -562,7 +565,7 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
     }
 
     private FriendRequest buildFriendRequest(ResultSet resultSet) {
-        FriendRequest request = new FriendRequest();
+        FriendRequest request = ac.getBean(FriendRequest.class);
         try {
             request.setUsername(resultSet.getString(1));
             request.setRequestTarget(resultSet.getString(2));
@@ -614,7 +617,7 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
     }
 
     private SignInDate buildSignInDate(ResultSet resultSet) {
-        SignInDate signInDate = new SignInDate();
+        SignInDate signInDate = ac.getBean(SignInDate.class);
         try {
             signInDate.setUsername(resultSet.getString(1));
             signInDate.setSignInDate(resultSet.getTimestamp(2));
@@ -651,7 +654,7 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
     }
 
     private UserFriend buildUserFriend(ResultSet resultSet) {
-        UserFriend friend = new UserFriend();
+        UserFriend friend = ac.getBean(UserFriend.class);
         try {
             friend.setUsername(resultSet.getString(1));
             friend.setFriend(resultSet.getString(2));

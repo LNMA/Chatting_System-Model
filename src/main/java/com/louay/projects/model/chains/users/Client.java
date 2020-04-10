@@ -1,11 +1,13 @@
 package com.louay.projects.model.chains.users;
 
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.sql.Date;
 import java.time.LocalDate;
 
+@Configuration
 @Component
 @Scope("prototype")
 public class Client extends Users {
@@ -115,7 +117,7 @@ public class Client extends Users {
 
     @Override
     public String toString() {
-        return "Client{" +
+        return super.toString()+", Client{" +
                 "firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", birthday=" + birthday +

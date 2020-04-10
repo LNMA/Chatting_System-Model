@@ -1,28 +1,31 @@
 package com.louay.projects.model.util.pool;
 
 
+import com.louay.projects.model.factory.BeansFactory;
 import com.louay.projects.model.util.queue.MyList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.sql.*;
 
+@Configuration
 @Component("pool")
 @Scope("singleton")
+@ComponentScan(basePackages = { "com.louay.projects.model"})
 public class MyConnectionPool {
-
-    @Autowired
-    @Qualifier("dbConfig")
-    private DBConnectionConfig db;
 
     @Autowired
     @Qualifier("queue")
     private MyList<ConnectionWrapper> connection;
-
-    private ConnectionWrapper wrapper;
+    private ApplicationContext context = new AnnotationConfigApplicationContext(BeansFactory.class);
+    private ConnectionWrapper tempWrapper;
 
 
 
@@ -32,7 +35,7 @@ public class MyConnectionPool {
 
     public ConnectionWrapper getConnection() throws SQLException {
         if (this.connection.isEmpty()) {
-            return new ConnectionWrapper(getWrapperConnection(this.db.getUrl(), this.db.getUsername(), this.db.getPassword()));
+            return (ConnectionWrapper) context.getBean("dbConnectionWrapper");
         } else {
             ConnectionWrapper connectionWrapper = this.connection.dequeue();
             if (connectionWrapper.isAlive()) {
@@ -44,17 +47,6 @@ public class MyConnectionPool {
         }
     }
 
-    public Connection getWrapperConnection(String url, String username, String password) {
-        Connection connection = null;
-        try{
-            Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
-            connection = DriverManager.getConnection(url, username, password);
-        } catch (ClassNotFoundException | SQLException | IllegalAccessException | InstantiationException e) {
-            System.out.println(e.getMessage());
-        }
-        return connection;
-    }
-
     public void release(ConnectionWrapper connectionWrapper){
         this.connection.enqueue(connectionWrapper);
     }
@@ -62,8 +54,8 @@ public class MyConnectionPool {
 
     public ResultSet selectResult(String query, Object...key) throws SQLException {
         ResultSet resultSet;
-        this.wrapper = this.getConnection();
-        PreparedStatement select = this.wrapper.getConnection().prepareStatement(query);
+        this.tempWrapper = this.getConnection();
+        PreparedStatement select = this.tempWrapper.getConnection().prepareStatement(query);
         for (int i = 0; i < key.length; i++) {
             if (key[i] instanceof String) {
                 select.setString((i + 1), (String) key[i]);
@@ -87,14 +79,14 @@ public class MyConnectionPool {
         }
 
         resultSet = select.executeQuery();
-        this.release(this.wrapper);
+        this.release(this.tempWrapper);
         return resultSet;
     }
 
     public int updateQuery(String query,Object...objects) throws SQLException {
         int result;
-        this.wrapper = this.getConnection();
-        PreparedStatement update = this.wrapper.getConnection().prepareStatement(query);
+        this.tempWrapper = this.getConnection();
+        PreparedStatement update = this.tempWrapper.getConnection().prepareStatement(query);
         for (int i = 0; i < objects.length; i++) {
             if (objects[i] instanceof String) {
                 update.setString((i + 1), (String) objects[i]);
@@ -120,17 +112,17 @@ public class MyConnectionPool {
         }
 
         result = update.executeUpdate();
-        this.release(this.wrapper);
+        this.release(this.tempWrapper);
         return result;
     }
 
     public java.sql.Blob initBlob(long pos, byte[] bytes){
         java.sql.Blob blob = null;
         try{
-            this.wrapper = this.getConnection();
-            blob = this.wrapper.getConnection().createBlob();
+            this.tempWrapper = this.getConnection();
+            blob = this.tempWrapper.getConnection().createBlob();
             blob.setBytes(pos, bytes);
-            this.release(wrapper);
+            this.release(tempWrapper);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }

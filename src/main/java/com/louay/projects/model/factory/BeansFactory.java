@@ -24,6 +24,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 
 import java.sql.Blob;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.*;
 
 
@@ -36,18 +39,29 @@ public class BeansFactory {
         return new MyQueue<>(10);
     }
 
-    @Bean(name = "dbConfig")
+    @Bean(name = "dbConnectionWrapper")
     @Scope("prototype")
-    public DBConnectionConfig getConnectionConfig() {
+    public ConnectionWrapper getConnectionWrapper() {
         DBConnectionConfig db = new DBConnectionConfig();
         db.setDriver("jdbc:mysql");
         db.setHost("localhost");
         db.setPort("3306");
-        db.setSchema("chatting_system");
+        db.setSchema("chatting_system?useSSL=false");
         db.setUsername("root");
         db.setPassword("1729384#General");
-        return db;
+
+        Connection connection = null;
+        try{
+            Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
+            connection = DriverManager.getConnection(db.getUrl(), db.getUsername(), db.getPassword());
+        } catch (ClassNotFoundException | SQLException | IllegalAccessException | InstantiationException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return new ConnectionWrapper(connection);
     }
+
+
 
     @Bean(name = "usersContainer")
     @Scope("prototype")

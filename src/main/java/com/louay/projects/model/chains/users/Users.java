@@ -1,7 +1,11 @@
 package com.louay.projects.model.chains.users;
 
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
 import java.sql.Timestamp;
 import java.util.Objects;
+
 
 public abstract class Users {
     private String username;

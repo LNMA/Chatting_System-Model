@@ -1,5 +1,6 @@
 package com.louay.projects.model.chains.communications;
 
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -7,6 +8,7 @@ import java.sql.Blob;
 import java.sql.Timestamp;
 import java.util.Objects;
 
+@Configuration
 @Component
 @Scope("prototype")
 public class AccountPicture {
