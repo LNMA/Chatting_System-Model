@@ -10,13 +10,17 @@ import com.louay.projects.model.chains.users.activity.AccountStatus;
 import com.louay.projects.model.chains.users.activity.SignInDate;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public interface SelectUsersDAO {
 
     Collection<Users> findUserInAccountByUsername(Users user);
 
     Collection<Users> findUserInAccountDetailByUsername(Users user);
+
+    Collection<Users> findUserByUsernameAndPassword(Users users);
 
     Collection<AccountComments> findUserCommentByIdComment(AccountComments comment);
 
@@ -32,6 +36,8 @@ public interface SelectUsersDAO {
 
     Collection<AccountStatus> findUserStatusByUsername(AccountStatus status);
 
+    Collection<AccountPicture> findFriendAndPictureByUsername(Users users);
+
     Map<Long, FriendRequest> findFriendRequestBySender(FriendRequest request);
 
     Map<Long, FriendRequest>  findFriendRequestByReceiver(FriendRequest request);
@@ -41,4 +47,5 @@ public interface SelectUsersDAO {
     Map<Long ,UserFriend> findUserFriendByUsername(UserFriend friend);
 
     Map<Long ,UserFriend> findUserFriendByFriend(UserFriend friend);
+
 }

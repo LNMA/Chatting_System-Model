@@ -19,11 +19,12 @@ import com.louay.projects.model.util.pool.ConnectionWrapper;
 import com.louay.projects.model.util.pool.DBConnectionConfig;
 import com.louay.projects.model.util.queue.MyList;
 import com.louay.projects.model.util.queue.MyQueue;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 
-import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -61,6 +62,14 @@ public class BeansFactory {
         return new ConnectionWrapper(connection);
     }
 
+    @Bean(name = "buildAnnotationContext")
+    @Scope("prototype")
+    public ApplicationContext buildContext(){
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
+        context.scan("com.louay.projects.model");
+        context.refresh();
+        return context;
+    }
 
 
     @Bean(name = "usersContainer")
@@ -96,7 +105,7 @@ public class BeansFactory {
     @Bean(name = "accountPictureContainer")
     @Scope("prototype")
     public Collection<AccountPicture> getAccountPictureContainer(){
-        return new LinkedHashSet<>();
+        return new HashSet<>();
     }
 
     @Bean(name = "accountMessageContainer")

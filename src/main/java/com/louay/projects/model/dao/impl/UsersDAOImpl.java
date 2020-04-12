@@ -11,13 +11,11 @@ import com.louay.projects.model.chains.users.Users;
 import com.louay.projects.model.chains.users.activity.AccountStatus;
 import com.louay.projects.model.chains.users.activity.SignInDate;
 import com.louay.projects.model.dao.*;
-import com.louay.projects.model.factory.BeansFactory;
 import com.louay.projects.model.util.pool.ConnectionWrapper;
 import com.louay.projects.model.util.pool.MyConnectionPool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
@@ -37,7 +35,9 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
     @Autowired
     @Qualifier("pool")
     private MyConnectionPool pool;
-    private ApplicationContext ac = new AnnotationConfigApplicationContext(BeansFactory.class);
+    @Autowired
+    @Qualifier("buildAnnotationContext")
+    private ApplicationContext ac;
 
 
     @Override
@@ -328,6 +328,19 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
         return container;
     }
 
+    @Override
+    public Collection<Users> findUserByUsernameAndPassword(Users users) {
+        @SuppressWarnings(value = "unchecked")
+        Collection<Users> container = (Collection<Users>) this.ac.getBean("usersContainer");
+        try {
+            ResultSet resultSet = this.pool.selectResult("SELECT * FROM `account` WHERE `username` = ? AND " +
+                            "`password` = ?;", users.getUsername(), users.getPassword());
+            buildUserContainer(resultSet, container);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return container;    }
+
     private Client buildClient(ResultSet resultSet) {
         Client user = ac.getBean(Client.class);
         try {
@@ -518,9 +531,23 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
         @SuppressWarnings(value = "unchecked")
         Collection<AccountPicture> container = (Collection<AccountPicture>) ac.getBean("accountPictureContainer");
         try {
-            ResultSet resultSet = this.pool.selectResult("SELECT * FROM `account_pic` WHERE `username` = ? ORDER BY " +
-                            "`account_pic`.`uploadDate` DESC;",
-                    picture.getUsername());
+            ResultSet resultSet = this.pool.selectResult("SELECT * FROM `account_pic` WHERE `username` = ?;",
+                                                            picture.getUsername());
+            buildAccountPicture(resultSet, container);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return container;
+    }
+
+    @Override
+    public Collection<AccountPicture> findFriendAndPictureByUsername(Users users) {
+        @SuppressWarnings(value = "unchecked")
+        Collection<AccountPicture> container = (Collection<AccountPicture>) ac.getBean("accountPictureContainer");
+        try {
+            ResultSet resultSet = this.pool.selectResult("SELECT `account_pic`.* FROM `account_pic` INNER JOIN `user_friend` ON " +
+                            "`account_pic`.`username` = `user_friend`.`friend` WHERE `user_friend`.`username` = ?;"
+                            , users.getUsername());
             buildAccountPicture(resultSet, container);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -705,6 +732,8 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
         return container;
     }
 
+
+
     @Override
     public int deleteAccountByUsername(Users user) {
         int result = 0;
@@ -869,4 +898,6 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
         }
         return result;
     }
+
+
 }

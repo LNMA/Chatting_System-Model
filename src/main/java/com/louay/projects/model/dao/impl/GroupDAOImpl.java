@@ -7,13 +7,11 @@ import com.louay.projects.model.chains.member.group.GroupInvite;
 import com.louay.projects.model.chains.member.group.GroupMembers;
 import com.louay.projects.model.chains.member.group.GroupRequest;
 import com.louay.projects.model.dao.*;
-import com.louay.projects.model.factory.BeansFactory;
 import com.louay.projects.model.util.pool.ConnectionWrapper;
 import com.louay.projects.model.util.pool.MyConnectionPool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
@@ -37,8 +35,9 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
     @Autowired
     @Qualifier("pool")
     private MyConnectionPool pool;
-
-    private ApplicationContext ac = new AnnotationConfigApplicationContext(BeansFactory.class);
+    @Autowired
+    @Qualifier("buildAnnotationContext")
+    private ApplicationContext ac;
 
     @Override
     public int insertGroupDetail(GroupsDetail groupsDetail) {
