@@ -15,6 +15,7 @@ import com.louay.projects.model.chains.member.group.GroupRequest;
 import com.louay.projects.model.chains.users.Users;
 import com.louay.projects.model.chains.users.activity.AccountStatus;
 import com.louay.projects.model.chains.users.activity.SignInDate;
+import com.louay.projects.model.chains.util.PictureDirection;
 import com.louay.projects.model.util.pool.ConnectionWrapper;
 import com.louay.projects.model.util.pool.DBConnectionConfig;
 import com.louay.projects.model.util.queue.MyList;
@@ -71,6 +72,14 @@ public class BeansFactory {
         return context;
     }
 
+    @Bean(name = "buildAnnotationContextControl")
+    @Scope("prototype")
+    public ApplicationContext buildControlContext(){
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
+        context.scan("com.louay.projects.model", "com.louay.projects.controller");
+        context.refresh();
+        return context;
+    }
 
     @Bean(name = "usersContainer")
     @Scope("prototype")
@@ -156,6 +165,11 @@ public class BeansFactory {
         return new LinkedHashSet<>();
     }
 
+    @Bean(name = "friendUserImgList")
+    @Scope("prototype")
+    public List<PictureDirection> getPicturePathImgList(){
+        return new ArrayList<>();
+    }
 
 
 

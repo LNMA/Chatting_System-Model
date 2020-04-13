@@ -23,6 +23,7 @@ com\louay\projects\model\dao\CreateUsersDAO.class
 com\louay\projects\model\dao\UpdateUsersDAO.class
 com\louay\projects\model\dao\SelectUsersDAO.class
 com\louay\projects\model\chains\users\activity\AccountStatus.class
+com\louay\projects\model\chains\util\PictureDirection.class
 com\louay\projects\model\chains\users\Client.class
 com\louay\projects\model\chains\communications\AccountPicture.class
 com\louay\projects\model\util\pool\MyConnectionPool.class
@@ -39,6 +40,7 @@ com\louay\projects\model\dao\CirclesGroupDAO.class
 com\louay\projects\model\dao\impl\UsersDAOImpl.class
 com\louay\projects\model\dao\impl\GroupDAOImpl.class
 com\louay\projects\model\dao\CirclesUsersDAO.class
+com\louay\projects\model\Main.class
 com\louay\projects\model\chains\groups\GroupsDetail.class
 com\louay\projects\model\dao\CreateGroupsDAO.class
 com\louay\projects\model\dao\DeleteUserDAO.class

@@ -116,12 +116,11 @@ public class MyConnectionPool {
         return result;
     }
 
-    public java.sql.Blob initBlob(long pos, byte[] bytes){
+    public java.sql.Blob initBlob(){
         java.sql.Blob blob = null;
         try{
             this.tempWrapper = this.getConnection();
             blob = this.tempWrapper.getConnection().createBlob();
-            blob.setBytes(pos, bytes);
             this.release(tempWrapper);
         } catch (SQLException e) {
             System.out.println(e.getMessage());

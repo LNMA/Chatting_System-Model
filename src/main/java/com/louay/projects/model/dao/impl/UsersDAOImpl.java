@@ -47,7 +47,7 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
             result = this.pool.updateQuery("INSERT INTO `account`(`username`, `password`, `dateCreate`, `accountPermission`) " +
                     "VALUES(?, ?, ?, ?);", user.getUsername(), user.getPassword(), user.getDateCreate(), user.getAccountPermission());
         } catch (SQLIntegrityConstraintViolationException e) {
-            throw new RuntimeException("username already used, try another one.");
+            return -404;
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
