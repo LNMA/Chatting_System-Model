@@ -7,10 +7,10 @@ import org.springframework.stereotype.Component;
 @Configuration
 @Component
 @Scope("prototype")
-public class PictureDirection {
+public class PictureBase64 {
     String username;
-    String fileName;
-    String path;
+    String pictureBase64;
+
 
     public String getUsername() {
         return username;
@@ -20,28 +20,19 @@ public class PictureDirection {
         this.username = username;
     }
 
-    public String getFileName() {
-        return fileName;
+    public String getPictureBase64() {
+        return pictureBase64;
     }
 
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
-    }
-
-    public String getPath() {
-        return path;
-    }
-
-    public void setPath(String path) {
-        this.path = path;
+    public void setPictureBase64(String pictureBase64) {
+        this.pictureBase64 = pictureBase64;
     }
 
     @Override
     public String toString() {
-        return "PictureDirection{" +
+        return "PictureBase64{" +
                 "username='" + username + '\'' +
-                ", fileName='" + fileName + '\'' +
-                ", path='" + path + '\'' +
+                ", pictureBase64='" + pictureBase64 + '\'' +
                 '}';
     }
 }

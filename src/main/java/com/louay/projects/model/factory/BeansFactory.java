@@ -1,10 +1,10 @@
 package com.louay.projects.model.factory;
 
 
-import com.louay.projects.model.chains.communications.AccountComments;
+import com.louay.projects.model.chains.communications.AccountTextPost;
 import com.louay.projects.model.chains.communications.AccountMessage;
 import com.louay.projects.model.chains.communications.AccountPicture;
-import com.louay.projects.model.chains.communications.group.GroupComments;
+import com.louay.projects.model.chains.communications.group.GroupTextPost;
 import com.louay.projects.model.chains.communications.group.GroupPicture;
 import com.louay.projects.model.chains.groups.GroupsDetail;
 import com.louay.projects.model.chains.member.FriendRequest;
@@ -15,7 +15,7 @@ import com.louay.projects.model.chains.member.group.GroupRequest;
 import com.louay.projects.model.chains.users.Users;
 import com.louay.projects.model.chains.users.activity.AccountStatus;
 import com.louay.projects.model.chains.users.activity.SignInDate;
-import com.louay.projects.model.chains.util.PictureDirection;
+import com.louay.projects.model.chains.util.PictureBase64;
 import com.louay.projects.model.util.pool.ConnectionWrapper;
 import com.louay.projects.model.util.pool.DBConnectionConfig;
 import com.louay.projects.model.util.queue.MyList;
@@ -123,9 +123,9 @@ public class BeansFactory {
         return new LinkedHashSet<>();
     }
 
-    @Bean(name = "accountCommentContainer")
+    @Bean(name = "accountTextPostContainer")
     @Scope("prototype")
-    public Collection<AccountComments> getAccountCommentContainer(){
+    public Collection<AccountTextPost> getAccountTextPostContainer(){
         return new LinkedHashSet<>();
     }
 
@@ -155,7 +155,7 @@ public class BeansFactory {
 
     @Bean(name = "groupCommentContainer")
     @Scope("prototype")
-    public Collection<GroupComments> getGroupCommentContainer(){
+    public Collection<GroupTextPost> getGroupCommentContainer(){
         return new LinkedHashSet<>();
     }
 
@@ -167,7 +167,7 @@ public class BeansFactory {
 
     @Bean(name = "friendUserImgList")
     @Scope("prototype")
-    public List<PictureDirection> getPicturePathImgList(){
+    public List<PictureBase64> getPicturePathImgList(){
         return new ArrayList<>();
     }
 

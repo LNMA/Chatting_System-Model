@@ -1,6 +1,6 @@
 package com.louay.projects.model.dao;
 
-import com.louay.projects.model.chains.communications.group.GroupComments;
+import com.louay.projects.model.chains.communications.group.GroupTextPost;
 import com.louay.projects.model.chains.communications.group.GroupPicture;
 import com.louay.projects.model.chains.groups.GroupsDetail;
 import com.louay.projects.model.chains.member.group.GroupInvite;
@@ -11,7 +11,7 @@ public interface DeleteGroupDAO {
 
     int deleteGroupDetailByIdGroup(GroupsDetail groupsDetail);
 
-    int deleteGroupCommentByIdComment(GroupComments comments);
+    int deleteGroupTextPostByIdPost(GroupTextPost post);
 
     int deleteGroupInviteByIdGroupAndUsername(GroupInvite invite);
 

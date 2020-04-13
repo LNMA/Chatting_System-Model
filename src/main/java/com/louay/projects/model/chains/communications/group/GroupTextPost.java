@@ -10,22 +10,22 @@ import java.util.Objects;
 @Configuration
 @Component
 @Scope("prototype")
-public class GroupComments {
-    private Long idComment;
+public class GroupTextPost {
+    private Long idPost;
     private String idGroup;
     private String username;
-    private StringBuilder comment;
-    private java.sql.Timestamp commentsDate;
+    private StringBuilder post;
+    private java.sql.Timestamp postDate;
 
-    public GroupComments() {
+    public GroupTextPost() {
     }
 
-    public Long getIdComment() {
-        return idComment;
+    public Long getIdPost() {
+        return idPost;
     }
 
-    public void setIdComment(Long idComment) {
-        this.idComment = idComment;
+    public void setIdPost(Long idPost) {
+        this.idPost = idPost;
     }
 
     public String getIdGroup() {
@@ -44,43 +44,43 @@ public class GroupComments {
         this.username = username;
     }
 
-    public StringBuilder getComment() {
-        return comment;
+    public StringBuilder getPost() {
+        return post;
     }
 
-    public void setComment(String comment) {
-        this.comment = new StringBuilder(comment);
+    public void setPost(String post) {
+        this.post = new StringBuilder(post);
     }
 
-    public Timestamp getCommentsDate() {
-        return commentsDate;
+    public Timestamp getPostDate() {
+        return postDate;
     }
 
-    public void setCommentsDate(Timestamp commentsDate) {
-        this.commentsDate = commentsDate;
+    public void setPostDate(Timestamp postDate) {
+        this.postDate = postDate;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof GroupComments)) return false;
-        GroupComments that = (GroupComments) o;
-        return getIdComment().compareTo(that.getIdComment()) == 0;
+        if (!(o instanceof GroupTextPost)) return false;
+        GroupTextPost that = (GroupTextPost) o;
+        return getIdPost().equals(that.getIdPost());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getIdComment());
+        return Objects.hash(getIdPost());
     }
 
     @Override
     public String toString() {
-        return "GroupComments{" +
-                "idComment=" + idComment +
+        return "GroupTextPost{" +
+                "idPost=" + idPost +
                 ", idGroup='" + idGroup + '\'' +
                 ", username='" + username + '\'' +
-                ", comment=" + comment +
-                ", commentsDate=" + commentsDate +
+                ", post=" + post +
+                ", postDate=" + postDate +
                 '}';
     }
 }

@@ -1,6 +1,6 @@
 package com.louay.projects.model.dao;
 
-import com.louay.projects.model.chains.communications.AccountComments;
+import com.louay.projects.model.chains.communications.AccountTextPost;
 import com.louay.projects.model.chains.communications.AccountMessage;
 import com.louay.projects.model.chains.communications.AccountPicture;
 import com.louay.projects.model.chains.member.FriendRequest;
@@ -10,9 +10,7 @@ import com.louay.projects.model.chains.users.activity.AccountStatus;
 import com.louay.projects.model.chains.users.activity.SignInDate;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public interface SelectUsersDAO {
 
@@ -22,9 +20,9 @@ public interface SelectUsersDAO {
 
     Collection<Users> findUserByUsernameAndPassword(Users users);
 
-    Collection<AccountComments> findUserCommentByIdComment(AccountComments comment);
+    Collection<AccountTextPost> findUserTextPostByIdPost(AccountTextPost post);
 
-    Collection<AccountComments> findUserCommentByUsername(AccountComments comment);
+    Collection<AccountTextPost> findUserTextPostByUsername(AccountTextPost post);
 
     Collection<AccountMessage> findUserMessageByIdMessage(AccountMessage message);
 
