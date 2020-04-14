@@ -78,8 +78,8 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
     public Long insertAccountTextPost(AccountTextPost post) {
         try {
             ConnectionWrapper wrapper = this.pool.getConnection();
-            PreparedStatement insert = wrapper.getConnection().prepareStatement("INSERT INTO `account_comments`(`username`" +
-                    ", `comments`, `commentsDate`) VALUES (?, ?, ?);", Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement insert = wrapper.getConnection().prepareStatement("INSERT INTO `account_post`(`username`" +
+                    ", `post`, `postDate`) VALUES (?, ?, ?);", Statement.RETURN_GENERATED_KEYS);
             insert.setString(1, post.getIdUsername());
             insert.setString(2, post.getPost().toString());
             insert.setTimestamp(3, post.getPostDate());
@@ -219,8 +219,8 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
     public int updateAccountTextPostByIdComment(AccountTextPost post) {
         int result = 0;
         try {
-            result = this.pool.updateQuery("UPDATE `account_comments` SET `username` = ?, `comments` = ?, " +
-                            "`commentsDate` = ? WHERE `idComments` = ?;", post.getIdUsername(), post.getPost().toString(),
+            result = this.pool.updateQuery("UPDATE `account_post` SET `username` = ?, `post` = ?, " +
+                            "`postDate` = ? WHERE `idPost` = ?;", post.getIdUsername(), post.getPost().toString(),
                     post.getPostDate(), post.getIdPost());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -413,7 +413,7 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
         @SuppressWarnings(value = "unchecked")
         Collection<AccountTextPost> container = (Collection<AccountTextPost>) ac.getBean("accountTextPostContainer");
         try {
-            ResultSet resultSet = this.pool.selectResult("SELECT * FROM `account_comments` WHERE `idComments` = ?;",
+            ResultSet resultSet = this.pool.selectResult("SELECT * FROM `account_post` WHERE `idPost` = ?;",
                     post.getIdPost());
             buildAccountTextPostContainer(resultSet, container);
         } catch (SQLException e) {
@@ -427,8 +427,8 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
         @SuppressWarnings(value = "unchecked")
         Collection<AccountTextPost> container = (Collection<AccountTextPost>) ac.getBean("accountTextPostContainer");
         try {
-            ResultSet resultSet = this.pool.selectResult("SELECT * FROM `account_comments` WHERE `username` = ? " +
-                    "ORDER BY `account_comments`.`commentsDate` DESC;", post.getIdUsername());
+            ResultSet resultSet = this.pool.selectResult("SELECT * FROM `account_post` WHERE `username` = ? " +
+                    "ORDER BY `account_post`.`postDate` DESC;", post.getIdUsername());
             buildAccountTextPostContainer(resultSet, container);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -760,7 +760,7 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
     public int deleteAccountTextPostByIdPost(AccountTextPost post) {
         int result = 0;
         try {
-            result = this.pool.updateQuery("DELETE FROM `account_comments` WHERE `idComments` = ?;",
+            result = this.pool.updateQuery("DELETE FROM `account_post` WHERE `idPost` = ?;",
                     post.getIdPost());
         } catch (SQLException e) {
             System.out.println(e.getMessage());

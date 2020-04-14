@@ -56,8 +56,8 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
     public Long insertGroupTextPost(GroupTextPost post) {
         try {
             ConnectionWrapper wrapper = this.pool.getConnection();
-            PreparedStatement insert = wrapper.getConnection().prepareStatement("INSERT INTO `group_comments`(`idGroupe`, " +
-                    "`username`, `comments`, `commentsDate`) VALUES (?, ?, ?,?);", Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement insert = wrapper.getConnection().prepareStatement("INSERT INTO `group_post`(`idGroupe`, " +
+                    "`username`, `post`, `postDate`) VALUES (?, ?, ?,?);", Statement.RETURN_GENERATED_KEYS);
             insert.setString(1, post.getIdGroup());
             insert.setString(2, post.getUsername());
             insert.setString(3, post.getPost().toString());
@@ -142,8 +142,8 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
     public int updateGroupTextPostByIdComment(GroupTextPost post) {
         int result = 0;
         try {
-            result = this.pool.updateQuery("UPDATE `group_comments` SET `idGroupe` = ?, `username` = ?, " +
-                            "`comments` = ?, `commentsDate` = ? WHERE `idComments` = ?;", post.getIdGroup(), post.getUsername(),
+            result = this.pool.updateQuery("UPDATE `group_post` SET `idGroupe` = ?, `username` = ?, " +
+                            "`post` = ?, `postDate` = ? WHERE `idPost` = ?;", post.getIdGroup(), post.getUsername(),
                     post.getPost().toString(), post.getPostDate(), post.getIdPost());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -267,8 +267,8 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
         @SuppressWarnings(value = "unchecked")
         Collection<GroupTextPost> container = (Collection<GroupTextPost>) ac.getBean("groupCommentContainer");
         try {
-            ResultSet resultSet = this.pool.selectResult("SELECT * FROM `group_comments` WHERE `idComments` = ? " +
-                    "ORDER BY `group_comments`.`commentsDate` DESC;", post.getIdPost());
+            ResultSet resultSet = this.pool.selectResult("SELECT * FROM `group_post` WHERE `idPost` = ? " +
+                    "ORDER BY `group_post`.`postDate` DESC;", post.getIdPost());
             buildGroupTextPostContainer(resultSet, container);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -281,8 +281,8 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
         @SuppressWarnings(value = "unchecked")
         Collection<GroupTextPost> container = (Collection<GroupTextPost>) ac.getBean("groupCommentContainer");
         try {
-            ResultSet resultSet = this.pool.selectResult("SELECT * FROM `group_comments` WHERE `idGroupe` = ? " +
-                    "ORDER BY `group_comments`.`commentsDate` DESC;", post.getIdGroup());
+            ResultSet resultSet = this.pool.selectResult("SELECT * FROM `group_post` WHERE `idGroupe` = ? " +
+                    "ORDER BY `group_post`.`postDate` DESC;", post.getIdGroup());
             buildGroupTextPostContainer(resultSet, container);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -295,8 +295,8 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
         @SuppressWarnings(value = "unchecked")
         Collection<GroupTextPost> container = (Collection<GroupTextPost>) ac.getBean("groupCommentContainer");
         try {
-            ResultSet resultSet = this.pool.selectResult("SELECT * FROM `group_comments` WHERE `username` = ? " +
-                    "ORDER BY `group_comments`.`commentsDate` DESC;", post.getUsername());
+            ResultSet resultSet = this.pool.selectResult("SELECT * FROM `group_post` WHERE `username` = ? " +
+                    "ORDER BY `group_post`.`postDate` DESC;", post.getUsername());
             buildGroupTextPostContainer(resultSet, container);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -309,8 +309,8 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
         @SuppressWarnings(value = "unchecked")
         Collection<GroupTextPost> container = (Collection<GroupTextPost>) ac.getBean("groupCommentContainer");
         try {
-            ResultSet resultSet = this.pool.selectResult("SELECT * FROM `group_comments` WHERE `username` = ? " +
-                            "AND `idGroupe` = ? ORDER BY `group_comments`.`commentsDate` DESC;", post.getUsername(),
+            ResultSet resultSet = this.pool.selectResult("SELECT * FROM `group_post` WHERE `username` = ? " +
+                            "AND `idGroupe` = ? ORDER BY `group_post`.`postDate` DESC;", post.getUsername(),
                     post.getIdGroup());
             buildGroupTextPostContainer(resultSet, container);
         } catch (SQLException e) {
@@ -528,7 +528,7 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
     public int deleteGroupTextPostByIdPost(GroupTextPost post) {
         int result = 0;
         try {
-            result = this.pool.updateQuery("DELETE FROM `group_comments` WHERE `idComments` = ?;",
+            result = this.pool.updateQuery("DELETE FROM `group_post` WHERE `idPost` = ?;",
                     post.getIdPost());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
