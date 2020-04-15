@@ -78,6 +78,34 @@ INSERT INTO `account_detail` VALUES ('louay','Louay','Amr','1994-08-10','30 day,
 UNLOCK TABLES;
 
 --
+-- Table structure for table `account_img_post`
+--
+
+DROP TABLE IF EXISTS `account_img_post`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `account_img_post` (
+  `idPost` bigint(30) NOT NULL AUTO_INCREMENT,
+  `username` varchar(30) DEFAULT NULL,
+  `img` longblob,
+  `fileName` varchar(60) DEFAULT NULL,
+  `dateUpload` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`idPost`),
+  KEY `accountaccount_img_post-username` (`username`),
+  CONSTRAINT `accountaccount_img_post-username_FKY` FOREIGN KEY (`username`) REFERENCES `account` (`username`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `account_img_post`
+--
+
+LOCK TABLES `account_img_post` WRITE;
+/*!40000 ALTER TABLE `account_img_post` DISABLE KEYS */;
+/*!40000 ALTER TABLE `account_img_post` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `account_message`
 --
 
@@ -150,7 +178,7 @@ CREATE TABLE `account_post` (
   PRIMARY KEY (`idPost`),
   KEY `account-account_comments-username` (`username`),
   CONSTRAINT `account-account_comments-username_FKY` FOREIGN KEY (`username`) REFERENCES `account` (`username`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -159,6 +187,7 @@ CREATE TABLE `account_post` (
 
 LOCK TABLES `account_post` WRITE;
 /*!40000 ALTER TABLE `account_post` DISABLE KEYS */;
+INSERT INTO `account_post` VALUES (1,'louay','Hi, This is my first post.','2020-04-14 23:05:01'),(2,'louay','Now, time to img post.\r\n ','2020-04-14 23:16:02');
 /*!40000 ALTER TABLE `account_post` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -445,4 +474,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-04-14 21:11:20
+-- Dump completed on 2020-04-15  3:07:27

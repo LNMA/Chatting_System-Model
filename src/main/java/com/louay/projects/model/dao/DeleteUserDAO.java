@@ -1,5 +1,6 @@
 package com.louay.projects.model.dao;
 
+import com.louay.projects.model.chains.communications.AccountImgPost;
 import com.louay.projects.model.chains.communications.AccountTextPost;
 import com.louay.projects.model.chains.communications.AccountMessage;
 import com.louay.projects.model.chains.communications.AccountPicture;
@@ -16,6 +17,8 @@ public interface DeleteUserDAO {
     int deleteAccountDetailByUsername(Users user);
 
     int deleteAccountTextPostByIdPost(AccountTextPost post);
+
+    int deleteAccountImgPost(AccountImgPost post);
 
     int deleteAccountMessageByIdMessage(AccountMessage message);
 

@@ -4,6 +4,7 @@ C:\Users\Oday Amr\Documents\IdeaProjects\Chatting_System-Model\src\main\java\com
 C:\Users\Oday Amr\Documents\IdeaProjects\Chatting_System-Model\src\main\java\com\louay\projects\model\dao\UpdateUserPostDAO.java
 C:\Users\Oday Amr\Documents\IdeaProjects\Chatting_System-Model\src\main\java\com\louay\projects\model\chains\users\activity\AccountStatus.java
 C:\Users\Oday Amr\Documents\IdeaProjects\Chatting_System-Model\src\main\java\com\louay\projects\model\dao\UpdateGroupDAO.java
+C:\Users\Oday Amr\Documents\IdeaProjects\Chatting_System-Model\src\main\java\com\louay\projects\model\chains\communications\group\GroupTextPost.java
 C:\Users\Oday Amr\Documents\IdeaProjects\Chatting_System-Model\src\main\java\com\louay\projects\model\chains\users\activity\SignInDate.java
 C:\Users\Oday Amr\Documents\IdeaProjects\Chatting_System-Model\src\main\java\com\louay\projects\model\chains\member\UserFriend.java
 C:\Users\Oday Amr\Documents\IdeaProjects\Chatting_System-Model\src\main\java\com\louay\projects\model\dao\DeleteUserDAO.java
@@ -14,9 +15,9 @@ C:\Users\Oday Amr\Documents\IdeaProjects\Chatting_System-Model\src\main\java\com
 C:\Users\Oday Amr\Documents\IdeaProjects\Chatting_System-Model\src\main\java\com\louay\projects\model\chains\member\FriendRequest.java
 C:\Users\Oday Amr\Documents\IdeaProjects\Chatting_System-Model\src\main\java\com\louay\projects\model\chains\users\Admin.java
 C:\Users\Oday Amr\Documents\IdeaProjects\Chatting_System-Model\src\main\java\com\louay\projects\model\dao\DeleteGroupDAO.java
-C:\Users\Oday Amr\Documents\IdeaProjects\Chatting_System-Model\src\main\java\com\louay\projects\model\chains\communications\AccountComments.java
 C:\Users\Oday Amr\Documents\IdeaProjects\Chatting_System-Model\src\main\java\com\louay\projects\model\chains\users\Users.java
 C:\Users\Oday Amr\Documents\IdeaProjects\Chatting_System-Model\src\main\java\com\louay\projects\model\dao\InsertGroupPostDAO.java
+C:\Users\Oday Amr\Documents\IdeaProjects\Chatting_System-Model\src\main\java\com\louay\projects\model\chains\communications\AccountTextPost.java
 C:\Users\Oday Amr\Documents\IdeaProjects\Chatting_System-Model\src\main\java\com\louay\projects\model\Main.java
 C:\Users\Oday Amr\Documents\IdeaProjects\Chatting_System-Model\src\main\java\com\louay\projects\model\dao\impl\GroupDAOImpl.java
 C:\Users\Oday Amr\Documents\IdeaProjects\Chatting_System-Model\src\main\java\com\louay\projects\model\constants\UserType.java
@@ -29,7 +30,6 @@ C:\Users\Oday Amr\Documents\IdeaProjects\Chatting_System-Model\src\main\java\com
 C:\Users\Oday Amr\Documents\IdeaProjects\Chatting_System-Model\src\main\java\com\louay\projects\model\util\pool\ConnectionWrapper.java
 C:\Users\Oday Amr\Documents\IdeaProjects\Chatting_System-Model\src\main\java\com\louay\projects\model\chains\util\PictureBase64.java
 C:\Users\Oday Amr\Documents\IdeaProjects\Chatting_System-Model\src\main\java\com\louay\projects\model\chains\communications\AccountPicture.java
-C:\Users\Oday Amr\Documents\IdeaProjects\Chatting_System-Model\src\main\java\com\louay\projects\model\chains\communications\group\GroupComments.java
 C:\Users\Oday Amr\Documents\IdeaProjects\Chatting_System-Model\src\main\java\com\louay\projects\model\dao\InsertUserPostDAO.java
 C:\Users\Oday Amr\Documents\IdeaProjects\Chatting_System-Model\src\main\java\com\louay\projects\model\chains\communications\group\GroupPicture.java
 C:\Users\Oday Amr\Documents\IdeaProjects\Chatting_System-Model\src\main\java\com\louay\projects\model\dao\impl\UsersDAOImpl.java

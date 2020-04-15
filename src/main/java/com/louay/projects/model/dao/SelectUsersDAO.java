@@ -1,5 +1,6 @@
 package com.louay.projects.model.dao;
 
+import com.louay.projects.model.chains.communications.AccountImgPost;
 import com.louay.projects.model.chains.communications.AccountTextPost;
 import com.louay.projects.model.chains.communications.AccountMessage;
 import com.louay.projects.model.chains.communications.AccountPicture;
@@ -23,6 +24,8 @@ public interface SelectUsersDAO {
     Collection<AccountTextPost> findUserTextPostByIdPost(AccountTextPost post);
 
     Collection<AccountTextPost> findUserTextPostByUsername(AccountTextPost post);
+
+    Collection<AccountImgPost> findUserImgPostByUsername(AccountImgPost post);
 
     Collection<AccountMessage> findUserMessageByIdMessage(AccountMessage message);
 

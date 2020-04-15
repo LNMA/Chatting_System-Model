@@ -1,6 +1,7 @@
 package com.louay.projects.model.factory;
 
 
+import com.louay.projects.model.chains.communications.AccountImgPost;
 import com.louay.projects.model.chains.communications.AccountTextPost;
 import com.louay.projects.model.chains.communications.AccountMessage;
 import com.louay.projects.model.chains.communications.AccountPicture;
@@ -126,6 +127,12 @@ public class BeansFactory {
     @Bean(name = "accountTextPostContainer")
     @Scope("prototype")
     public Collection<AccountTextPost> getAccountTextPostContainer(){
+        return new LinkedHashSet<>();
+    }
+
+    @Bean(name = "accountImgPostContainer")
+    @Scope("prototype")
+    public Collection<AccountImgPost> getAccountImgPostContainer(){
         return new LinkedHashSet<>();
     }
 
