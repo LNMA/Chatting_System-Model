@@ -38,6 +38,7 @@ com\louay\projects\model\dao\InsertUserPostDAO.class
 com\louay\projects\model\chains\users\activity\SignInDate.class
 com\louay\projects\model\dao\CirclesGroupDAO.class
 com\louay\projects\model\dao\impl\UsersDAOImpl.class
+com\louay\projects\model\chains\communications\AccountImgPost.class
 com\louay\projects\model\dao\impl\GroupDAOImpl.class
 com\louay\projects\model\dao\CirclesUsersDAO.class
 com\louay\projects\model\Main.class

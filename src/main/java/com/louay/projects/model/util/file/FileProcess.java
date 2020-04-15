@@ -20,7 +20,7 @@ public class FileProcess {
             if (file.canExecute()) {
                 if (file.canRead()) {
                     bytes = new byte[(int) file.length()];
-                    in = new BufferedInputStream(new FileInputStream(path), 2048);
+                    in = new BufferedInputStream(new FileInputStream(path));
                     int i = 0;
                     while (in.available() != 0) {
                         bytes[i] = (byte) in.read();
@@ -40,7 +40,7 @@ public class FileProcess {
     }
 
     public void writePicture(String path, byte[] bytes) throws IOException {
-        OutputStream out = new BufferedOutputStream(new FileOutputStream(path), 2048);
+        OutputStream out = new BufferedOutputStream(new FileOutputStream(path));
         out.write(bytes);
         out.flush();
         out.close();

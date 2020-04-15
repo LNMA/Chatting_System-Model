@@ -1,5 +1,6 @@
 package com.louay.projects.model.dao.impl;
 
+import com.louay.projects.model.chains.communications.group.GroupImgPost;
 import com.louay.projects.model.chains.communications.group.GroupTextPost;
 import com.louay.projects.model.chains.communications.group.GroupPicture;
 import com.louay.projects.model.chains.groups.GroupsDetail;
@@ -62,6 +63,30 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
             insert.setString(2, post.getUsername());
             insert.setString(3, post.getPost().toString());
             insert.setTimestamp(4, post.getPostDate());
+            insert.executeUpdate();
+
+            ResultSet resultSet = insert.getGeneratedKeys();
+            if (resultSet.next()) {
+                post.setIdPost(resultSet.getLong(1));
+            }
+            this.pool.release(wrapper);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return post.getIdPost();
+    }
+
+    @Override
+    public Long insertGroupImgPost(GroupImgPost post) {
+        try {
+            ConnectionWrapper wrapper = this.pool.getConnection();
+            PreparedStatement insert = wrapper.getConnection().prepareStatement("INSERT INTO `group_img_post`(`idGroup`, " +
+                    "`username`, `img`, `fileName`, `dateUpload`) VALUES (?, ?, ?, ?, ?);", Statement.RETURN_GENERATED_KEYS);
+            insert.setString(1, post.getIdGroup());
+            insert.setString(2, post.getUsername());
+            insert.setBlob(3, post.getImage());
+            insert.setString(4, post.getFileName());
+            insert.setTimestamp(5, post.getDateUpload());
             insert.executeUpdate();
 
             ResultSet resultSet = insert.getGeneratedKeys();
@@ -145,6 +170,19 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
             result = this.pool.updateQuery("UPDATE `group_post` SET `idGroupe` = ?, `username` = ?, " +
                             "`post` = ?, `postDate` = ? WHERE `idPost` = ?;", post.getIdGroup(), post.getUsername(),
                     post.getPost().toString(), post.getPostDate(), post.getIdPost());
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return result;
+    }
+
+    @Override
+    public int updateGroupImgPostByIdComment(GroupImgPost post) {
+        int result = 0;
+        try {
+            result = this.pool.updateQuery("UPDATE `group_img_post` SET `idGroup` = ?, `username` = ?, " +
+                            "`img` = ?, `fileName` = ?, `dateUpload` = ?  WHERE `idPost` = ?;", post.getIdGroup(), post.getUsername(),
+                        post.getImage(), post.getFileName(), post.getDateUpload(), post.getIdPost());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -265,7 +303,7 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
     @Override
     public Collection<GroupTextPost> findGroupTextPostByIdPost(GroupTextPost post) {
         @SuppressWarnings(value = "unchecked")
-        Collection<GroupTextPost> container = (Collection<GroupTextPost>) ac.getBean("groupCommentContainer");
+        Collection<GroupTextPost> container = (Collection<GroupTextPost>) ac.getBean("groupTextPostContainer");
         try {
             ResultSet resultSet = this.pool.selectResult("SELECT * FROM `group_post` WHERE `idPost` = ? " +
                     "ORDER BY `group_post`.`postDate` DESC;", post.getIdPost());
@@ -279,7 +317,7 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
     @Override
     public Collection<GroupTextPost> findGroupTextPostByIdGroup(GroupTextPost post) {
         @SuppressWarnings(value = "unchecked")
-        Collection<GroupTextPost> container = (Collection<GroupTextPost>) ac.getBean("groupCommentContainer");
+        Collection<GroupTextPost> container = (Collection<GroupTextPost>) ac.getBean("groupTextPostContainer");
         try {
             ResultSet resultSet = this.pool.selectResult("SELECT * FROM `group_post` WHERE `idGroupe` = ? " +
                     "ORDER BY `group_post`.`postDate` DESC;", post.getIdGroup());
@@ -293,7 +331,7 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
     @Override
     public Collection<GroupTextPost> findGroupTextPostByUsername(GroupTextPost post) {
         @SuppressWarnings(value = "unchecked")
-        Collection<GroupTextPost> container = (Collection<GroupTextPost>) ac.getBean("groupCommentContainer");
+        Collection<GroupTextPost> container = (Collection<GroupTextPost>) ac.getBean("groupTextPostContainer");
         try {
             ResultSet resultSet = this.pool.selectResult("SELECT * FROM `group_post` WHERE `username` = ? " +
                     "ORDER BY `group_post`.`postDate` DESC;", post.getUsername());
@@ -307,12 +345,51 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
     @Override
     public Collection<GroupTextPost> findGroupTextPostByUsernameAndIdGroup(GroupTextPost post) {
         @SuppressWarnings(value = "unchecked")
-        Collection<GroupTextPost> container = (Collection<GroupTextPost>) ac.getBean("groupCommentContainer");
+        Collection<GroupTextPost> container = (Collection<GroupTextPost>) ac.getBean("groupTextPostContainer");
         try {
             ResultSet resultSet = this.pool.selectResult("SELECT * FROM `group_post` WHERE `username` = ? " +
                             "AND `idGroupe` = ? ORDER BY `group_post`.`postDate` DESC;", post.getUsername(),
                     post.getIdGroup());
             buildGroupTextPostContainer(resultSet, container);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return container;
+    }
+
+    private GroupImgPost buildGroupImgPost(ResultSet resultSet) {
+        GroupImgPost post = ac.getBean(GroupImgPost.class);
+        try {
+            post.setIdPost(resultSet.getLong(1));
+            post.setIdGroup(resultSet.getString(2));
+            post.setUsername(resultSet.getString(3));
+            post.setImage(resultSet.getBlob(4));
+            post.setFileName(resultSet.getString(5));
+            post.setDateUpload(resultSet.getTimestamp(6));
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return post;
+    }
+
+    public void buildGroupImgPostContainer(ResultSet resultSet, Collection<GroupImgPost> container) {
+        try {
+            while (resultSet.next()) {
+                container.add(buildGroupImgPost(resultSet));
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    @Override
+    public Collection<GroupImgPost> findGroupImgPostByUsername(GroupImgPost post) {
+        @SuppressWarnings(value = "unchecked")
+        Collection<GroupImgPost> container = (Collection<GroupImgPost>) ac.getBean("groupImgPostContainer");
+        try {
+            ResultSet resultSet = this.pool.selectResult("SELECT * FROM `group_img_post` WHERE `username` = ? " +
+                            "ORDER BY `group_img_post`.`dateUpload` DESC;", post.getUsername());
+            buildGroupImgPostContainer(resultSet, container);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -535,6 +612,16 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
         }
         return result;
     }
+
+    @Override
+    public int deleteGroupImgPostByIdPost(GroupImgPost post) {
+        int result = 0;
+        try {
+            result = this.pool.updateQuery("DELETE FROM `group_img_post` WHERE `idPost` = ?;", post.getIdPost());
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return result;    }
 
     @Override
     public int deleteGroupInviteByIdGroupAndUsername(GroupInvite invite) {

@@ -1,5 +1,6 @@
 package com.louay.projects.model.dao;
 
+import com.louay.projects.model.chains.communications.group.GroupImgPost;
 import com.louay.projects.model.chains.communications.group.GroupTextPost;
 import com.louay.projects.model.chains.communications.group.GroupPicture;
 import com.louay.projects.model.chains.groups.GroupsDetail;
@@ -21,6 +22,8 @@ public interface SelectGroupDAO {
     Collection<GroupTextPost> findGroupTextPostByUsername(GroupTextPost post);
 
     Collection<GroupTextPost> findGroupTextPostByUsernameAndIdGroup(GroupTextPost post);
+
+    Collection<GroupImgPost> findGroupImgPostByUsername(GroupImgPost post);
 
     Map<Long, GroupInvite> findGroupInviteByIdGroup(GroupInvite invite);
 

@@ -5,6 +5,7 @@ import com.louay.projects.model.chains.communications.AccountImgPost;
 import com.louay.projects.model.chains.communications.AccountTextPost;
 import com.louay.projects.model.chains.communications.AccountMessage;
 import com.louay.projects.model.chains.communications.AccountPicture;
+import com.louay.projects.model.chains.communications.group.GroupImgPost;
 import com.louay.projects.model.chains.communications.group.GroupTextPost;
 import com.louay.projects.model.chains.communications.group.GroupPicture;
 import com.louay.projects.model.chains.groups.GroupsDetail;
@@ -160,9 +161,15 @@ public class BeansFactory {
         return new HashSet<>();
     }
 
-    @Bean(name = "groupCommentContainer")
+    @Bean(name = "groupTextPostContainer")
     @Scope("prototype")
     public Collection<GroupTextPost> getGroupCommentContainer(){
+        return new LinkedHashSet<>();
+    }
+
+    @Bean(name = "groupImgPostContainer")
+    @Scope("prototype")
+    public Collection<GroupImgPost> getGroupImgPostContainer(){
         return new LinkedHashSet<>();
     }
 
