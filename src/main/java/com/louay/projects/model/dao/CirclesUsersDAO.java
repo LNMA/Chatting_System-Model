@@ -1,15 +1,15 @@
 package com.louay.projects.model.dao;
 
-import com.louay.projects.model.chains.member.FriendRequest;
-import com.louay.projects.model.chains.member.UserFriend;
+import com.louay.projects.model.chains.member.Member;
+import com.louay.projects.model.chains.member.Request;
 
 public interface CirclesUsersDAO {
 
-    int insertFriendRequest(FriendRequest request);
+    int insertFriendRequest(Request request);
 
-    int insertUserFriends(UserFriend friend);
+    int insertUserFriends(Member friend);
 
-    int updateFriendRequestByUsernameAndDate(FriendRequest request);
+    int updateFriendRequestByUsernameAndDate(Request request);
 
-    int updateUserFriendsByUsernameAndDate(UserFriend friend);
+    int updateUserFriendsByUsernameAndDate(Member friend);
 }

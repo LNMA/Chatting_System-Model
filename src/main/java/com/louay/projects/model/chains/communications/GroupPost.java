@@ -1,18 +1,18 @@
-package com.louay.projects.model.chains.member.group;
+package com.louay.projects.model.chains.communications;
 
-import com.louay.projects.model.chains.member.Member;
+
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-
 @Configuration
 @Component
 @Scope("prototype")
-public class GroupMembers extends Member {
+public class GroupPost extends Post{
     private String idGroup;
+    private String username;
 
-    public GroupMembers() {
+    public GroupPost() {
     }
 
     public String getIdGroup() {
@@ -23,10 +23,19 @@ public class GroupMembers extends Member {
         this.idGroup = idGroup;
     }
 
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
     @Override
     public String toString() {
-        return super.toString()+", GroupMembers{" +
+        return super.toString()+", GroupPost{" +
                 "idGroup='" + idGroup + '\'' +
+                ", username='" + username + '\'' +
                 '}';
     }
 }

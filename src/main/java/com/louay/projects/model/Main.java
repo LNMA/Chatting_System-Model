@@ -1,6 +1,6 @@
 package com.louay.projects.model;
 
-import com.louay.projects.model.chains.communications.AccountPicture;
+import com.louay.projects.model.chains.communications.account.AccountPicture;
 import com.louay.projects.model.chains.users.Client;
 import com.louay.projects.model.constants.UserGender;
 import com.louay.projects.model.constants.UserType;
@@ -11,13 +11,9 @@ import com.louay.projects.model.util.file.FileProcess;
 import com.louay.projects.model.util.pool.MyConnectionPool;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.*;
 import java.sql.SQLException;
 import java.util.Base64;
-import java.util.Iterator;
 import java.util.Set;
 
 public class Main {

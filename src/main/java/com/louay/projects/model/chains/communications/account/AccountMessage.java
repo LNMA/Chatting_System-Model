@@ -1,4 +1,4 @@
-package com.louay.projects.model.chains.communications;
+package com.louay.projects.model.chains.communications.account;
 
 
 import org.springframework.context.annotation.Configuration;

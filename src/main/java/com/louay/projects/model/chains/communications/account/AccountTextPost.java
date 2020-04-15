@@ -1,6 +1,7 @@
-package com.louay.projects.model.chains.communications.group;
+package com.louay.projects.model.chains.communications.account;
 
-import com.louay.projects.model.chains.communications.GroupPost;
+import com.louay.projects.model.chains.communications.AccountPost;
+import com.louay.projects.model.chains.communications.Post;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -9,10 +10,10 @@ import org.springframework.stereotype.Component;
 @Configuration
 @Component
 @Scope("prototype")
-public class GroupTextPost extends GroupPost {
+public class AccountTextPost extends AccountPost {
     private StringBuilder post;
 
-    public GroupTextPost() {
+    public AccountTextPost() {
     }
 
     public StringBuilder getPost() {
@@ -25,7 +26,7 @@ public class GroupTextPost extends GroupPost {
 
     @Override
     public String toString() {
-        return super.toString()+", GroupTextPost{" +
+        return super.toString()+", AccountTextPost{" +
                 "post=" + post +
                 '}';
     }
