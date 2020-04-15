@@ -7,41 +7,42 @@ import org.springframework.stereotype.Component;
 import java.io.*;
 
 @Configuration
-@Component
+@Component("fileOperation")
 @Scope("prototype")
 public class FileProcess {
 
     public byte[] readAPicture(String path) throws IOException {
-        byte [] bytes;
+        byte[] bytes;
         InputStream in;
         File file = new File(path);
 
-        if (file.exists()){
+        if (file.exists()) {
             if (file.canExecute()) {
                 if (file.canRead()) {
                     bytes = new byte[(int) file.length()];
-                    try {
-                        in = new BufferedInputStream(new FileInputStream(path));
-                        int i = 0;
-                        while (in.available() != 0) {
-                            bytes[i] = (byte) in.read();
-                            i++;
-                        }
-                        in.close();
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                    in = new BufferedInputStream(new FileInputStream(path));
+                    int i = 0;
+                    while (in.available() != 0) {
+                        bytes[i] = (byte) in.read();
+                        i++;
                     }
-                }else {
+                    in.close();
+                } else {
                     throw new IOException("file can not Read.");
                 }
-            }else {
+            } else {
                 throw new IOException("file can not execute.");
             }
-        }else {
+        } else {
             throw new FileNotFoundException("file not found.");
         }
         return bytes;
+    }
+
+    public void writePicture(String path, byte[] bytes) throws IOException {
+        OutputStream out = new BufferedOutputStream(new FileOutputStream(path));
+        out.write(bytes);
+        out.flush();
+        out.close();
     }
 }

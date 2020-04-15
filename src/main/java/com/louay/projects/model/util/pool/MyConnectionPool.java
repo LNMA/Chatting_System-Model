@@ -1,12 +1,10 @@
 package com.louay.projects.model.util.pool;
 
 
-import com.louay.projects.model.factory.BeansFactory;
 import com.louay.projects.model.util.queue.MyList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
@@ -24,7 +22,9 @@ public class MyConnectionPool {
     @Autowired
     @Qualifier("queue")
     private MyList<ConnectionWrapper> connection;
-    private ApplicationContext context = new AnnotationConfigApplicationContext(BeansFactory.class);
+    @Autowired
+    @Qualifier("buildAnnotationContext")
+    private ApplicationContext context;
     private ConnectionWrapper tempWrapper;
 
 
@@ -116,12 +116,11 @@ public class MyConnectionPool {
         return result;
     }
 
-    public java.sql.Blob initBlob(long pos, byte[] bytes){
+    public java.sql.Blob initBlob(){
         java.sql.Blob blob = null;
         try{
             this.tempWrapper = this.getConnection();
             blob = this.tempWrapper.getConnection().createBlob();
-            blob.setBytes(pos, bytes);
             this.release(tempWrapper);
         } catch (SQLException e) {
             System.out.println(e.getMessage());

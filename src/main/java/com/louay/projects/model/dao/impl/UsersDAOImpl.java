@@ -1,6 +1,7 @@
 package com.louay.projects.model.dao.impl;
 
-import com.louay.projects.model.chains.communications.AccountComments;
+import com.louay.projects.model.chains.communications.AccountImgPost;
+import com.louay.projects.model.chains.communications.AccountTextPost;
 import com.louay.projects.model.chains.communications.AccountMessage;
 import com.louay.projects.model.chains.communications.AccountPicture;
 import com.louay.projects.model.chains.member.FriendRequest;
@@ -11,13 +12,11 @@ import com.louay.projects.model.chains.users.Users;
 import com.louay.projects.model.chains.users.activity.AccountStatus;
 import com.louay.projects.model.chains.users.activity.SignInDate;
 import com.louay.projects.model.dao.*;
-import com.louay.projects.model.factory.BeansFactory;
 import com.louay.projects.model.util.pool.ConnectionWrapper;
 import com.louay.projects.model.util.pool.MyConnectionPool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
@@ -37,7 +36,9 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
     @Autowired
     @Qualifier("pool")
     private MyConnectionPool pool;
-    private ApplicationContext ac = new AnnotationConfigApplicationContext(BeansFactory.class);
+    @Autowired
+    @Qualifier("buildAnnotationContext")
+    private ApplicationContext ac;
 
 
     @Override
@@ -47,7 +48,7 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
             result = this.pool.updateQuery("INSERT INTO `account`(`username`, `password`, `dateCreate`, `accountPermission`) " +
                     "VALUES(?, ?, ?, ?);", user.getUsername(), user.getPassword(), user.getDateCreate(), user.getAccountPermission());
         } catch (SQLIntegrityConstraintViolationException e) {
-            throw new RuntimeException("username already used, try another one.");
+            return -404;
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -75,33 +76,57 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
     }
 
     @Override
-    public Long insertAccountComments(AccountComments comments) {
+    public Long insertAccountTextPost(AccountTextPost post) {
         try {
             ConnectionWrapper wrapper = this.pool.getConnection();
-            PreparedStatement insert = wrapper.getConnection().prepareStatement("INSERT INTO `account_comments`(`username`" +
-                    ", `comments`, `commentsDate`) VALUES (?, ?, ?);", Statement.RETURN_GENERATED_KEYS);
-            insert.setString(1, comments.getIdUsername());
-            insert.setString(2, comments.getComments().toString());
-            insert.setTimestamp(3, comments.getCommentsDate());
+            PreparedStatement insert = wrapper.getConnection().prepareStatement("INSERT INTO `account_post`(`username`" +
+                    ", `post`, `postDate`) VALUES (?, ?, ?);", Statement.RETURN_GENERATED_KEYS);
+            insert.setString(1, post.getIdUsername());
+            insert.setString(2, post.getPost().toString());
+            insert.setTimestamp(3, post.getPostDate());
             insert.executeUpdate();
 
             ResultSet resultSet = insert.getGeneratedKeys();
             if (resultSet.next()) {
-                comments.setIdComment(resultSet.getLong(1));
+                post.setIdPost(resultSet.getLong(1));
             }
             this.pool.release(wrapper);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-        return comments.getIdComment();
+        return post.getIdPost();
+    }
+
+    @Override
+    public Long insertAccountImgPost(AccountImgPost post) {
+        try {
+            ConnectionWrapper wrapper = this.pool.getConnection();
+            PreparedStatement insert = wrapper.getConnection().prepareStatement("INSERT INTO `account_img_post`" +
+                    "(`username`, `img`, `fileName`, `dateUpload`) VALUES (?, ?, ?, ?);", Statement.RETURN_GENERATED_KEYS);
+            insert.setString(1, post.getUsername());
+            insert.setBlob(2, post.getImage());
+            insert.setString(3, post.getFileName());
+            insert.setTimestamp(4, post.getDateUpload());
+            insert.executeUpdate();
+
+            ResultSet resultSet = insert.getGeneratedKeys();
+            if (resultSet.next()) {
+                post.setIdPost(resultSet.getLong(1));
+            }
+            this.pool.release(wrapper);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return post.getIdPost();
     }
 
     @Override
     public Long insertAccountMassage(AccountMessage message) {
         try {
             ConnectionWrapper wrapper = this.pool.getConnection();
-            PreparedStatement insert = wrapper.getConnection().prepareStatement("INSERT INTO `account_message`(`source`" +
-                    ", `massage`, `target`, `sentDate`, `isSeen`) VALUES (?, ?, ?, ?, ?);", Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement insert = wrapper.getConnection().prepareStatement("INSERT INTO `account_message`" +
+                    "(`source`, `massage`, `target`, `sentDate`, `isSeen`) VALUES (?, ?, ?, ?, ?);",
+                    Statement.RETURN_GENERATED_KEYS);
             insert.setString(1, message.getSourceUser());
             insert.setString(2, message.getMessage().toString());
             insert.setString(3, message.getTargetUser());
@@ -216,12 +241,25 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
     }
 
     @Override
-    public int updateAccountCommentsByIdComment(AccountComments comments) {
+    public int updateAccountTextPostByIdComment(AccountTextPost post) {
         int result = 0;
         try {
-            result = this.pool.updateQuery("UPDATE `account_comments` SET `username` = ?, `comments` = ?, " +
-                            "`commentsDate` = ? WHERE `idComments` = ?;", comments.getIdUsername(), comments.getComments().toString(),
-                    comments.getCommentsDate(), comments.getIdComment());
+            result = this.pool.updateQuery("UPDATE `account_post` SET `username` = ?, `post` = ?, " +
+                            "`postDate` = ? WHERE `idPost` = ?;", post.getIdUsername(), post.getPost().toString(),
+                    post.getPostDate(), post.getIdPost());
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return result;
+    }
+
+    @Override
+    public int updateAccountImgPost(AccountImgPost post) {
+        int result = 0;
+        try {
+            result = this.pool.updateQuery("UPDATE `account_img_post` SET `username` = ?, `img` = ?, " +
+                            "`fileName` = ?, `dateUpload` = ?  WHERE `idPost` = ?;", post.getUsername(), post.getImage(),
+                    post.getFileName(), post.getDateUpload(), post.getIdPost());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -328,6 +366,19 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
         return container;
     }
 
+    @Override
+    public Collection<Users> findUserByUsernameAndPassword(Users users) {
+        @SuppressWarnings(value = "unchecked")
+        Collection<Users> container = (Collection<Users>) this.ac.getBean("usersContainer");
+        try {
+            ResultSet resultSet = this.pool.selectResult("SELECT * FROM `account` WHERE `username` = ? AND " +
+                            "`password` = ?;", users.getUsername(), users.getPassword());
+            buildUserContainer(resultSet, container);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return container;    }
+
     private Client buildClient(ResultSet resultSet) {
         Client user = ac.getBean(Client.class);
         try {
@@ -372,23 +423,23 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
         return container;
     }
 
-    private AccountComments buildAccountComment(ResultSet resultSet) {
-        AccountComments comments = ac.getBean(AccountComments.class);
+    private AccountTextPost buildAccountTextPost(ResultSet resultSet) {
+        AccountTextPost post = ac.getBean(AccountTextPost.class);
         try {
-            comments.setIdComment(resultSet.getLong(1));
-            comments.setIdUsername(resultSet.getString(2));
-            comments.setComments(resultSet.getString(3));
-            comments.setCommentsDate(resultSet.getTimestamp(4));
+            post.setIdPost(resultSet.getLong(1));
+            post.setIdUsername(resultSet.getString(2));
+            post.setPost(resultSet.getString(3));
+            post.setPostDate(resultSet.getTimestamp(4));
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-        return comments;
+        return post;
     }
 
-    public void buildAccountCommentContainer(ResultSet resultSet, Collection<AccountComments> container) {
+    public void buildAccountTextPostContainer(ResultSet resultSet, Collection<AccountTextPost> container) {
         try {
             while (resultSet.next()) {
-                container.add(buildAccountComment(resultSet));
+                container.add(buildAccountTextPost(resultSet));
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -396,13 +447,13 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
     }
 
     @Override
-    public Collection<AccountComments> findUserCommentByIdComment(AccountComments comment) {
+    public Collection<AccountTextPost> findUserTextPostByIdPost(AccountTextPost post) {
         @SuppressWarnings(value = "unchecked")
-        Collection<AccountComments> container = (Collection<AccountComments>) ac.getBean("accountCommentContainer");
+        Collection<AccountTextPost> container = (Collection<AccountTextPost>) ac.getBean("accountTextPostContainer");
         try {
-            ResultSet resultSet = this.pool.selectResult("SELECT * FROM `account_comments` WHERE `idComments` = ?;",
-                    comment.getIdComment());
-            buildAccountCommentContainer(resultSet, container);
+            ResultSet resultSet = this.pool.selectResult("SELECT * FROM `account_post` WHERE `idPost` = ?;",
+                    post.getIdPost());
+            buildAccountTextPostContainer(resultSet, container);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -410,13 +461,51 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
     }
 
     @Override
-    public Collection<AccountComments> findUserCommentByUsername(AccountComments comment) {
+    public Collection<AccountTextPost> findUserTextPostByUsername(AccountTextPost post) {
         @SuppressWarnings(value = "unchecked")
-        Collection<AccountComments> container = (Collection<AccountComments>) ac.getBean("accountCommentContainer");
+        Collection<AccountTextPost> container = (Collection<AccountTextPost>) ac.getBean("accountTextPostContainer");
         try {
-            ResultSet resultSet = this.pool.selectResult("SELECT * FROM `account_comments` WHERE `username` = ? " +
-                    "ORDER BY `account_comments`.`commentsDate` DESC;", comment.getIdUsername());
-            buildAccountCommentContainer(resultSet, container);
+            ResultSet resultSet = this.pool.selectResult("SELECT * FROM `account_post` WHERE `username` = ? " +
+                    "ORDER BY `account_post`.`postDate` DESC;", post.getIdUsername());
+            buildAccountTextPostContainer(resultSet, container);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return container;
+    }
+
+    private AccountImgPost buildAccountImgPost(ResultSet resultSet) {
+        AccountImgPost post = ac.getBean(AccountImgPost.class);
+        try {
+            post.setIdPost(resultSet.getLong(1));
+            post.setUsername(resultSet.getString(2));
+            post.setImage(resultSet.getBlob(3));
+            post.setFileName(resultSet.getString(4));
+            post.setDateUpload(resultSet.getTimestamp(5));
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return post;
+    }
+
+    public void buildAccountImgPostContainer(ResultSet resultSet, Collection<AccountImgPost> container) {
+        try {
+            while (resultSet.next()) {
+                container.add(buildAccountImgPost(resultSet));
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    @Override
+    public Collection<AccountImgPost> findUserImgPostByUsername(AccountImgPost post) {
+        @SuppressWarnings(value = "unchecked")
+        Collection<AccountImgPost> container = (Collection<AccountImgPost>) ac.getBean("accountImgPostContainer");
+        try {
+            ResultSet resultSet = this.pool.selectResult("SELECT * FROM `account_img_post` WHERE `username` = ? " +
+                    "ORDER BY `account_img_post`.`dateUpload` DESC;", post.getUsername());
+            buildAccountImgPostContainer(resultSet, container);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -518,9 +607,23 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
         @SuppressWarnings(value = "unchecked")
         Collection<AccountPicture> container = (Collection<AccountPicture>) ac.getBean("accountPictureContainer");
         try {
-            ResultSet resultSet = this.pool.selectResult("SELECT * FROM `account_pic` WHERE `username` = ? ORDER BY " +
-                            "`account_pic`.`uploadDate` DESC;",
-                    picture.getUsername());
+            ResultSet resultSet = this.pool.selectResult("SELECT * FROM `account_pic` WHERE `username` = ?;",
+                                                            picture.getUsername());
+            buildAccountPicture(resultSet, container);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return container;
+    }
+
+    @Override
+    public Collection<AccountPicture> findFriendAndPictureByUsername(Users users) {
+        @SuppressWarnings(value = "unchecked")
+        Collection<AccountPicture> container = (Collection<AccountPicture>) ac.getBean("accountPictureContainer");
+        try {
+            ResultSet resultSet = this.pool.selectResult("SELECT `account_pic`.* FROM `account_pic` INNER JOIN `user_friend` ON " +
+                            "`account_pic`.`username` = `user_friend`.`friend` WHERE `user_friend`.`username` = ?;"
+                            , users.getUsername());
             buildAccountPicture(resultSet, container);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -705,6 +808,8 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
         return container;
     }
 
+
+
     @Override
     public int deleteAccountByUsername(Users user) {
         int result = 0;
@@ -728,11 +833,23 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
     }
 
     @Override
-    public int deleteAccountCommentByIdComment(AccountComments comments) {
+    public int deleteAccountTextPostByIdPost(AccountTextPost post) {
         int result = 0;
         try {
-            result = this.pool.updateQuery("DELETE FROM `account_comments` WHERE `idComments` = ?;",
-                    comments.getIdComment());
+            result = this.pool.updateQuery("DELETE FROM `account_post` WHERE `idPost` = ?;",
+                    post.getIdPost());
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return result;
+    }
+
+    @Override
+    public int deleteAccountImgPost(AccountImgPost post) {
+        int result = 0;
+        try {
+            result = this.pool.updateQuery("DELETE FROM `account_img_post` WHERE `idPost` = ?;",
+                    post.getIdPost());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -869,4 +986,6 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
         }
         return result;
     }
+
+
 }

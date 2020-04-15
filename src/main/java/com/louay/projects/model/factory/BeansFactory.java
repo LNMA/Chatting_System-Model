@@ -1,10 +1,12 @@
 package com.louay.projects.model.factory;
 
 
-import com.louay.projects.model.chains.communications.AccountComments;
+import com.louay.projects.model.chains.communications.AccountImgPost;
+import com.louay.projects.model.chains.communications.AccountTextPost;
 import com.louay.projects.model.chains.communications.AccountMessage;
 import com.louay.projects.model.chains.communications.AccountPicture;
-import com.louay.projects.model.chains.communications.group.GroupComments;
+import com.louay.projects.model.chains.communications.group.GroupImgPost;
+import com.louay.projects.model.chains.communications.group.GroupTextPost;
 import com.louay.projects.model.chains.communications.group.GroupPicture;
 import com.louay.projects.model.chains.groups.GroupsDetail;
 import com.louay.projects.model.chains.member.FriendRequest;
@@ -15,15 +17,17 @@ import com.louay.projects.model.chains.member.group.GroupRequest;
 import com.louay.projects.model.chains.users.Users;
 import com.louay.projects.model.chains.users.activity.AccountStatus;
 import com.louay.projects.model.chains.users.activity.SignInDate;
+import com.louay.projects.model.chains.util.PictureBase64;
 import com.louay.projects.model.util.pool.ConnectionWrapper;
 import com.louay.projects.model.util.pool.DBConnectionConfig;
 import com.louay.projects.model.util.queue.MyList;
 import com.louay.projects.model.util.queue.MyQueue;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 
-import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -61,7 +65,23 @@ public class BeansFactory {
         return new ConnectionWrapper(connection);
     }
 
+    @Bean(name = "buildAnnotationContext")
+    @Scope("prototype")
+    public ApplicationContext buildContext(){
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
+        context.scan("com.louay.projects.model");
+        context.refresh();
+        return context;
+    }
 
+    @Bean(name = "buildAnnotationContextControl")
+    @Scope("prototype")
+    public ApplicationContext buildControlContext(){
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
+        context.scan("com.louay.projects.model", "com.louay.projects.controller");
+        context.refresh();
+        return context;
+    }
 
     @Bean(name = "usersContainer")
     @Scope("prototype")
@@ -96,7 +116,7 @@ public class BeansFactory {
     @Bean(name = "accountPictureContainer")
     @Scope("prototype")
     public Collection<AccountPicture> getAccountPictureContainer(){
-        return new LinkedHashSet<>();
+        return new HashSet<>();
     }
 
     @Bean(name = "accountMessageContainer")
@@ -105,9 +125,15 @@ public class BeansFactory {
         return new LinkedHashSet<>();
     }
 
-    @Bean(name = "accountCommentContainer")
+    @Bean(name = "accountTextPostContainer")
     @Scope("prototype")
-    public Collection<AccountComments> getAccountCommentContainer(){
+    public Collection<AccountTextPost> getAccountTextPostContainer(){
+        return new LinkedHashSet<>();
+    }
+
+    @Bean(name = "accountImgPostContainer")
+    @Scope("prototype")
+    public Collection<AccountImgPost> getAccountImgPostContainer(){
         return new LinkedHashSet<>();
     }
 
@@ -135,9 +161,15 @@ public class BeansFactory {
         return new HashSet<>();
     }
 
-    @Bean(name = "groupCommentContainer")
+    @Bean(name = "groupTextPostContainer")
     @Scope("prototype")
-    public Collection<GroupComments> getGroupCommentContainer(){
+    public Collection<GroupTextPost> getGroupCommentContainer(){
+        return new LinkedHashSet<>();
+    }
+
+    @Bean(name = "groupImgPostContainer")
+    @Scope("prototype")
+    public Collection<GroupImgPost> getGroupImgPostContainer(){
         return new LinkedHashSet<>();
     }
 
@@ -147,6 +179,11 @@ public class BeansFactory {
         return new LinkedHashSet<>();
     }
 
+    @Bean(name = "friendUserImgList")
+    @Scope("prototype")
+    public List<PictureBase64> getPicturePathImgList(){
+        return new ArrayList<>();
+    }
 
 
 

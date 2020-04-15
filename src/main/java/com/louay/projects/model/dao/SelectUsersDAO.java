@@ -1,6 +1,7 @@
 package com.louay.projects.model.dao;
 
-import com.louay.projects.model.chains.communications.AccountComments;
+import com.louay.projects.model.chains.communications.AccountImgPost;
+import com.louay.projects.model.chains.communications.AccountTextPost;
 import com.louay.projects.model.chains.communications.AccountMessage;
 import com.louay.projects.model.chains.communications.AccountPicture;
 import com.louay.projects.model.chains.member.FriendRequest;
@@ -18,9 +19,13 @@ public interface SelectUsersDAO {
 
     Collection<Users> findUserInAccountDetailByUsername(Users user);
 
-    Collection<AccountComments> findUserCommentByIdComment(AccountComments comment);
+    Collection<Users> findUserByUsernameAndPassword(Users users);
 
-    Collection<AccountComments> findUserCommentByUsername(AccountComments comment);
+    Collection<AccountTextPost> findUserTextPostByIdPost(AccountTextPost post);
+
+    Collection<AccountTextPost> findUserTextPostByUsername(AccountTextPost post);
+
+    Collection<AccountImgPost> findUserImgPostByUsername(AccountImgPost post);
 
     Collection<AccountMessage> findUserMessageByIdMessage(AccountMessage message);
 
@@ -32,6 +37,8 @@ public interface SelectUsersDAO {
 
     Collection<AccountStatus> findUserStatusByUsername(AccountStatus status);
 
+    Collection<AccountPicture> findFriendAndPictureByUsername(Users users);
+
     Map<Long, FriendRequest> findFriendRequestBySender(FriendRequest request);
 
     Map<Long, FriendRequest>  findFriendRequestByReceiver(FriendRequest request);
@@ -41,4 +48,5 @@ public interface SelectUsersDAO {
     Map<Long ,UserFriend> findUserFriendByUsername(UserFriend friend);
 
     Map<Long ,UserFriend> findUserFriendByFriend(UserFriend friend);
+
 }

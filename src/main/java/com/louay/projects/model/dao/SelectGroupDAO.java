@@ -1,6 +1,7 @@
 package com.louay.projects.model.dao;
 
-import com.louay.projects.model.chains.communications.group.GroupComments;
+import com.louay.projects.model.chains.communications.group.GroupImgPost;
+import com.louay.projects.model.chains.communications.group.GroupTextPost;
 import com.louay.projects.model.chains.communications.group.GroupPicture;
 import com.louay.projects.model.chains.groups.GroupsDetail;
 import com.louay.projects.model.chains.member.group.GroupInvite;
@@ -14,13 +15,15 @@ public interface SelectGroupDAO {
 
     Collection<GroupsDetail> findGroupDetailByIdGroup(GroupsDetail groupsDetail);
 
-    Collection<GroupComments> findGroupCommentsByIdComments(GroupComments comments);
+    Collection<GroupTextPost> findGroupTextPostByIdPost(GroupTextPost post);
 
-    Collection<GroupComments> findGroupCommentsByIdGroup(GroupComments comments);
+    Collection<GroupTextPost> findGroupTextPostByIdGroup(GroupTextPost post);
 
-    Collection<GroupComments> findGroupCommentsByUsername(GroupComments comments);
+    Collection<GroupTextPost> findGroupTextPostByUsername(GroupTextPost post);
 
-    Collection<GroupComments> findGroupCommentsByUsernameAndIdGroup(GroupComments comments);
+    Collection<GroupTextPost> findGroupTextPostByUsernameAndIdGroup(GroupTextPost post);
+
+    Collection<GroupImgPost> findGroupImgPostByUsername(GroupImgPost post);
 
     Map<Long, GroupInvite> findGroupInviteByIdGroup(GroupInvite invite);
 
