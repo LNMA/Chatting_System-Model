@@ -516,6 +516,26 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
         return container;
     }
 
+    @Override
+    public Collection<AccountTextPost> findUserFriendTextPostByUsername(Post post) {
+        if (!(post instanceof AccountTextPost)) {
+            throw new IllegalArgumentException("Need AccountTextPost.");
+        }
+        AccountTextPost textPost = (AccountTextPost) post;
+        @SuppressWarnings(value = "unchecked")
+        Collection<AccountTextPost> container = (Collection<AccountTextPost>) ac.getBean("postContainer");
+        try {
+            ResultSet resultSet = this.pool.selectResult("SELECT `account_post`.`idPost`, `account_post`.`username`, " +
+                    "`account_post`.`post`, `account_post`.`postDate` FROM `account_post` INNER JOIN `user_friend` ON " +
+                    "`account_post`.`username` = `user_friend`.`friend` WHERE `user_friend`.`username` = ? ORDER BY " +
+                    "`account_post`.`postDate` DESC;", textPost.getUsername());
+            buildAccountTextPostContainer(resultSet, container);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return container;
+    }
+
     private AccountImgPost buildAccountImgPost(ResultSet resultSet) {
         AccountImgPost post = ac.getBean(AccountImgPost.class);
         try {
@@ -557,6 +577,26 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
         }
         return container;
     }
+
+    @Override
+    public Collection<AccountImgPost> findUserFriendImgPostByUsername(Post post) {
+        if (!(post instanceof AccountImgPost)) {
+            throw new IllegalArgumentException("Need AccountImgPost.");
+        }
+        AccountImgPost imgPost = (AccountImgPost) post;
+        @SuppressWarnings(value = "unchecked")
+        Collection<AccountImgPost> container = (Collection<AccountImgPost>) ac.getBean("postContainer");
+        try {
+            ResultSet resultSet = this.pool.selectResult("SELECT `account_img_post`.`idPost`, " +
+                    "`account_img_post`.`username`, `account_img_post`.`img`, `account_img_post`.`fileName`, " +
+                    "`account_img_post`.`dateUpload` FROM `account_img_post` INNER JOIN `user_friend` ON " +
+                    "`account_img_post`.`username` = `user_friend`.`friend` WHERE `user_friend`.`username` = ? " +
+                    "ORDER BY `account_img_post`.`dateUpload` DESC;", imgPost.getUsername());
+            buildAccountImgPostContainer(resultSet, container);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return container;    }
 
     private AccountMessage buildAccountMessage(ResultSet resultSet) {
         AccountMessage message = ac.getBean(AccountMessage.class);

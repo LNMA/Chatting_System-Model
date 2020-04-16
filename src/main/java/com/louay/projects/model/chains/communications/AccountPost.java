@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 public class AccountPost extends Post {
     private String username;
 
+    @Override
     public String getUsername() {
         return username;
     }

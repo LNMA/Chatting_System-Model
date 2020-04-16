@@ -1,9 +1,11 @@
 package com.louay.projects.model.chains.communications;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.Comparator;
 import java.util.Objects;
 
-public abstract class Post {
+public abstract class Post implements Comparator<Post>, Serializable {
     private Long idPost;
     private java.sql.Timestamp datePost;
 
@@ -26,6 +28,8 @@ public abstract class Post {
         this.datePost = datePost;
     }
 
+    abstract String getUsername();
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -37,6 +41,13 @@ public abstract class Post {
     @Override
     public int hashCode() {
         return Objects.hash(getIdPost());
+    }
+
+    @Override
+    public int compare(Post o1, Post o2) {
+        java.sql.Timestamp date1 = o1.getDatePost();
+        java.sql.Timestamp date2 = o2.getDatePost();
+        return date1.compareTo(date2);
     }
 
     @Override

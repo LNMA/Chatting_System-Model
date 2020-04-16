@@ -12,18 +12,18 @@ import java.sql.Blob;
 @Component
 @Scope("prototype")
 public class AccountImgPost extends AccountPost {
-    java.sql.Blob Image;
+    java.sql.Blob image;
     String fileName;
 
     public AccountImgPost() {
     }
 
     public Blob getImage() {
-        return Image;
+        return image;
     }
 
     public void setImage(Blob image) {
-        Image = image;
+        this.image = image;
     }
 
     public String getFileName() {
@@ -37,7 +37,7 @@ public class AccountImgPost extends AccountPost {
     @Override
     public String toString() {
         return super.toString()+", AccountImgPost{" +
-                "Image=" + Image +
+                "Image=" + image +
                 ", fileName='" + fileName + '\'' +
                 '}';
     }

@@ -23,6 +23,7 @@ public class GroupPost extends Post{
         this.idGroup = idGroup;
     }
 
+    @Override
     public String getUsername() {
         return username;
     }

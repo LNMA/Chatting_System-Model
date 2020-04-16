@@ -1,9 +1,15 @@
 package com.louay.projects.model.chains.communications.group;
 
 import com.louay.projects.model.chains.communications.GroupPost;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.sql.Blob;
 
+@Configuration
+@Component
+@Scope("prototype")
 public class GroupImgPost extends GroupPost {
     private java.sql.Blob image;
     private String fileName;
