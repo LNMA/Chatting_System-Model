@@ -7,6 +7,7 @@ com\louay\projects\model\chains\member\account\UserFriend.class
 com\louay\projects\model\chains\users\Users.class
 com\louay\projects\model\util\queue\MyList.class
 com\louay\projects\model\chains\member\group\GroupMembers.class
+com\louay\projects\model\chains\communications\PostType.class
 com\louay\projects\model\dao\UpdateGroupPostDAO.class
 com\louay\projects\model\factory\BeansFactory.class
 com\louay\projects\model\chains\communications\Post.class
@@ -29,7 +30,6 @@ com\louay\projects\model\dao\DeleteGroupDAO.class
 com\louay\projects\model\util\pool\ConnectionWrapper.class
 com\louay\projects\model\constants\UserType.class
 com\louay\projects\model\chains\communications\account\AccountTextPost.class
-com\louay\projects\model\chains\communications\AccountPost.class
 com\louay\projects\model\dao\SelectGroupDAO.class
 com\louay\projects\model\dao\CreateUsersDAO.class
 com\louay\projects\model\dao\UpdateUsersDAO.class
@@ -37,6 +37,7 @@ com\louay\projects\model\chains\communications\group\GroupTextPost.class
 com\louay\projects\model\chains\member\group\GroupInvite.class
 com\louay\projects\model\constants\UserGender.class
 com\louay\projects\model\util\pool\DBConnectionConfig.class
+com\louay\projects\model\chains\communications\PostClassName.class
 com\louay\projects\model\chains\util\PictureBase64.class
 com\louay\projects\model\chains\communications\group\GroupImgPost.class
 com\louay\projects\model\chains\member\Member.class
@@ -46,7 +47,6 @@ com\louay\projects\model\dao\impl\UsersDAOImpl.class
 com\louay\projects\model\dao\impl\GroupDAOImpl.class
 com\louay\projects\model\dao\CirclesUsersDAO.class
 com\louay\projects\model\chains\communications\account\AccountImgPost.class
-com\louay\projects\model\chains\communications\GroupPost.class
 com\louay\projects\model\chains\groups\GroupsDetail.class
 com\louay\projects\model\dao\CreateGroupsDAO.class
 com\louay\projects\model\chains\communications\account\AccountMessage.class

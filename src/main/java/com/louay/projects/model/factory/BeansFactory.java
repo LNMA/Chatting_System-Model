@@ -87,7 +87,7 @@ public class BeansFactory {
     @Bean(name = "postContainer")
     @Scope("prototype")
     public Collection<Post> getPostContainer(){
-        return new LinkedHashSet<>();
+        return new HashSet<>();
     }
 
     @Bean(name = "memberContainer")

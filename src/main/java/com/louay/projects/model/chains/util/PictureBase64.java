@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 @Scope("prototype")
 public class PictureBase64 {
     String username;
-    String pictureBase64;
+    StringBuilder pictureBase64;
 
 
     public String getUsername() {
@@ -20,12 +20,12 @@ public class PictureBase64 {
         this.username = username;
     }
 
-    public String getPictureBase64() {
+    public StringBuilder getPictureBase64() {
         return pictureBase64;
     }
 
     public void setPictureBase64(String pictureBase64) {
-        this.pictureBase64 = pictureBase64;
+        this.pictureBase64 = new StringBuilder(pictureBase64);
     }
 
     @Override

@@ -507,8 +507,8 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
         @SuppressWarnings(value = "unchecked")
         Collection<AccountTextPost> container = (Collection<AccountTextPost>) ac.getBean("postContainer");
         try {
-            ResultSet resultSet = this.pool.selectResult("SELECT * FROM `account_post` WHERE `username` = ? " +
-                    "ORDER BY `account_post`.`postDate` DESC;", textPost.getUsername());
+            ResultSet resultSet = this.pool.selectResult("SELECT * FROM `account_post` WHERE `username` = ?;",
+                    textPost.getUsername());
             buildAccountTextPostContainer(resultSet, container);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -527,8 +527,8 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
         try {
             ResultSet resultSet = this.pool.selectResult("SELECT `account_post`.`idPost`, `account_post`.`username`, " +
                     "`account_post`.`post`, `account_post`.`postDate` FROM `account_post` INNER JOIN `user_friend` ON " +
-                    "`account_post`.`username` = `user_friend`.`friend` WHERE `user_friend`.`username` = ? ORDER BY " +
-                    "`account_post`.`postDate` DESC;", textPost.getUsername());
+                    "`account_post`.`username` = `user_friend`.`friend` WHERE `user_friend`.`username` = ?;",
+                    textPost.getUsername());
             buildAccountTextPostContainer(resultSet, container);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -569,8 +569,8 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
         @SuppressWarnings(value = "unchecked")
         Collection<AccountImgPost> container = (Collection<AccountImgPost>) ac.getBean("postContainer");
         try {
-            ResultSet resultSet = this.pool.selectResult("SELECT * FROM `account_img_post` WHERE `username` = ? " +
-                    "ORDER BY `account_img_post`.`dateUpload` DESC;", imgPost.getUsername());
+            ResultSet resultSet = this.pool.selectResult("SELECT * FROM `account_img_post` WHERE `username` = ?;",
+                    imgPost.getUsername());
             buildAccountImgPostContainer(resultSet, container);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -590,8 +590,8 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
             ResultSet resultSet = this.pool.selectResult("SELECT `account_img_post`.`idPost`, " +
                     "`account_img_post`.`username`, `account_img_post`.`img`, `account_img_post`.`fileName`, " +
                     "`account_img_post`.`dateUpload` FROM `account_img_post` INNER JOIN `user_friend` ON " +
-                    "`account_img_post`.`username` = `user_friend`.`friend` WHERE `user_friend`.`username` = ? " +
-                    "ORDER BY `account_img_post`.`dateUpload` DESC;", imgPost.getUsername());
+                    "`account_img_post`.`username` = `user_friend`.`friend` WHERE `user_friend`.`username` = ?;",
+                    imgPost.getUsername());
             buildAccountImgPostContainer(resultSet, container);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -946,7 +946,7 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
     }
 
     @Override
-    public int deleteAccountImgPost(Post post) {
+    public int deleteAccountImgPostByIdPost(Post post) {
         int result = 0;
         try {
             result = this.pool.updateQuery("DELETE FROM `account_img_post` WHERE `idPost` = ?;",

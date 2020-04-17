@@ -344,8 +344,8 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
         @SuppressWarnings(value = "unchecked")
         Collection<GroupTextPost> container = (Collection<GroupTextPost>) ac.getBean("postContainer");
         try {
-            ResultSet resultSet = this.pool.selectResult("SELECT * FROM `group_post` WHERE `idPost` = ? " +
-                    "ORDER BY `group_post`.`postDate` DESC;", post.getIdPost());
+            ResultSet resultSet = this.pool.selectResult("SELECT * FROM `group_post` WHERE `idPost` = ? ;",
+                    post.getIdPost());
             buildGroupTextPostContainer(resultSet, container);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -362,8 +362,8 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
         @SuppressWarnings(value = "unchecked")
         Collection<GroupTextPost> container = (Collection<GroupTextPost>) ac.getBean("postContainer");
         try {
-            ResultSet resultSet = this.pool.selectResult("SELECT * FROM `group_post` WHERE `idGroupe` = ? " +
-                    "ORDER BY `group_post`.`postDate` DESC;", post.getIdGroup());
+            ResultSet resultSet = this.pool.selectResult("SELECT * FROM `group_post` WHERE `idGroupe` = ?;",
+                    post.getIdGroup());
             buildGroupTextPostContainer(resultSet, container);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -380,8 +380,8 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
         @SuppressWarnings(value = "unchecked")
         Collection<GroupTextPost> container = (Collection<GroupTextPost>) ac.getBean("postContainer");
         try {
-            ResultSet resultSet = this.pool.selectResult("SELECT * FROM `group_post` WHERE `username` = ? " +
-                    "ORDER BY `group_post`.`postDate` DESC;", post.getUsername());
+            ResultSet resultSet = this.pool.selectResult("SELECT * FROM `group_post` WHERE `username` = ? ;",
+                    post.getUsername());
             buildGroupTextPostContainer(resultSet, container);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -399,7 +399,7 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
         Collection<GroupTextPost> container = (Collection<GroupTextPost>) ac.getBean("postContainer");
         try {
             ResultSet resultSet = this.pool.selectResult("SELECT * FROM `group_post` WHERE `username` = ? " +
-                            "AND `idGroupe` = ? ORDER BY `group_post`.`postDate` DESC;", post.getUsername(),
+                            "AND `idGroupe` = ?;", post.getUsername(),
                     post.getIdGroup());
             buildGroupTextPostContainer(resultSet, container);
         } catch (SQLException e) {
@@ -442,8 +442,8 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
         @SuppressWarnings(value = "unchecked")
         Collection<GroupImgPost> container = (Collection<GroupImgPost>) ac.getBean("postContainer");
         try {
-            ResultSet resultSet = this.pool.selectResult("SELECT * FROM `group_img_post` WHERE `username` = ? " +
-                            "ORDER BY `group_img_post`.`dateUpload` DESC;", post.getUsername());
+            ResultSet resultSet = this.pool.selectResult("SELECT * FROM `group_img_post` WHERE `username` = ?;",
+                    post.getUsername());
             buildGroupImgPostContainer(resultSet, container);
         } catch (SQLException e) {
             System.out.println(e.getMessage());

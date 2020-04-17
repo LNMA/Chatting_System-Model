@@ -5,8 +5,9 @@ import java.sql.Timestamp;
 import java.util.Comparator;
 import java.util.Objects;
 
-public abstract class Post implements Comparator<Post>, Serializable {
+public abstract class Post implements Comparator<Post>, Serializable, Comparable<Post> {
     private Long idPost;
+    private String username;
     private java.sql.Timestamp datePost;
 
     public Post() {
@@ -20,6 +21,14 @@ public abstract class Post implements Comparator<Post>, Serializable {
         this.idPost = idPost;
     }
 
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
     public Timestamp getDatePost() {
         return datePost;
     }
@@ -28,7 +37,9 @@ public abstract class Post implements Comparator<Post>, Serializable {
         this.datePost = datePost;
     }
 
-    abstract String getUsername();
+    public abstract PostType getType();
+
+    public abstract PostClassName getClassName();
 
     @Override
     public boolean equals(Object o) {
@@ -51,9 +62,26 @@ public abstract class Post implements Comparator<Post>, Serializable {
     }
 
     @Override
+    public int compareTo(Post o) {
+        if (this.datePost != null && o.getDatePost() != null) {
+            java.sql.Timestamp date1 = this.datePost;
+            java.sql.Timestamp date2 = o.getDatePost();
+
+            if (date1.after(date2)) {
+                return -1;
+            }
+            if (date1.before(date2)) {
+                return 1;
+            }
+        }
+        return 0;
+    }
+
+    @Override
     public String toString() {
         return "Post{" +
                 "idPost=" + idPost +
+                ", username='" + username + '\'' +
                 ", datePost=" + datePost +
                 '}';
     }

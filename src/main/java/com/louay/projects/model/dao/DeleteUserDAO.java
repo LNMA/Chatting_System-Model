@@ -17,7 +17,7 @@ public interface DeleteUserDAO {
 
     int deleteAccountTextPostByIdPost(Post post);
 
-    int deleteAccountImgPost(Post post);
+    int deleteAccountImgPostByIdPost(Post post);
 
     int deleteAccountMessageByIdMessage(AccountMessage message);
 
