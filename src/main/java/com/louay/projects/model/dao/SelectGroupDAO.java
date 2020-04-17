@@ -28,6 +28,8 @@ public interface SelectGroupDAO {
 
     Collection<GroupImgPost> findGroupImgPostByUsername(Post post);
 
+    Collection<GroupImgPost> findGroupImgPostByIdPost(Post post);
+
     Map<Long, GroupInvite> findGroupInviteByIdGroup(GroupInvite invite);
 
     Map<Long, GroupInvite> findGroupInviteByUsername(GroupInvite invite);

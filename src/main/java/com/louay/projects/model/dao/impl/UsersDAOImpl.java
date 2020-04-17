@@ -561,6 +561,24 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
     }
 
     @Override
+    public Collection<AccountImgPost> findUserImgPostByIdPost(Post post) {
+        if (!(post instanceof AccountImgPost)) {
+            throw new IllegalArgumentException("Need AccountImgPost.");
+        }
+        AccountImgPost imgPost = (AccountImgPost) post;
+        @SuppressWarnings(value = "unchecked")
+        Collection<AccountImgPost> container = (Collection<AccountImgPost>) ac.getBean("postContainer");
+        try {
+            ResultSet resultSet = this.pool.selectResult("SELECT * FROM `account_img_post` WHERE `idPost` = ?;",
+                    imgPost.getIdPost());
+            buildAccountImgPostContainer(resultSet, container);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return container;
+    }
+
+    @Override
     public Collection<AccountImgPost> findUserImgPostByUsername(Post post) {
         if (!(post instanceof AccountImgPost)) {
             throw new IllegalArgumentException("Need AccountImgPost.");

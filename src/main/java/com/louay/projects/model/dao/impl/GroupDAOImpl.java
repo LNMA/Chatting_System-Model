@@ -434,6 +434,24 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
     }
 
     @Override
+    public Collection<GroupImgPost> findGroupImgPostByIdPost(Post groupImgPost) {
+        if (!(groupImgPost instanceof GroupImgPost)){
+            throw new IllegalArgumentException("Need GroupImgPost.");
+        }
+        GroupImgPost post = (GroupImgPost) groupImgPost;
+        @SuppressWarnings(value = "unchecked")
+        Collection<GroupImgPost> container = (Collection<GroupImgPost>) ac.getBean("postContainer");
+        try {
+            ResultSet resultSet = this.pool.selectResult("SELECT * FROM `group_img_post` WHERE `idPost` = ?;",
+                    post.getIdPost());
+            buildGroupImgPostContainer(resultSet, container);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return container;
+    }
+
+    @Override
     public Collection<GroupImgPost> findGroupImgPostByUsername(Post groupImgPost) {
         if (!(groupImgPost instanceof GroupImgPost)){
             throw new IllegalArgumentException("Need GroupImgPost.");

@@ -32,6 +32,8 @@ public interface SelectUsersDAO {
 
     Collection<AccountImgPost> findUserImgPostByUsername(Post post);
 
+    Collection<AccountImgPost> findUserImgPostByIdPost(Post post);
+
     Collection<AccountImgPost> findUserFriendImgPostByUsername(Post post);
 
     Collection<AccountMessage> findUserMessageByIdMessage(AccountMessage message);
