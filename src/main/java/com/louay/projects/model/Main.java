@@ -1,9 +1,9 @@
 package com.louay.projects.model;
 
-import com.louay.projects.model.chains.communications.account.AccountPicture;
-import com.louay.projects.model.chains.users.Client;
+import com.louay.projects.model.chains.accounts.Client;
+import com.louay.projects.model.chains.accounts.Users;
 import com.louay.projects.model.constants.UserGender;
-import com.louay.projects.model.constants.UserType;
+import com.louay.projects.model.chains.accounts.UserType;
 import com.louay.projects.model.dao.CreateUsersDAO;
 import com.louay.projects.model.dao.SelectUsersDAO;
 import com.louay.projects.model.util.date.NowDate;
@@ -56,7 +56,7 @@ public class Main {
         }
         System.out.println();
 
-        AccountPicture picture = context.getBean(AccountPicture.class);
+        Users picture = context.getBean(Users.class);
         picture.setUsername(user.getUsername());
         MyConnectionPool pool = (MyConnectionPool) context.getBean("pool");
         java.sql.Blob blob = pool.initBlob();
@@ -70,7 +70,7 @@ public class Main {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        picture.setUploadDate(NowDate.getNowTimestamp());
+        picture.setDateCreate(NowDate.getNowTimestamp());
         picture.setPictureName("Annotation 2020-03-08 210620.png");
 
         File file = new File(String.valueOf(picture.getPicture()));
@@ -78,7 +78,7 @@ public class Main {
 
 
         SelectUsersDAO insertUserPostDAO = (SelectUsersDAO) context.getBean("usersDAO");
-        Set<AccountPicture> set = (Set<AccountPicture>) insertUserPostDAO.findPictureByUsername(picture);
+        Set<Users> set = (Set<Users>) insertUserPostDAO.findPictureByUsername(picture);
         try (OutputStream out = new BufferedOutputStream(new FileOutputStream("C:\\Users\\Oday Amr\\Desktop\\" + set.iterator().next().getPictureName()))) {
             out.write(set.iterator().next().getPicture().getBytes(1,(int)set.iterator().next().getPicture().length()));
             String f = Base64.getEncoder().encodeToString(set.iterator().next().getPicture().getBytes(1,(int)set.iterator().next().getPicture().length()));

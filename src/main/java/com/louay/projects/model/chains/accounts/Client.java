@@ -1,4 +1,4 @@
-package com.louay.projects.model.chains.users;
+package com.louay.projects.model.chains.accounts;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
@@ -63,8 +63,7 @@ public class Client extends Users {
         int year = birthday.until(now).getYears();
         int month = birthday.until(now).getMonths();
         int day = birthday.until(now).getDays();
-        String age = String.format("%d day, %d month, %d year",day, month, year);
-        return age;
+        return String.format("%d day, %d month, %d year",day, month, year);
     }
 
     public String getGender() {
@@ -113,6 +112,21 @@ public class Client extends Users {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    @Override
+    public AccountType getAccountType() {
+        return AccountType.USER;
+    }
+
+    @Override
+    public UserType getUserType() {
+        return UserType.CLIENT;
+    }
+
+    @Override
+    public AccountClassName getAccountClassName() {
+        return AccountClassName.CLIENT;
     }
 
     @Override

@@ -4,14 +4,13 @@ import com.louay.projects.model.chains.communications.Post;
 import com.louay.projects.model.chains.communications.account.AccountImgPost;
 import com.louay.projects.model.chains.communications.account.AccountTextPost;
 import com.louay.projects.model.chains.communications.account.AccountMessage;
-import com.louay.projects.model.chains.communications.account.AccountPicture;
 import com.louay.projects.model.chains.member.Member;
 import com.louay.projects.model.chains.member.Request;
 import com.louay.projects.model.chains.member.account.FriendRequest;
 import com.louay.projects.model.chains.member.account.UserFriend;
-import com.louay.projects.model.chains.users.Users;
-import com.louay.projects.model.chains.users.activity.AccountStatus;
-import com.louay.projects.model.chains.users.activity.SignInDate;
+import com.louay.projects.model.chains.accounts.Users;
+import com.louay.projects.model.chains.accounts.activity.AccountStatus;
+import com.louay.projects.model.chains.accounts.activity.SignInDate;
 
 import java.util.Collection;
 import java.util.Map;
@@ -19,6 +18,8 @@ import java.util.Map;
 public interface SelectUsersDAO {
 
     Collection<Users> findUserInAccountByUsername(Users user);
+
+    Collection<Users> findUserInAccountByLikeUsername(Users users);
 
     Collection<Users> findUserInAccountDetailByUsername(Users user);
 
@@ -42,11 +43,11 @@ public interface SelectUsersDAO {
 
     Collection<AccountMessage> findUserMessageByReceiver(AccountMessage message);
 
-    Collection<AccountPicture> findPictureByUsername(AccountPicture picture);
+    Collection<Users> findPictureByUsername(Users picture);
 
     Collection<AccountStatus> findUserStatusByUsername(AccountStatus status);
 
-    Collection<AccountPicture> findFriendAndPictureByUsername(Users users);
+    Collection<Users> findFriendAndPictureByUsername(Users users);
 
     Map<Long, FriendRequest> findFriendRequestBySender(Request request);
 

@@ -3,8 +3,7 @@ package com.louay.projects.model.dao;
 import com.louay.projects.model.chains.communications.Post;
 import com.louay.projects.model.chains.communications.group.GroupImgPost;
 import com.louay.projects.model.chains.communications.group.GroupTextPost;
-import com.louay.projects.model.chains.communications.group.GroupPicture;
-import com.louay.projects.model.chains.groups.GroupsDetail;
+import com.louay.projects.model.chains.accounts.group.Groups;
 import com.louay.projects.model.chains.member.Member;
 import com.louay.projects.model.chains.member.Request;
 import com.louay.projects.model.chains.member.group.GroupInvite;
@@ -16,7 +15,9 @@ import java.util.Map;
 
 public interface SelectGroupDAO {
 
-    Collection<GroupsDetail> findGroupDetailByIdGroup(GroupsDetail groupsDetail);
+    Collection<Groups> findGroupDetailByIdGroup(Groups groups);
+
+    Collection<Groups> findGroupDetailByLikeIdGroup(Groups groups);
 
     Collection<GroupTextPost> findGroupTextPostByIdPost(Post post);
 
@@ -38,7 +39,7 @@ public interface SelectGroupDAO {
 
     Map<Long, GroupMembers> findGroupMemberByUsername(Member member);
 
-    Collection<GroupPicture> findGroupPictureByIdGroup(GroupPicture picture);
+    Collection<Groups> findGroupPictureByIdGroup(Groups picture);
 
     Map<Long, GroupRequest> findGroupRequestByIdGroup(Request request);
 

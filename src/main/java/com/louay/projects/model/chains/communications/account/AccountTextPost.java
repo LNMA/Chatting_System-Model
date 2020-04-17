@@ -25,6 +25,15 @@ public class AccountTextPost extends Post {
         this.post = new StringBuilder(post);
     }
 
+    public void setPostStringBuilder(StringBuilder post){
+        this.post = new StringBuilder(post);
+    }
+
+    public void setEditPost(StringBuilder post){
+        this.post.delete(0, this.post.length());
+        this.post.append(post);
+    }
+
     @Override
     public PostType getType() {
         return PostType.TEXT_POST;

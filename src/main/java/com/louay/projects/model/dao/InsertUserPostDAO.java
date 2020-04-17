@@ -1,8 +1,8 @@
 package com.louay.projects.model.dao;
 
+import com.louay.projects.model.chains.accounts.Users;
 import com.louay.projects.model.chains.communications.Post;;
 import com.louay.projects.model.chains.communications.account.AccountMessage;
-import com.louay.projects.model.chains.communications.account.AccountPicture;
 
 public interface InsertUserPostDAO {
 
@@ -10,7 +10,7 @@ public interface InsertUserPostDAO {
 
     Long insertAccountMassage(AccountMessage message);
 
-    int insertAccountPicture(AccountPicture picture);
+    int insertAccountPicture(Users picture);
 
     Long insertAccountImgPost(Post post);
 }

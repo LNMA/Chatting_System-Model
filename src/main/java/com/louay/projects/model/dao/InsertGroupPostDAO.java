@@ -1,7 +1,7 @@
 package com.louay.projects.model.dao;
 
+import com.louay.projects.model.chains.accounts.group.Groups;
 import com.louay.projects.model.chains.communications.Post;
-import com.louay.projects.model.chains.communications.group.GroupPicture;
 
 public interface InsertGroupPostDAO {
 
@@ -9,5 +9,5 @@ public interface InsertGroupPostDAO {
 
     Long insertGroupImgPost(Post post);
 
-    int insertGroupPicture(GroupPicture picture);
+    int insertGroupPicture(Groups picture);
 }

@@ -3,8 +3,7 @@ package com.louay.projects.model.dao.impl;
 import com.louay.projects.model.chains.communications.Post;
 import com.louay.projects.model.chains.communications.group.GroupImgPost;
 import com.louay.projects.model.chains.communications.group.GroupTextPost;
-import com.louay.projects.model.chains.communications.group.GroupPicture;
-import com.louay.projects.model.chains.groups.GroupsDetail;
+import com.louay.projects.model.chains.accounts.group.Groups;
 import com.louay.projects.model.chains.member.Member;
 import com.louay.projects.model.chains.member.Request;
 import com.louay.projects.model.chains.member.group.GroupInvite;
@@ -44,12 +43,12 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
     private ApplicationContext ac;
 
     @Override
-    public int insertGroupDetail(GroupsDetail groupsDetail) {
+    public int insertGroupDetail(Groups groups) {
         int result = 0;
         try {
             result = this.pool.updateQuery("INSERT INTO `group_detail`(`idGroup`, `groupPrivacy`, `groupCreateDate`, " +
-                            "`groupActivity`) VALUES (?, ?, ?, ?);", groupsDetail.getIdGroup(), groupsDetail.getGroupCreateDate(),
-                    groupsDetail.getGroupPrivacy(), groupsDetail.getGroupActivity());
+                            "`groupActivity`) VALUES (?, ?, ?, ?);", groups.getIdGroup(), groups.getDateCreate(),
+                    groups.getGroupPrivacy(), groups.getGroupActivity());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -112,12 +111,12 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
     }
 
     @Override
-    public int insertGroupPicture(GroupPicture picture) {
+    public int insertGroupPicture(Groups picture) {
         int result = 0;
         try {
             result = this.pool.updateQuery("INSERT INTO `group_pic`(`idGroup`, `pic`, `picName`, `uploadDate`) " +
                     "values (?, ?, ?, ?);", picture.getIdGroup(), picture.getPicture(), picture.getPictureName(),
-                    picture.getUploadDate());
+                    picture.getDateCreate());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
 
@@ -170,12 +169,12 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
     }
 
     @Override
-    public int updateGroupDetailByIdGroup(GroupsDetail groupsDetail) {
+    public int updateGroupDetailByIdGroup(Groups groups) {
         int result = 0;
         try {
             result = this.pool.updateQuery("UPDATE `group_detail` SET `groupPrivacy` = ?, `groupCreateDate` = ?, " +
-                            "`groupActivity` = ? WHERE `idGroup` = ?;", groupsDetail.getGroupPrivacy(),
-                    groupsDetail.getGroupCreateDate(), groupsDetail.getGroupActivity(), groupsDetail.getIdGroup());
+                            "`groupActivity` = ? WHERE `idGroup` = ?;", groups.getGroupPrivacy(),
+                    groups.getDateCreate(), groups.getGroupActivity(), groups.getIdGroup());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -183,7 +182,7 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
     }
 
     @Override
-    public int updateGroupTextPostByIdComment(Post groupTextPost) {
+    public int updateGroupTextPostByIdPost(Post groupTextPost) {
         if (!(groupTextPost instanceof GroupTextPost)){
             throw new IllegalArgumentException("Need GroupTextPost.");
         }
@@ -200,7 +199,7 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
     }
 
     @Override
-    public int updateGroupImgPostByIdComment(Post groupImgPost) {
+    public int updateGroupImgPostByIdPost(Post groupImgPost) {
         if (!(groupImgPost instanceof GroupImgPost)){
             throw new IllegalArgumentException("Need GroupImgPost.");
         }
@@ -217,11 +216,11 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
     }
 
     @Override
-    public int updateGroupPictureByIdGroup(GroupPicture picture) {
+    public int updateGroupPictureByIdGroup(Groups picture) {
         int result = 0;
         try {
             result = this.pool.updateQuery("UPDATE `group_pic` SET `pic` = ?, `picName` = ?, `uploadDate` = ? " +
-                            "WHERE `idGroup` = ?;", picture.getPicture(),picture.getPictureName(), picture.getUploadDate(),
+                            "WHERE `idGroup` = ?;", picture.getPicture(),picture.getPictureName(), picture.getDateCreate(),
                     picture.getIdGroup());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -273,12 +272,12 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
         return result;
     }
 
-    private GroupsDetail buildGroupDetail(ResultSet resultSet) {
-        GroupsDetail group = ac.getBean(GroupsDetail.class);
+    private Groups buildGroupDetail(ResultSet resultSet) {
+        Groups group = ac.getBean(Groups.class);
         try {
             group.setIdGroup(resultSet.getString(1));
             group.setGroupPrivacy(resultSet.getString(2));
-            group.setGroupCreateDate(resultSet.getTimestamp(3));
+            group.setDateCreate(resultSet.getTimestamp(3));
             group.setGroupActivity(resultSet.getString(4));
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -286,7 +285,7 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
         return group;
     }
 
-    public void buildGroupDetailContainer(ResultSet resultSet, Collection<GroupsDetail> container) {
+    public void buildGroupDetailContainer(ResultSet resultSet, Collection<Groups> container) {
         try {
             while (resultSet.next()) {
                 container.add(buildGroupDetail(resultSet));
@@ -297,12 +296,27 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
     }
 
     @Override
-    public Collection<GroupsDetail> findGroupDetailByIdGroup(GroupsDetail groupsDetail) {
+    public Collection<Groups> findGroupDetailByIdGroup(Groups groups) {
         @SuppressWarnings(value = "unchecked")
-        Collection<GroupsDetail> container = (Collection<GroupsDetail>) ac.getBean("groupDetailContainer");
+        Collection<Groups> container = (Collection<Groups>) ac.getBean("groupContainer");
         try {
             ResultSet resultSet = this.pool.selectResult("SELECT * FROM `group_detail` WHERE `idGroup` = ?;",
-                    groupsDetail.getIdGroup());
+                    groups.getIdGroup());
+            buildGroupDetailContainer(resultSet, container);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return container;
+    }
+
+    @Override
+    public Collection<Groups> findGroupDetailByLikeIdGroup(Groups groups) {
+        @SuppressWarnings(value = "unchecked")
+        Collection<Groups> container = (Collection<Groups>) ac.getBean("groupContainer");
+        try {
+            ResultSet resultSet = this.pool.selectResult("SELECT * FROM `group_detail` WHERE `groupPrivacy` " +
+                            "NOT IN ('hidden') AND `idGroup` LIKE ?;", groups.getIdGroup()+"%");
             buildGroupDetailContainer(resultSet, container);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -581,20 +595,20 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
         return container;
     }
 
-    private GroupPicture buildGroupPicture(ResultSet resultSet) {
-        GroupPicture picture = ac.getBean(GroupPicture.class);
+    private Groups buildGroupPicture(ResultSet resultSet) {
+        Groups picture = ac.getBean(Groups.class);
         try {
             picture.setIdGroup(resultSet.getString(1));
             picture.setPicture(resultSet.getBlob(2));
             picture.setPictureName(resultSet.getString(3));
-            picture.setUploadDate(resultSet.getTimestamp(4));
+            picture.setDateCreate(resultSet.getTimestamp(4));
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
         return picture;
     }
 
-    public void buildBuildGroupPictureContainer(ResultSet resultSet, Collection<GroupPicture> container) {
+    public void buildBuildGroupPictureContainer(ResultSet resultSet, Collection<Groups> container) {
         try {
             while (resultSet.next()) {
                 container.add(buildGroupPicture(resultSet));
@@ -605,9 +619,9 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
     }
 
     @Override
-    public Collection<GroupPicture> findGroupPictureByIdGroup(GroupPicture picture) {
+    public Collection<Groups> findGroupPictureByIdGroup(Groups picture) {
         @SuppressWarnings(value = "unchecked")
-        Collection<GroupPicture> container = (Collection<GroupPicture>) ac.getBean("groupPictureContainer");
+        Collection<Groups> container = (Collection<Groups>) ac.getBean("groupContainer");
         try {
             ResultSet resultSet = this.pool.selectResult("SELECT * FROM `group_pic` WHERE `idGroup` = ? ORDER BY " +
                     "`group_pic`.`uploadDate` DESC;", picture.getIdGroup());
@@ -679,11 +693,11 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
     }
 
     @Override
-    public int deleteGroupDetailByIdGroup(GroupsDetail groupsDetail) {
+    public int deleteGroupDetailByIdGroup(Groups groups) {
         int result = 0;
         try{
             result = this.pool.updateQuery("DELETE FROM `group_detail` WHERE `idGroup` = ?;",
-                    groupsDetail.getIdGroup());
+                    groups.getIdGroup());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -765,7 +779,7 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
     }
 
     @Override
-    public int deleteGroupPictureByIdGroup(GroupPicture picture) {
+    public int deleteGroupPictureByIdGroup(Groups picture) {
         int result = 0;
         try {
             result = this.pool.updateQuery("DELETE FROM `group_pic` WHERE `idGroup` = ?;", picture.getIdGroup());

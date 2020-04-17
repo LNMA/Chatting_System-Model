@@ -2,12 +2,11 @@ package com.louay.projects.model.dao;
 
 import com.louay.projects.model.chains.communications.Post;
 import com.louay.projects.model.chains.communications.account.AccountMessage;
-import com.louay.projects.model.chains.communications.account.AccountPicture;
 import com.louay.projects.model.chains.member.Member;
 import com.louay.projects.model.chains.member.Request;
-import com.louay.projects.model.chains.users.Users;
-import com.louay.projects.model.chains.users.activity.AccountStatus;
-import com.louay.projects.model.chains.users.activity.SignInDate;
+import com.louay.projects.model.chains.accounts.Users;
+import com.louay.projects.model.chains.accounts.activity.AccountStatus;
+import com.louay.projects.model.chains.accounts.activity.SignInDate;
 
 public interface DeleteUserDAO {
 
@@ -21,7 +20,7 @@ public interface DeleteUserDAO {
 
     int deleteAccountMessageByIdMessage(AccountMessage message);
 
-    int deleteAccountPictureByUsername(AccountPicture picture);
+    int deleteAccountPictureByUsername(Users picture);
 
     int deleteAccountStatusByUsername(AccountStatus status);
 

@@ -1,4 +1,4 @@
-package com.louay.projects.model.chains.users.activity;
+package com.louay.projects.model.chains.accounts.activity;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;

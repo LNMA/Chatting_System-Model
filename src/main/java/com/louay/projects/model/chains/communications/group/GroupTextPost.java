@@ -26,16 +26,21 @@ public class GroupTextPost extends Post {
         this.idGroup = idGroup;
     }
 
-    public void setPost(StringBuilder post) {
-        this.post = post;
-    }
-
     public StringBuilder getPost() {
         return post;
     }
 
     public void setPost(String post) {
         this.post = new StringBuilder(post);
+    }
+
+    public void setPostStringBuilder(StringBuilder post){
+        this.post = new StringBuilder(post);
+    }
+
+    public void setEditPost(StringBuilder post){
+        this.post.delete(0, this.post.length());
+        this.post.append(post);
     }
 
     @Override

@@ -1,23 +1,24 @@
-package com.louay.projects.model.chains.groups;
+package com.louay.projects.model.chains.accounts.group;
 
 
+import com.louay.projects.model.chains.accounts.AccountClassName;
+import com.louay.projects.model.chains.accounts.AccountType;
+import com.louay.projects.model.chains.accounts.Accounts;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.sql.Timestamp;
 import java.util.Objects;
 
 @Configuration
 @Component
 @Scope("prototype")
-public class GroupsDetail {
+public class Groups extends Accounts {
     private String idGroup;
     private String groupPrivacy;
-    private java.sql.Timestamp groupCreateDate;
     private String groupActivity;
 
-    public GroupsDetail() {
+    public Groups() {
     }
 
     public String getIdGroup() {
@@ -36,14 +37,6 @@ public class GroupsDetail {
         this.groupPrivacy = groupPrivacy;
     }
 
-    public Timestamp getGroupCreateDate() {
-        return groupCreateDate;
-    }
-
-    public void setGroupCreateDate(Timestamp groupCreateDate) {
-        this.groupCreateDate = groupCreateDate;
-    }
-
     public String getGroupActivity() {
         return groupActivity;
     }
@@ -53,10 +46,20 @@ public class GroupsDetail {
     }
 
     @Override
+    public AccountType getAccountType() {
+        return AccountType.GROUP;
+    }
+
+    @Override
+    public AccountClassName getAccountClassName() {
+        return AccountClassName.GROUPS;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof GroupsDetail)) return false;
-        GroupsDetail that = (GroupsDetail) o;
+        if (!(o instanceof Groups)) return false;
+        Groups that = (Groups) o;
         return getIdGroup().compareTo(that.getIdGroup()) == 0;
     }
 
@@ -67,10 +70,9 @@ public class GroupsDetail {
 
     @Override
     public String toString() {
-        return "Groups{" +
+        return super.toString()+", Groups{" +
                 "idGroup='" + idGroup + '\'' +
-                ", groupPrivacy=" + groupPrivacy +
-                ", groupCreateDate=" + groupCreateDate +
+                ", groupPrivacy='" + groupPrivacy + '\'' +
                 ", groupActivity='" + groupActivity + '\'' +
                 '}';
     }

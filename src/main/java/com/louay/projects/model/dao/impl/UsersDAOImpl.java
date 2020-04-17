@@ -4,16 +4,15 @@ import com.louay.projects.model.chains.communications.Post;
 import com.louay.projects.model.chains.communications.account.AccountImgPost;
 import com.louay.projects.model.chains.communications.account.AccountTextPost;
 import com.louay.projects.model.chains.communications.account.AccountMessage;
-import com.louay.projects.model.chains.communications.account.AccountPicture;
 import com.louay.projects.model.chains.member.Member;
 import com.louay.projects.model.chains.member.Request;
 import com.louay.projects.model.chains.member.account.FriendRequest;
 import com.louay.projects.model.chains.member.account.UserFriend;
-import com.louay.projects.model.chains.users.Admin;
-import com.louay.projects.model.chains.users.Client;
-import com.louay.projects.model.chains.users.Users;
-import com.louay.projects.model.chains.users.activity.AccountStatus;
-import com.louay.projects.model.chains.users.activity.SignInDate;
+import com.louay.projects.model.chains.accounts.Admin;
+import com.louay.projects.model.chains.accounts.Client;
+import com.louay.projects.model.chains.accounts.Users;
+import com.louay.projects.model.chains.accounts.activity.AccountStatus;
+import com.louay.projects.model.chains.accounts.activity.SignInDate;
 import com.louay.projects.model.dao.*;
 import com.louay.projects.model.util.pool.ConnectionWrapper;
 import com.louay.projects.model.util.pool.MyConnectionPool;
@@ -157,12 +156,12 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
     }
 
     @Override
-    public int insertAccountPicture(AccountPicture picture) {
+    public int insertAccountPicture(Users picture) {
         int result = 0;
         try {
             result = this.pool.updateQuery("INSERT INTO `account_pic`(`username`, `pic`,`picName`, `uploadDate`) " +
                             "VALUES (?, ?, ?, ?);", picture.getUsername(), picture.getPicture(), picture.getPictureName(),
-                    picture.getUploadDate());
+                    picture.getDateCreate());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -260,7 +259,7 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
     }
 
     @Override
-    public int updateAccountTextPostByIdComment(Post post) {
+    public int updateAccountTextPostByIdPost(Post post) {
         if (!(post instanceof AccountTextPost)) {
             throw new IllegalArgumentException("Need AccountTextPost.");
         }
@@ -277,7 +276,7 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
     }
 
     @Override
-    public int updateAccountImgPost(Post post) {
+    public int updateAccountImgPostByIdPost(Post post) {
         if (!(post instanceof AccountImgPost)) {
             throw new IllegalArgumentException("Need AccountImgPost.");
         }
@@ -308,12 +307,12 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
     }
 
     @Override
-    public int updateAccountPictureByUsername(AccountPicture picture) {
+    public int updateAccountPictureByUsername(Users picture) {
         int result = 0;
         try {
             result = this.pool.updateQuery("UPDATE `account_pic` SET `pic` = ?, `picName` = ?,  " +
                             "`uploadDate` = ? WHERE `username` = ?;", picture.getPicture(),
-                    picture.getPictureName(), picture.getUploadDate(), picture.getUsername());
+                    picture.getPictureName(), picture.getDateCreate(), picture.getUsername());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -396,6 +395,20 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
         try {
             ResultSet resultSet = this.pool.selectResult("SELECT * FROM `account` WHERE `username` = ?;",
                     user.getUsername());
+            buildUserContainer(resultSet, container);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return container;
+    }
+
+    @Override
+    public Collection<Users> findUserInAccountByLikeUsername(Users users) {
+        @SuppressWarnings(value = "unchecked")
+        Collection<Users> container = (Collection<Users>) this.ac.getBean("usersContainer");
+        try {
+            ResultSet resultSet = this.pool.selectResult("SELECT * FROM `account` WHERE `accountPermission` = 'client' AND `username` LIKE ?;",
+                    users.getUsername()+"%");
             buildUserContainer(resultSet, container);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -683,20 +696,20 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
         return container;
     }
 
-    private AccountPicture buildAccountPicture(ResultSet resultSet) {
-        AccountPicture picture = ac.getBean(AccountPicture.class);
+    private Users buildAccountPicture(ResultSet resultSet) {
+        Users picture = ac.getBean(Admin.class);
         try {
             picture.setUsername(resultSet.getString(1));
             picture.setPicture(resultSet.getBlob(2));
             picture.setPictureName(resultSet.getString(3));
-            picture.setUploadDate(resultSet.getTimestamp(4));
+            picture.setDateCreate(resultSet.getTimestamp(4));
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
         return picture;
     }
 
-    public void buildAccountPicture(ResultSet resultSet, Collection<AccountPicture> container) {
+    public void buildAccountPicture(ResultSet resultSet, Collection<Users> container) {
         try {
             while (resultSet.next()) {
                 container.add(buildAccountPicture(resultSet));
@@ -707,9 +720,9 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
     }
 
     @Override
-    public Collection<AccountPicture> findPictureByUsername(AccountPicture picture) {
+    public Collection<Users> findPictureByUsername(Users picture) {
         @SuppressWarnings(value = "unchecked")
-        Collection<AccountPicture> container = (Collection<AccountPicture>) ac.getBean("accountPictureContainer");
+        Collection<Users> container = (Collection<Users>) ac.getBean("usersContainer");
         try {
             ResultSet resultSet = this.pool.selectResult("SELECT * FROM `account_pic` WHERE `username` = ?;",
                     picture.getUsername());
@@ -721,9 +734,9 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
     }
 
     @Override
-    public Collection<AccountPicture> findFriendAndPictureByUsername(Users users) {
+    public Collection<Users> findFriendAndPictureByUsername(Users users) {
         @SuppressWarnings(value = "unchecked")
-        Collection<AccountPicture> container = (Collection<AccountPicture>) ac.getBean("accountPictureContainer");
+        Collection<Users> container = (Collection<Users>) ac.getBean("usersContainer");
         try {
             ResultSet resultSet = this.pool.selectResult("SELECT `account_pic`.* FROM `account_pic` INNER JOIN `user_friend` ON " +
                             "`account_pic`.`username` = `user_friend`.`friend` WHERE `user_friend`.`username` = ?;"
@@ -988,7 +1001,7 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
     }
 
     @Override
-    public int deleteAccountPictureByUsername(AccountPicture picture) {
+    public int deleteAccountPictureByUsername(Users picture) {
         int result = 0;
         try {
             result = this.pool.updateQuery("DELETE FROM `account_pic` WHERE `username` = ?;", picture.getUsername());

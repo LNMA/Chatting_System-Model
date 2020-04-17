@@ -1,12 +1,10 @@
-package com.louay.projects.model.chains.users;
+package com.louay.projects.model.chains.accounts;
 
-import java.sql.Timestamp;
 import java.util.Objects;
 
-public abstract class Users {
+public abstract class Users extends Accounts{
     private String username;
     private String password;
-    private java.sql.Timestamp dateCreate;
     private String accountPermission;
 
     public Users() {
@@ -28,14 +26,6 @@ public abstract class Users {
         this.password = password;
     }
 
-    public Timestamp getDateCreate() {
-        return dateCreate;
-    }
-
-    public void setDateCreate(Timestamp dateCreate) {
-        this.dateCreate = dateCreate;
-    }
-
     public String getAccountPermission() {
         return accountPermission;
     }
@@ -43,6 +33,8 @@ public abstract class Users {
     public void setAccountPermission(String accountPermission) {
         this.accountPermission = accountPermission;
     }
+
+    public abstract UserType getUserType();
 
     @Override
     public boolean equals(Object o) {
@@ -59,10 +51,9 @@ public abstract class Users {
 
     @Override
     public String toString() {
-        return "Users{" +
+        return super.toString()+", Users{" +
                 "username='" + username + '\'' +
                 ", password='" + password + '\'' +
-                ", dateCreate=" + dateCreate +
                 ", accountPermission='" + accountPermission + '\'' +
                 '}';
     }
