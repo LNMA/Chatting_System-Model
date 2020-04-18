@@ -1,5 +1,8 @@
 package com.louay.projects.model.chains.accounts;
 
+import com.louay.projects.model.chains.accounts.constant.AccountClassName;
+import com.louay.projects.model.chains.accounts.constant.AccountType;
+
 import java.sql.Blob;
 import java.sql.SQLException;
 import java.sql.Timestamp;

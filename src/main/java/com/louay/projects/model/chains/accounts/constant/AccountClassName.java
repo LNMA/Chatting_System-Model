@@ -1,4 +1,4 @@
-package com.louay.projects.model.chains.accounts;
+package com.louay.projects.model.chains.accounts.constant;
 
 public enum AccountClassName {
     ADMIN("Admin"), CLIENT("Client"), GROUPS("Groups");

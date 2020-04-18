@@ -2,8 +2,8 @@ package com.louay.projects.model;
 
 import com.louay.projects.model.chains.accounts.Client;
 import com.louay.projects.model.chains.accounts.Users;
-import com.louay.projects.model.constants.UserGender;
-import com.louay.projects.model.chains.accounts.UserType;
+import com.louay.projects.model.chains.accounts.constant.UserGender;
+import com.louay.projects.model.chains.accounts.constant.UserType;
 import com.louay.projects.model.dao.CreateUsersDAO;
 import com.louay.projects.model.dao.SelectUsersDAO;
 import com.louay.projects.model.util.date.NowDate;

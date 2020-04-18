@@ -402,14 +402,40 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
         return container;
     }
 
+    private Client buildClientSearchPurpose(ResultSet resultSet) {
+        Client user = ac.getBean(Client.class);
+        try {
+            user.setUsername(resultSet.getString(1));
+            user.setDateCreate(resultSet.getTimestamp(2));
+            user.setPicture(resultSet.getBlob(3));
+            user.setPictureName(resultSet.getString(4));
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return user;
+    }
+
+    public void buildClientSearchPurposeContainer(ResultSet resultSet, Collection<Users> container) {
+        try {
+            while (resultSet.next()) {
+                container.add(buildClientSearchPurpose(resultSet));
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+
     @Override
     public Collection<Users> findUserInAccountByLikeUsername(Users users) {
         @SuppressWarnings(value = "unchecked")
         Collection<Users> container = (Collection<Users>) this.ac.getBean("usersContainer");
         try {
-            ResultSet resultSet = this.pool.selectResult("SELECT * FROM `account` WHERE `accountPermission` = 'client' AND `username` LIKE ?;",
-                    users.getUsername()+"%");
-            buildUserContainer(resultSet, container);
+            ResultSet resultSet = this.pool.selectResult("SELECT `account`.`username`, `account`.`dateCreate`, " +
+                            "`account_pic`.`pic`, `account_pic`.`picName` FROM `account` INNER JOIN `account_pic` ON " +
+                            "`account`.`username` = `account_pic`.`username` WHERE `account`.`accountPermission` = 'client'" +
+                            " AND `account`.`username` LIKE ?;", (users.getUsername()+"%"));
+            buildClientSearchPurposeContainer(resultSet, container);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }

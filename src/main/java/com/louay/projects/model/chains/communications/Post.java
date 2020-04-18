@@ -1,5 +1,8 @@
 package com.louay.projects.model.chains.communications;
 
+import com.louay.projects.model.chains.communications.constant.PostClassName;
+import com.louay.projects.model.chains.communications.constant.PostType;
+
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Comparator;

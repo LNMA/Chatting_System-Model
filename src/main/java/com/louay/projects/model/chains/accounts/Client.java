@@ -1,5 +1,8 @@
 package com.louay.projects.model.chains.accounts;
 
+import com.louay.projects.model.chains.accounts.constant.AccountClassName;
+import com.louay.projects.model.chains.accounts.constant.AccountType;
+import com.louay.projects.model.chains.accounts.constant.UserType;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;

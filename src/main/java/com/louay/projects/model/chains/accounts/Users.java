@@ -1,5 +1,7 @@
 package com.louay.projects.model.chains.accounts;
 
+import com.louay.projects.model.chains.accounts.constant.UserType;
+
 import java.util.Objects;
 
 public abstract class Users extends Accounts{

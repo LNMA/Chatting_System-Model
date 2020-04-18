@@ -1,15 +1,14 @@
 package com.louay.projects.model.chains.communications.group;
 
 import com.louay.projects.model.chains.communications.Post;
-import com.louay.projects.model.chains.communications.PostClassName;
-import com.louay.projects.model.chains.communications.PostType;
+import com.louay.projects.model.chains.communications.constant.PostClassName;
+import com.louay.projects.model.chains.communications.constant.PostType;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.sql.Blob;
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.Base64;
 
 @Configuration

@@ -1,8 +1,8 @@
 package com.louay.projects.model.chains.communications.account;
 
 import com.louay.projects.model.chains.communications.Post;
-import com.louay.projects.model.chains.communications.PostClassName;
-import com.louay.projects.model.chains.communications.PostType;
+import com.louay.projects.model.chains.communications.constant.PostClassName;
+import com.louay.projects.model.chains.communications.constant.PostType;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;

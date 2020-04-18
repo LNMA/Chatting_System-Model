@@ -1,4 +1,4 @@
-package com.louay.projects.model.constants;
+package com.louay.projects.model.chains.accounts.constant;
 
 public enum UserGender {
     MALE("male"), FEMALE("female");

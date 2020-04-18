@@ -1,4 +1,4 @@
-package com.louay.projects.model.chains.communications;
+package com.louay.projects.model.chains.communications.constant;
 
 public enum PostClassName {
     ACCOUNT_TEX_POST("AccountTextPost"), ACCOUNT_IMG_POST("AccountImgPost"), GROUP_IMG_POST("GroupImgPost"),

@@ -1,4 +1,4 @@
-package com.louay.projects.model.chains.accounts;
+package com.louay.projects.model.chains.accounts.constant;
 
 public enum UserType {
     ADMIN("admin"), CLIENT("client"), SUPERVISOR("supervisor");

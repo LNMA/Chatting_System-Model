@@ -310,14 +310,40 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
         return container;
     }
 
+    private Groups buildGroupSearchPurpose(ResultSet resultSet) {
+        Groups groups = ac.getBean(Groups.class);
+        try {
+            groups.setIdGroup(resultSet.getString(1));
+            groups.setDateCreate(resultSet.getTimestamp(2));
+            groups.setPicture(resultSet.getBlob(3));
+            groups.setPictureName(resultSet.getString(4));
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return groups;
+    }
+
+    public void buildGroupSearchPurposeContainer(ResultSet resultSet, Collection<Groups> container) {
+        try {
+            while (resultSet.next()) {
+                container.add(buildGroupSearchPurpose(resultSet));
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
     @Override
     public Collection<Groups> findGroupDetailByLikeIdGroup(Groups groups) {
         @SuppressWarnings(value = "unchecked")
         Collection<Groups> container = (Collection<Groups>) ac.getBean("groupContainer");
         try {
-            ResultSet resultSet = this.pool.selectResult("SELECT * FROM `group_detail` WHERE `groupPrivacy` " +
-                            "NOT IN ('hidden') AND `idGroup` LIKE ?;", groups.getIdGroup()+"%");
-            buildGroupDetailContainer(resultSet, container);
+            ResultSet resultSet = this.pool.selectResult("SELECT `group_detail`.`idGroup`, " +
+                    "`group_detail`.`groupCreateDate`, `group_pic`.`pic`, `group_pic`.`picName` FROM `group_detail` " +
+                    "INNER JOIN `group_pic` ON `group_detail`.`idGroup` = `group_pic`.`idGroup` WHERE " +
+                    "`group_detail`.`groupPrivacy` IN ('hidden') AND `group_detail`.`idGroup` LIKE ?;",
+                    (groups.getIdGroup()+"%"));
+            buildGroupSearchPurposeContainer(resultSet, container);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }

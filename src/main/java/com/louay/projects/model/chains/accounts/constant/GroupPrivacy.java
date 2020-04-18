@@ -1,4 +1,4 @@
-package com.louay.projects.model.constants;
+package com.louay.projects.model.chains.accounts.constant;
 
 public enum  GroupPrivacy {
     PUBLIC("public"), PRIVATE("private"), HIDDEN("hidden");
