@@ -1,31 +1,21 @@
 package com.louay.projects.model.chains.communications.group;
 
+import com.louay.projects.model.chains.communications.Post;
+import com.louay.projects.model.chains.communications.constant.PostClassName;
+import com.louay.projects.model.chains.communications.constant.PostType;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.sql.Timestamp;
-import java.util.Objects;
 
 @Configuration
 @Component
 @Scope("prototype")
-public class GroupTextPost {
-    private Long idPost;
+public class GroupTextPost extends Post {
     private String idGroup;
-    private String username;
     private StringBuilder post;
-    private java.sql.Timestamp postDate;
 
     public GroupTextPost() {
-    }
-
-    public Long getIdPost() {
-        return idPost;
-    }
-
-    public void setIdPost(Long idPost) {
-        this.idPost = idPost;
     }
 
     public String getIdGroup() {
@@ -36,14 +26,6 @@ public class GroupTextPost {
         this.idGroup = idGroup;
     }
 
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
     public StringBuilder getPost() {
         return post;
     }
@@ -52,35 +34,30 @@ public class GroupTextPost {
         this.post = new StringBuilder(post);
     }
 
-    public Timestamp getPostDate() {
-        return postDate;
+    public void setPostStringBuilder(StringBuilder post){
+        this.post = new StringBuilder(post);
     }
 
-    public void setPostDate(Timestamp postDate) {
-        this.postDate = postDate;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof GroupTextPost)) return false;
-        GroupTextPost that = (GroupTextPost) o;
-        return getIdPost().equals(that.getIdPost());
+    public void setEditPost(StringBuilder post){
+        this.post.delete(0, this.post.length());
+        this.post.append(post);
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(getIdPost());
+    public PostClassName getClassName() {
+        return PostClassName.GROUP_TEXT_POST;
+    }
+
+    @Override
+    public PostType getType() {
+        return PostType.TEXT_POST;
     }
 
     @Override
     public String toString() {
-        return "GroupTextPost{" +
-                "idPost=" + idPost +
-                ", idGroup='" + idGroup + '\'' +
-                ", username='" + username + '\'' +
+        return super.toString()+",GroupTextPost{" +
+                "idGroup='" + idGroup + '\'' +
                 ", post=" + post +
-                ", postDate=" + postDate +
                 '}';
     }
 }

@@ -1,23 +1,15 @@
 package com.louay.projects.model.factory;
 
 
-import com.louay.projects.model.chains.communications.AccountImgPost;
-import com.louay.projects.model.chains.communications.AccountTextPost;
-import com.louay.projects.model.chains.communications.AccountMessage;
-import com.louay.projects.model.chains.communications.AccountPicture;
-import com.louay.projects.model.chains.communications.group.GroupImgPost;
-import com.louay.projects.model.chains.communications.group.GroupTextPost;
-import com.louay.projects.model.chains.communications.group.GroupPicture;
-import com.louay.projects.model.chains.groups.GroupsDetail;
-import com.louay.projects.model.chains.member.FriendRequest;
-import com.louay.projects.model.chains.member.UserFriend;
+import com.louay.projects.model.chains.accounts.group.Groups;
+import com.louay.projects.model.chains.communications.Post;
+import com.louay.projects.model.chains.communications.account.AccountMessage;
+import com.louay.projects.model.chains.member.Member;
+import com.louay.projects.model.chains.member.Request;
 import com.louay.projects.model.chains.member.group.GroupInvite;
-import com.louay.projects.model.chains.member.group.GroupMembers;
-import com.louay.projects.model.chains.member.group.GroupRequest;
-import com.louay.projects.model.chains.users.Users;
-import com.louay.projects.model.chains.users.activity.AccountStatus;
-import com.louay.projects.model.chains.users.activity.SignInDate;
-import com.louay.projects.model.chains.util.PictureBase64;
+import com.louay.projects.model.chains.accounts.Users;
+import com.louay.projects.model.chains.accounts.activity.AccountStatus;
+import com.louay.projects.model.chains.accounts.activity.SignInDate;
 import com.louay.projects.model.util.pool.ConnectionWrapper;
 import com.louay.projects.model.util.pool.DBConnectionConfig;
 import com.louay.projects.model.util.queue.MyList;
@@ -89,6 +81,24 @@ public class BeansFactory {
         return new HashSet<>();
     }
 
+    @Bean(name = "postContainer")
+    @Scope("prototype")
+    public Collection<Post> getPostContainer(){
+        return new HashSet<>();
+    }
+
+    @Bean(name = "memberContainer")
+    @Scope("prototype")
+    public Map<Long, Member> getMemberContainer(){
+        return new LinkedHashMap<>();
+    }
+
+    @Bean(name = "requestContainer")
+    @Scope("prototype")
+    public Map<Long, Request> getRequestContainer(){
+        return new LinkedHashMap<>();
+    }
+
     @Bean(name = "statusContainer")
     @Scope("prototype")
     public Collection<AccountStatus> getStatusContainer(){
@@ -101,39 +111,9 @@ public class BeansFactory {
         return new LinkedHashMap<>();
     }
 
-    @Bean(name = "userFriendsContainer")
-    @Scope("prototype")
-    public Map<Long ,UserFriend> getUserFriendsContainer(){
-        return new LinkedHashMap<>();
-    }
-
-    @Bean(name = "userRequestContainer")
-    @Scope("prototype")
-    public Map<Long, FriendRequest> getUserRequestContainer(){
-        return new LinkedHashMap<>();
-    }
-
-    @Bean(name = "accountPictureContainer")
-    @Scope("prototype")
-    public Collection<AccountPicture> getAccountPictureContainer(){
-        return new HashSet<>();
-    }
-
     @Bean(name = "accountMessageContainer")
     @Scope("prototype")
     public Collection<AccountMessage> getAccountMessageContainer(){
-        return new LinkedHashSet<>();
-    }
-
-    @Bean(name = "accountTextPostContainer")
-    @Scope("prototype")
-    public Collection<AccountTextPost> getAccountTextPostContainer(){
-        return new LinkedHashSet<>();
-    }
-
-    @Bean(name = "accountImgPostContainer")
-    @Scope("prototype")
-    public Collection<AccountImgPost> getAccountImgPostContainer(){
         return new LinkedHashSet<>();
     }
 
@@ -143,52 +123,10 @@ public class BeansFactory {
         return new LinkedHashMap<>();
     }
 
-    @Bean(name = "groupMembersContainer")
+    @Bean(name = "groupContainer")
     @Scope("prototype")
-    public Map<Long, GroupMembers> getGroupMembersContainer(){
-        return new LinkedHashMap<>();
-    }
-
-    @Bean(name = "groupRequestContainer")
-    @Scope("prototype")
-    public Map<Long, GroupRequest> getGroupRequestContainer(){
-        return new LinkedHashMap<>();
-    }
-
-    @Bean(name = "groupDetailContainer")
-    @Scope("prototype")
-    public Collection<GroupsDetail> getGroupDetailContainer(){
+    public Collection<Groups> getGroupContainer(){
         return new HashSet<>();
     }
-
-    @Bean(name = "groupTextPostContainer")
-    @Scope("prototype")
-    public Collection<GroupTextPost> getGroupCommentContainer(){
-        return new LinkedHashSet<>();
-    }
-
-    @Bean(name = "groupImgPostContainer")
-    @Scope("prototype")
-    public Collection<GroupImgPost> getGroupImgPostContainer(){
-        return new LinkedHashSet<>();
-    }
-
-    @Bean(name = "groupPictureContainer")
-    @Scope("prototype")
-    public Collection<GroupPicture> getGroupPictureContainer(){
-        return new LinkedHashSet<>();
-    }
-
-    @Bean(name = "friendUserImgList")
-    @Scope("prototype")
-    public List<PictureBase64> getPicturePathImgList(){
-        return new ArrayList<>();
-    }
-
-
-
-
-
-
 
 }

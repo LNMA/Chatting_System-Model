@@ -1,16 +1,18 @@
 package com.louay.projects.model.dao.impl;
 
-import com.louay.projects.model.chains.communications.AccountImgPost;
-import com.louay.projects.model.chains.communications.AccountTextPost;
-import com.louay.projects.model.chains.communications.AccountMessage;
-import com.louay.projects.model.chains.communications.AccountPicture;
-import com.louay.projects.model.chains.member.FriendRequest;
-import com.louay.projects.model.chains.member.UserFriend;
-import com.louay.projects.model.chains.users.Admin;
-import com.louay.projects.model.chains.users.Client;
-import com.louay.projects.model.chains.users.Users;
-import com.louay.projects.model.chains.users.activity.AccountStatus;
-import com.louay.projects.model.chains.users.activity.SignInDate;
+import com.louay.projects.model.chains.communications.Post;
+import com.louay.projects.model.chains.communications.account.AccountImgPost;
+import com.louay.projects.model.chains.communications.account.AccountTextPost;
+import com.louay.projects.model.chains.communications.account.AccountMessage;
+import com.louay.projects.model.chains.member.Member;
+import com.louay.projects.model.chains.member.Request;
+import com.louay.projects.model.chains.member.account.FriendRequest;
+import com.louay.projects.model.chains.member.account.UserFriend;
+import com.louay.projects.model.chains.accounts.Admin;
+import com.louay.projects.model.chains.accounts.Client;
+import com.louay.projects.model.chains.accounts.Users;
+import com.louay.projects.model.chains.accounts.activity.AccountStatus;
+import com.louay.projects.model.chains.accounts.activity.SignInDate;
 import com.louay.projects.model.dao.*;
 import com.louay.projects.model.util.pool.ConnectionWrapper;
 import com.louay.projects.model.util.pool.MyConnectionPool;
@@ -29,7 +31,7 @@ import java.util.Map;
 @Configuration
 @Component("usersDAO")
 @Scope("prototype")
-@ComponentScan(basePackages = { "com.louay.projects.model"})
+@ComponentScan(basePackages = {"com.louay.projects.model"})
 public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountStatusDAO, CirclesUsersDAO, UpdateUsersDAO,
         UpdateUserPostDAO, SelectUsersDAO, DeleteUserDAO {
 
@@ -76,14 +78,18 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
     }
 
     @Override
-    public Long insertAccountTextPost(AccountTextPost post) {
+    public Long insertAccountTextPost(Post post) {
+        if (!(post instanceof AccountTextPost)) {
+            throw new IllegalStateException("Need AccountTextPost.");
+        }
+        AccountTextPost textPost = (AccountTextPost) post;
         try {
             ConnectionWrapper wrapper = this.pool.getConnection();
             PreparedStatement insert = wrapper.getConnection().prepareStatement("INSERT INTO `account_post`(`username`" +
                     ", `post`, `postDate`) VALUES (?, ?, ?);", Statement.RETURN_GENERATED_KEYS);
-            insert.setString(1, post.getIdUsername());
-            insert.setString(2, post.getPost().toString());
-            insert.setTimestamp(3, post.getPostDate());
+            insert.setString(1, textPost.getUsername());
+            insert.setString(2, textPost.getPost().toString());
+            insert.setTimestamp(3, textPost.getDatePost());
             insert.executeUpdate();
 
             ResultSet resultSet = insert.getGeneratedKeys();
@@ -98,15 +104,19 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
     }
 
     @Override
-    public Long insertAccountImgPost(AccountImgPost post) {
+    public Long insertAccountImgPost(Post post) {
+        if (!(post instanceof AccountImgPost)) {
+            throw new IllegalStateException("Need AccountTextPost.");
+        }
+        AccountImgPost imgPost = (AccountImgPost) post;
         try {
             ConnectionWrapper wrapper = this.pool.getConnection();
             PreparedStatement insert = wrapper.getConnection().prepareStatement("INSERT INTO `account_img_post`" +
                     "(`username`, `img`, `fileName`, `dateUpload`) VALUES (?, ?, ?, ?);", Statement.RETURN_GENERATED_KEYS);
-            insert.setString(1, post.getUsername());
-            insert.setBlob(2, post.getImage());
-            insert.setString(3, post.getFileName());
-            insert.setTimestamp(4, post.getDateUpload());
+            insert.setString(1, imgPost.getUsername());
+            insert.setBlob(2, imgPost.getImage());
+            insert.setString(3, imgPost.getFileName());
+            insert.setTimestamp(4, imgPost.getDatePost());
             insert.executeUpdate();
 
             ResultSet resultSet = insert.getGeneratedKeys();
@@ -125,7 +135,7 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
         try {
             ConnectionWrapper wrapper = this.pool.getConnection();
             PreparedStatement insert = wrapper.getConnection().prepareStatement("INSERT INTO `account_message`" +
-                    "(`source`, `massage`, `target`, `sentDate`, `isSeen`) VALUES (?, ?, ?, ?, ?);",
+                            "(`source`, `massage`, `target`, `sentDate`, `isSeen`) VALUES (?, ?, ?, ?, ?);",
                     Statement.RETURN_GENERATED_KEYS);
             insert.setString(1, message.getSourceUser());
             insert.setString(2, message.getMessage().toString());
@@ -146,12 +156,12 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
     }
 
     @Override
-    public int insertAccountPicture(AccountPicture picture) {
+    public int insertAccountPicture(Users picture) {
         int result = 0;
         try {
             result = this.pool.updateQuery("INSERT INTO `account_pic`(`username`, `pic`,`picName`, `uploadDate`) " +
-                    "VALUES (?, ?, ?, ?);", picture.getUsername(), picture.getPicture(), picture.getPictureName(),
-                    picture.getUploadDate());
+                            "VALUES (?, ?, ?, ?);", picture.getUsername(), picture.getPicture(), picture.getPictureName(),
+                    picture.getDateCreate());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -183,11 +193,15 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
     }
 
     @Override
-    public int insertFriendRequest(FriendRequest request) {
+    public int insertFriendRequest(Request request) {
+        if (!(request instanceof FriendRequest)) {
+            throw new IllegalArgumentException("Need FriendRequest.");
+        }
+        FriendRequest friendRequest = (FriendRequest) request;
         int result = 0;
         try {
             result = this.pool.updateQuery("INSERT INTO `friend_request`(`username`, `requestTarget`, `requestDate`) " +
-                    "VALUES (?, ?, ?);", request.getUsername(), request.getRequestTarget(), request.getRequestDate());
+                    "VALUES (?, ?, ?);", friendRequest.getUsername(), friendRequest.getTargetAccount(), request.getRequestDate());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -195,11 +209,15 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
     }
 
     @Override
-    public int insertUserFriends(UserFriend friend) {
+    public int insertUserFriends(Member friend) {
+        if (!(friend instanceof UserFriend)) {
+            throw new IllegalArgumentException("Need FriendRequest.");
+        }
+        UserFriend friendRequest = (UserFriend) friend;
         int result = 0;
         try {
             result = this.pool.updateQuery("INSERT INTO `user_friend`(`username`, `friend`, `friendSince`) VALUES " +
-                    "(?, ?, ?);", friend.getUsername(), friend.getFriend(), friend.getFriendSince());
+                    "(?, ?, ?);", friendRequest.getUsername(), friendRequest.getFriendMember(), friend.getFriendMemberSince());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -226,10 +244,10 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
             Client client = (Client) user;
             try {
                 result = this.pool.updateQuery("UPDATE `account_detail` SET `firstName` = ?, `lastName` = ?, " +
-                        "`birthday` = ?, `age` = ?, `gender` = ?, `telephone` = ?, `email` = ?, `country` = ?, " +
-                        "`state` = ?, `address` = ? WHERE `username` = ?;", client.getFirstName(), client.getLastName(),
+                                "`birthday` = ?, `age` = ?, `gender` = ?, `telephone` = ?, `email` = ?, `country` = ?, " +
+                                "`state` = ?, `address` = ? WHERE `username` = ?;", client.getFirstName(), client.getLastName(),
                         client.getBirthday(), client.getAge(), client.getGender(), client.getTelephone(),
-                        client.getEmail(), client.getCountry(), client.getState(),client.getAddress(),
+                        client.getEmail(), client.getCountry(), client.getState(), client.getAddress(),
                         client.getUsername());
             } catch (SQLException e) {
                 System.out.println(e.getMessage());
@@ -241,12 +259,16 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
     }
 
     @Override
-    public int updateAccountTextPostByIdComment(AccountTextPost post) {
+    public int updateAccountTextPostByIdPost(Post post) {
+        if (!(post instanceof AccountTextPost)) {
+            throw new IllegalArgumentException("Need AccountTextPost.");
+        }
+        AccountTextPost textPost = (AccountTextPost) post;
         int result = 0;
         try {
             result = this.pool.updateQuery("UPDATE `account_post` SET `username` = ?, `post` = ?, " +
-                            "`postDate` = ? WHERE `idPost` = ?;", post.getIdUsername(), post.getPost().toString(),
-                    post.getPostDate(), post.getIdPost());
+                            "`postDate` = ? WHERE `idPost` = ?;", textPost.getUsername(), textPost.getPost().toString(),
+                    textPost.getDatePost(), textPost.getIdPost());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -254,12 +276,16 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
     }
 
     @Override
-    public int updateAccountImgPost(AccountImgPost post) {
+    public int updateAccountImgPostByIdPost(Post post) {
+        if (!(post instanceof AccountImgPost)) {
+            throw new IllegalArgumentException("Need AccountImgPost.");
+        }
+        AccountImgPost imgPost = (AccountImgPost) post;
         int result = 0;
         try {
             result = this.pool.updateQuery("UPDATE `account_img_post` SET `username` = ?, `img` = ?, " +
-                            "`fileName` = ?, `dateUpload` = ?  WHERE `idPost` = ?;", post.getUsername(), post.getImage(),
-                    post.getFileName(), post.getDateUpload(), post.getIdPost());
+                            "`fileName` = ?, `dateUpload` = ?  WHERE `idPost` = ?;", imgPost.getUsername(), imgPost.getImage(),
+                    imgPost.getFileName(), imgPost.getDatePost(), imgPost.getIdPost());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -281,12 +307,12 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
     }
 
     @Override
-    public int updateAccountPictureByUsername(AccountPicture picture) {
+    public int updateAccountPictureByUsername(Users picture) {
         int result = 0;
         try {
             result = this.pool.updateQuery("UPDATE `account_pic` SET `pic` = ?, `picName` = ?,  " +
                             "`uploadDate` = ? WHERE `username` = ?;", picture.getPicture(),
-                    picture.getPictureName(), picture.getUploadDate(), picture.getUsername());
+                    picture.getPictureName(), picture.getDateCreate(), picture.getUsername());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -306,11 +332,16 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
     }
 
     @Override
-    public int updateFriendRequestByUsernameAndDate(FriendRequest request) {
+    public int updateFriendRequestByUsernameAndDate(Request request) {
+        if (!(request instanceof FriendRequest)) {
+            throw new IllegalArgumentException("Need FriendRequest.");
+        }
+        FriendRequest friendRequest = (FriendRequest) request;
         int result = 0;
         try {
             result = this.pool.updateQuery("UPDATE `friend_request` SET `requestTarget` = ? WHERE `requestDate` = ? " +
-                    "AND `username` = ?;", request.getRequestTarget(), request.getRequestDate(), request.getUsername());
+                            "AND `username` = ?;", friendRequest.getTargetAccount(), friendRequest.getRequestDate(),
+                    friendRequest.getUsername());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -318,11 +349,16 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
     }
 
     @Override
-    public int updateUserFriendsByUsernameAndDate(UserFriend friend) {
+    public int updateUserFriendsByUsernameAndDate(Member friend) {
+        if (!(friend instanceof UserFriend)) {
+            throw new IllegalArgumentException("Need UserFriend.");
+        }
+        UserFriend userFriend = (UserFriend) friend;
         int result = 0;
         try {
             result = this.pool.updateQuery("UPDATE `user_friend` SET `friend` = ? WHERE `friendSince` = ? AND " +
-                    "`username` = ?;", friend.getFriend(), friend.getFriendSince(), friend.getUsername());
+                            "`username` = ?;", userFriend.getFriendMember(), userFriend.getFriendMemberSince(),
+                    userFriend.getUsername());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -366,18 +402,59 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
         return container;
     }
 
+    private Client buildClientSearchPurpose(ResultSet resultSet) {
+        Client user = ac.getBean(Client.class);
+        try {
+            user.setUsername(resultSet.getString(1));
+            user.setDateCreate(resultSet.getTimestamp(2));
+            user.setPicture(resultSet.getBlob(3));
+            user.setPictureName(resultSet.getString(4));
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return user;
+    }
+
+    public void buildClientSearchPurposeContainer(ResultSet resultSet, Collection<Users> container) {
+        try {
+            while (resultSet.next()) {
+                container.add(buildClientSearchPurpose(resultSet));
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+
+    @Override
+    public Collection<Users> findUserInAccountByLikeUsername(Users users) {
+        @SuppressWarnings(value = "unchecked")
+        Collection<Users> container = (Collection<Users>) this.ac.getBean("usersContainer");
+        try {
+            ResultSet resultSet = this.pool.selectResult("SELECT `account`.`username`, `account`.`dateCreate`, " +
+                            "`account_pic`.`pic`, `account_pic`.`picName` FROM `account` INNER JOIN `account_pic` ON " +
+                            "`account`.`username` = `account_pic`.`username` WHERE `account`.`accountPermission` = 'client'" +
+                            " AND `account`.`username` LIKE ?;", (users.getUsername()+"%"));
+            buildClientSearchPurposeContainer(resultSet, container);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return container;
+    }
+
     @Override
     public Collection<Users> findUserByUsernameAndPassword(Users users) {
         @SuppressWarnings(value = "unchecked")
         Collection<Users> container = (Collection<Users>) this.ac.getBean("usersContainer");
         try {
             ResultSet resultSet = this.pool.selectResult("SELECT * FROM `account` WHERE `username` = ? AND " +
-                            "`password` = ?;", users.getUsername(), users.getPassword());
+                    "`password` = ?;", users.getUsername(), users.getPassword());
             buildUserContainer(resultSet, container);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-        return container;    }
+        return container;
+    }
 
     private Client buildClient(ResultSet resultSet) {
         Client user = ac.getBean(Client.class);
@@ -427,9 +504,9 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
         AccountTextPost post = ac.getBean(AccountTextPost.class);
         try {
             post.setIdPost(resultSet.getLong(1));
-            post.setIdUsername(resultSet.getString(2));
+            post.setUsername(resultSet.getString(2));
             post.setPost(resultSet.getString(3));
-            post.setPostDate(resultSet.getTimestamp(4));
+            post.setDatePost(resultSet.getTimestamp(4));
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -447,9 +524,9 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
     }
 
     @Override
-    public Collection<AccountTextPost> findUserTextPostByIdPost(AccountTextPost post) {
+    public Collection<AccountTextPost> findUserTextPostByIdPost(Post post) {
         @SuppressWarnings(value = "unchecked")
-        Collection<AccountTextPost> container = (Collection<AccountTextPost>) ac.getBean("accountTextPostContainer");
+        Collection<AccountTextPost> container = (Collection<AccountTextPost>) ac.getBean("postContainer");
         try {
             ResultSet resultSet = this.pool.selectResult("SELECT * FROM `account_post` WHERE `idPost` = ?;",
                     post.getIdPost());
@@ -461,12 +538,36 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
     }
 
     @Override
-    public Collection<AccountTextPost> findUserTextPostByUsername(AccountTextPost post) {
+    public Collection<AccountTextPost> findUserTextPostByUsername(Post post) {
+        if (!(post instanceof AccountTextPost)) {
+            throw new IllegalArgumentException("Need AccountTextPost.");
+        }
+        AccountTextPost textPost = (AccountTextPost) post;
         @SuppressWarnings(value = "unchecked")
-        Collection<AccountTextPost> container = (Collection<AccountTextPost>) ac.getBean("accountTextPostContainer");
+        Collection<AccountTextPost> container = (Collection<AccountTextPost>) ac.getBean("postContainer");
         try {
-            ResultSet resultSet = this.pool.selectResult("SELECT * FROM `account_post` WHERE `username` = ? " +
-                    "ORDER BY `account_post`.`postDate` DESC;", post.getIdUsername());
+            ResultSet resultSet = this.pool.selectResult("SELECT * FROM `account_post` WHERE `username` = ?;",
+                    textPost.getUsername());
+            buildAccountTextPostContainer(resultSet, container);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return container;
+    }
+
+    @Override
+    public Collection<AccountTextPost> findUserFriendTextPostByUsername(Post post) {
+        if (!(post instanceof AccountTextPost)) {
+            throw new IllegalArgumentException("Need AccountTextPost.");
+        }
+        AccountTextPost textPost = (AccountTextPost) post;
+        @SuppressWarnings(value = "unchecked")
+        Collection<AccountTextPost> container = (Collection<AccountTextPost>) ac.getBean("postContainer");
+        try {
+            ResultSet resultSet = this.pool.selectResult("SELECT `account_post`.`idPost`, `account_post`.`username`, " +
+                    "`account_post`.`post`, `account_post`.`postDate` FROM `account_post` INNER JOIN `user_friend` ON " +
+                    "`account_post`.`username` = `user_friend`.`friend` WHERE `user_friend`.`username` = ?;",
+                    textPost.getUsername());
             buildAccountTextPostContainer(resultSet, container);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -481,7 +582,7 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
             post.setUsername(resultSet.getString(2));
             post.setImage(resultSet.getBlob(3));
             post.setFileName(resultSet.getString(4));
-            post.setDateUpload(resultSet.getTimestamp(5));
+            post.setDatePost(resultSet.getTimestamp(5));
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -499,18 +600,60 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
     }
 
     @Override
-    public Collection<AccountImgPost> findUserImgPostByUsername(AccountImgPost post) {
+    public Collection<AccountImgPost> findUserImgPostByIdPost(Post post) {
+        if (!(post instanceof AccountImgPost)) {
+            throw new IllegalArgumentException("Need AccountImgPost.");
+        }
+        AccountImgPost imgPost = (AccountImgPost) post;
         @SuppressWarnings(value = "unchecked")
-        Collection<AccountImgPost> container = (Collection<AccountImgPost>) ac.getBean("accountImgPostContainer");
+        Collection<AccountImgPost> container = (Collection<AccountImgPost>) ac.getBean("postContainer");
         try {
-            ResultSet resultSet = this.pool.selectResult("SELECT * FROM `account_img_post` WHERE `username` = ? " +
-                    "ORDER BY `account_img_post`.`dateUpload` DESC;", post.getUsername());
+            ResultSet resultSet = this.pool.selectResult("SELECT * FROM `account_img_post` WHERE `idPost` = ?;",
+                    imgPost.getIdPost());
             buildAccountImgPostContainer(resultSet, container);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
         return container;
     }
+
+    @Override
+    public Collection<AccountImgPost> findUserImgPostByUsername(Post post) {
+        if (!(post instanceof AccountImgPost)) {
+            throw new IllegalArgumentException("Need AccountImgPost.");
+        }
+        AccountImgPost imgPost = (AccountImgPost) post;
+        @SuppressWarnings(value = "unchecked")
+        Collection<AccountImgPost> container = (Collection<AccountImgPost>) ac.getBean("postContainer");
+        try {
+            ResultSet resultSet = this.pool.selectResult("SELECT * FROM `account_img_post` WHERE `username` = ?;",
+                    imgPost.getUsername());
+            buildAccountImgPostContainer(resultSet, container);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return container;
+    }
+
+    @Override
+    public Collection<AccountImgPost> findUserFriendImgPostByUsername(Post post) {
+        if (!(post instanceof AccountImgPost)) {
+            throw new IllegalArgumentException("Need AccountImgPost.");
+        }
+        AccountImgPost imgPost = (AccountImgPost) post;
+        @SuppressWarnings(value = "unchecked")
+        Collection<AccountImgPost> container = (Collection<AccountImgPost>) ac.getBean("postContainer");
+        try {
+            ResultSet resultSet = this.pool.selectResult("SELECT `account_img_post`.`idPost`, " +
+                    "`account_img_post`.`username`, `account_img_post`.`img`, `account_img_post`.`fileName`, " +
+                    "`account_img_post`.`dateUpload` FROM `account_img_post` INNER JOIN `user_friend` ON " +
+                    "`account_img_post`.`username` = `user_friend`.`friend` WHERE `user_friend`.`username` = ?;",
+                    imgPost.getUsername());
+            buildAccountImgPostContainer(resultSet, container);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return container;    }
 
     private AccountMessage buildAccountMessage(ResultSet resultSet) {
         AccountMessage message = ac.getBean(AccountMessage.class);
@@ -579,20 +722,20 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
         return container;
     }
 
-    private AccountPicture buildAccountPicture(ResultSet resultSet) {
-        AccountPicture picture = ac.getBean(AccountPicture.class);
+    private Users buildAccountPicture(ResultSet resultSet) {
+        Users picture = ac.getBean(Admin.class);
         try {
             picture.setUsername(resultSet.getString(1));
             picture.setPicture(resultSet.getBlob(2));
             picture.setPictureName(resultSet.getString(3));
-            picture.setUploadDate(resultSet.getTimestamp(4));
+            picture.setDateCreate(resultSet.getTimestamp(4));
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
         return picture;
     }
 
-    public void buildAccountPicture(ResultSet resultSet, Collection<AccountPicture> container) {
+    public void buildAccountPicture(ResultSet resultSet, Collection<Users> container) {
         try {
             while (resultSet.next()) {
                 container.add(buildAccountPicture(resultSet));
@@ -603,12 +746,12 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
     }
 
     @Override
-    public Collection<AccountPicture> findPictureByUsername(AccountPicture picture) {
+    public Collection<Users> findPictureByUsername(Users picture) {
         @SuppressWarnings(value = "unchecked")
-        Collection<AccountPicture> container = (Collection<AccountPicture>) ac.getBean("accountPictureContainer");
+        Collection<Users> container = (Collection<Users>) ac.getBean("usersContainer");
         try {
             ResultSet resultSet = this.pool.selectResult("SELECT * FROM `account_pic` WHERE `username` = ?;",
-                                                            picture.getUsername());
+                    picture.getUsername());
             buildAccountPicture(resultSet, container);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -617,13 +760,13 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
     }
 
     @Override
-    public Collection<AccountPicture> findFriendAndPictureByUsername(Users users) {
+    public Collection<Users> findFriendAndPictureByUsername(Users users) {
         @SuppressWarnings(value = "unchecked")
-        Collection<AccountPicture> container = (Collection<AccountPicture>) ac.getBean("accountPictureContainer");
+        Collection<Users> container = (Collection<Users>) ac.getBean("usersContainer");
         try {
             ResultSet resultSet = this.pool.selectResult("SELECT `account_pic`.* FROM `account_pic` INNER JOIN `user_friend` ON " +
                             "`account_pic`.`username` = `user_friend`.`friend` WHERE `user_friend`.`username` = ?;"
-                            , users.getUsername());
+                    , users.getUsername());
             buildAccountPicture(resultSet, container);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -671,7 +814,7 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
         FriendRequest request = ac.getBean(FriendRequest.class);
         try {
             request.setUsername(resultSet.getString(1));
-            request.setRequestTarget(resultSet.getString(2));
+            request.setTargetAccount(resultSet.getString(2));
             request.setRequestDate(resultSet.getTimestamp(3));
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -692,12 +835,16 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
     }
 
     @Override
-    public Map<Long, FriendRequest> findFriendRequestBySender(FriendRequest request) {
+    public Map<Long, FriendRequest> findFriendRequestBySender(Request request) {
+        if (!(request instanceof FriendRequest)) {
+            throw new IllegalArgumentException("Need FriendRequest.");
+        }
+        FriendRequest friendRequest = (FriendRequest) request;
         @SuppressWarnings(value = "unchecked")
-        Map<Long, FriendRequest> container = (Map<Long, FriendRequest>) ac.getBean("userRequestContainer");
+        Map<Long, FriendRequest> container = (Map<Long, FriendRequest>) ac.getBean("requestContainer");
         try {
             ResultSet resultSet = this.pool.selectResult("SELECT * FROM `friend_request` WHERE `username` = ? " +
-                    "ORDER BY `friend_request`.`requestDate` DESC;", request.getUsername());
+                    "ORDER BY `friend_request`.`requestDate` DESC;", friendRequest.getUsername());
             buildFriendRequestContainer(resultSet, container);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -706,12 +853,16 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
     }
 
     @Override
-    public Map<Long, FriendRequest> findFriendRequestByReceiver(FriendRequest request) {
+    public Map<Long, FriendRequest> findFriendRequestByReceiver(Request request) {
+        if (!(request instanceof FriendRequest)) {
+            throw new IllegalArgumentException("Need FriendRequest.");
+        }
+        FriendRequest friendRequest = (FriendRequest) request;
         @SuppressWarnings(value = "unchecked")
-        Map<Long, FriendRequest> container = (Map<Long, FriendRequest>) ac.getBean("userRequestContainer");
+        Map<Long, FriendRequest> container = (Map<Long, FriendRequest>) ac.getBean("requestContainer");
         try {
             ResultSet resultSet = this.pool.selectResult("SELECT * FROM `friend_request` WHERE `requestTarget` = ? " +
-                    "ORDER BY `friend_request`.`requestDate` DESC;", request.getRequestTarget());
+                    "ORDER BY `friend_request`.`requestDate` DESC;", friendRequest.getTargetAccount());
             buildFriendRequestContainer(resultSet, container);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -760,8 +911,8 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
         UserFriend friend = ac.getBean(UserFriend.class);
         try {
             friend.setUsername(resultSet.getString(1));
-            friend.setFriend(resultSet.getString(2));
-            friend.setFriendSince(resultSet.getTimestamp(3));
+            friend.setFriendMember(resultSet.getString(2));
+            friend.setFriendMemberSince(resultSet.getTimestamp(3));
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -781,12 +932,16 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
     }
 
     @Override
-    public Map<Long, UserFriend> findUserFriendByUsername(UserFriend friend) {
+    public Map<Long, UserFriend> findUserFriendByUsername(Member friend) {
+        if (!(friend instanceof UserFriend)) {
+            throw new IllegalArgumentException("Need Member.");
+        }
+        UserFriend member = (UserFriend) friend;
         @SuppressWarnings(value = "unchecked")
-        Map<Long, UserFriend> container = (Map<Long, UserFriend>) ac.getBean("userFriendsContainer");
+        Map<Long, UserFriend> container = (Map<Long, UserFriend>) ac.getBean("memberContainer");
         try {
             ResultSet resultSet = this.pool.selectResult("SELECT * FROM `user_friend` WHERE `username` = ? ORDER " +
-                    "BY `user_friend`.`friendSince` DESC;", friend.getUsername());
+                    "BY `user_friend`.`friendSince` DESC;", member.getUsername());
             buildUserFriendContainer(resultSet, container);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -795,19 +950,22 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
     }
 
     @Override
-    public Map<Long, UserFriend> findUserFriendByFriend(UserFriend friend) {
+    public Map<Long, UserFriend> findUserFriendByFriend(Member friend) {
+        if (!(friend instanceof UserFriend)) {
+            throw new IllegalArgumentException("Need Member.");
+        }
+        UserFriend member = (UserFriend) friend;
         @SuppressWarnings(value = "unchecked")
-        Map<Long, UserFriend> container = (Map<Long, UserFriend>) ac.getBean("userFriendsContainer");
+        Map<Long, UserFriend> container = (Map<Long, UserFriend>) ac.getBean("memberContainer");
         try {
             ResultSet resultSet = this.pool.selectResult("SELECT * FROM `user_friend` WHERE `friend` = ? ORDER " +
-                    "BY `user_friend`.`friendSince` DESC;", friend.getUsername());
+                    "BY `user_friend`.`friendSince` DESC;", member.getUsername());
             buildUserFriendContainer(resultSet, container);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
         return container;
     }
-
 
 
     @Override
@@ -833,7 +991,7 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
     }
 
     @Override
-    public int deleteAccountTextPostByIdPost(AccountTextPost post) {
+    public int deleteAccountTextPostByIdPost(Post post) {
         int result = 0;
         try {
             result = this.pool.updateQuery("DELETE FROM `account_post` WHERE `idPost` = ?;",
@@ -845,7 +1003,7 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
     }
 
     @Override
-    public int deleteAccountImgPost(AccountImgPost post) {
+    public int deleteAccountImgPostByIdPost(Post post) {
         int result = 0;
         try {
             result = this.pool.updateQuery("DELETE FROM `account_img_post` WHERE `idPost` = ?;",
@@ -869,7 +1027,7 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
     }
 
     @Override
-    public int deleteAccountPictureByUsername(AccountPicture picture) {
+    public int deleteAccountPictureByUsername(Users picture) {
         int result = 0;
         try {
             result = this.pool.updateQuery("DELETE FROM `account_pic` WHERE `username` = ?;", picture.getUsername());
@@ -916,11 +1074,15 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
     }
 
     @Override
-    public int deleteFriendRequestBySenderAndReceiver(FriendRequest request) {
+    public int deleteFriendRequestBySenderAndReceiver(Request request) {
+        if (!(request instanceof FriendRequest)) {
+            throw new IllegalArgumentException("Need FriendRequest.");
+        }
+        FriendRequest friendRequest = (FriendRequest) request;
         int result = 0;
         try {
             result = this.pool.updateQuery("DELETE FROM `friend_request` WHERE `username` = ? AND `requestTarget` = ?;",
-                    request.getUsername(), request.getRequestTarget());
+                    friendRequest.getUsername(), friendRequest.getTargetAccount());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -928,11 +1090,15 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
     }
 
     @Override
-    public int deleteFriendRequestBySenderAndDate(FriendRequest request) {
+    public int deleteFriendRequestBySenderAndDate(Request request) {
+        if (!(request instanceof FriendRequest)) {
+            throw new IllegalArgumentException("Need FriendRequest.");
+        }
+        FriendRequest friendRequest = (FriendRequest) request;
         int result = 0;
         try {
             result = this.pool.updateQuery("DELETE FROM `friend_request` WHERE `username` = ? AND `requestDate` = ?;",
-                    request.getUsername(), request.getRequestDate());
+                    friendRequest.getUsername(), friendRequest.getRequestDate());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -940,11 +1106,15 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
     }
 
     @Override
-    public int deleteFriendRequestByReceiverAndDate(FriendRequest request) {
+    public int deleteFriendRequestByReceiverAndDate(Request request) {
+        if (!(request instanceof FriendRequest)) {
+            throw new IllegalArgumentException("Need FriendRequest.");
+        }
+        FriendRequest friendRequest = (FriendRequest) request;
         int result = 0;
         try {
             result = this.pool.updateQuery("DELETE FROM `friend_request` WHERE `requestTarget` = ? AND " +
-                    "`requestDate` = ?;", request.getUsername(), request.getRequestDate());
+                    "`requestDate` = ?;", friendRequest.getUsername(), friendRequest.getRequestDate());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -952,11 +1122,15 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
     }
 
     @Override
-    public int deleteUserFriendByUsernameAndFriend(UserFriend friend) {
+    public int deleteUserFriendByUsernameAndFriend(Member friend) {
+        if (!(friend instanceof UserFriend)) {
+            throw new IllegalArgumentException("Need UserFriend.");
+        }
+        UserFriend userFriend = (UserFriend) friend;
         int result = 0;
         try {
             result = this.pool.updateQuery("DELETE FROM `user_friend` WHERE `username` = ? AND `friend` = ?;",
-                    friend.getUsername(), friend.getFriend());
+                    userFriend.getUsername(), userFriend.getFriendMember());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -964,11 +1138,15 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
     }
 
     @Override
-    public int deleteUserFriendByUsernameAndDate(UserFriend friend) {
+    public int deleteUserFriendByUsernameAndDate(Member friend) {
+        if (!(friend instanceof UserFriend)) {
+            throw new IllegalArgumentException("Need UserFriend.");
+        }
+        UserFriend userFriend = (UserFriend) friend;
         int result = 0;
         try {
             result = this.pool.updateQuery("DELETE FROM `user_friend` WHERE `username` = ? AND `friendSince` = ?;",
-                    friend.getUsername(), friend.getFriendSince());
+                    userFriend.getUsername(), userFriend.getFriendMember());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -976,16 +1154,18 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
     }
 
     @Override
-    public int deleteUserFriendByFriendAndDate(UserFriend friend) {
+    public int deleteUserFriendByFriendAndDate(Member friend) {
+        if (!(friend instanceof UserFriend)) {
+            throw new IllegalArgumentException("Need UserFriend.");
+        }
+        UserFriend userFriend = (UserFriend) friend;
         int result = 0;
         try {
             result = this.pool.updateQuery("DELETE FROM `user_friend` WHERE `friend` = ? AND `friendSince` = ?;",
-                    friend.getFriend(), friend.getFriendSince());
+                    userFriend.getFriendMember(), userFriend.getFriendMemberSince());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
         return result;
     }
-
-
 }

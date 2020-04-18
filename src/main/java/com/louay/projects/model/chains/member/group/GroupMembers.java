@@ -1,18 +1,16 @@
 package com.louay.projects.model.chains.member.group;
 
+import com.louay.projects.model.chains.member.Member;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.sql.Timestamp;
 
 @Configuration
 @Component
 @Scope("prototype")
-public class GroupMembers {
+public class GroupMembers extends Member {
     private String idGroup;
-    private String member;
-    private java.sql.Timestamp joinDate;
 
     public GroupMembers() {
     }
@@ -25,28 +23,10 @@ public class GroupMembers {
         this.idGroup = idGroup;
     }
 
-    public String getMember() {
-        return member;
-    }
-
-    public void setMember(String member) {
-        this.member = member;
-    }
-
-    public Timestamp getJoinDate() {
-        return joinDate;
-    }
-
-    public void setJoinDate(Timestamp joinDate) {
-        this.joinDate = joinDate;
-    }
-
     @Override
     public String toString() {
-        return "GroupMembers{" +
+        return super.toString()+", GroupMembers{" +
                 "idGroup='" + idGroup + '\'' +
-                ", member='" + member + '\'' +
-                ", joinDate=" + joinDate +
                 '}';
     }
 }

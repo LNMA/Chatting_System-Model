@@ -1,14 +1,12 @@
 package com.louay.projects.model.dao;
 
-import com.louay.projects.model.chains.communications.AccountImgPost;
-import com.louay.projects.model.chains.communications.AccountTextPost;
-import com.louay.projects.model.chains.communications.AccountMessage;
-import com.louay.projects.model.chains.communications.AccountPicture;
-import com.louay.projects.model.chains.member.FriendRequest;
-import com.louay.projects.model.chains.member.UserFriend;
-import com.louay.projects.model.chains.users.Users;
-import com.louay.projects.model.chains.users.activity.AccountStatus;
-import com.louay.projects.model.chains.users.activity.SignInDate;
+import com.louay.projects.model.chains.communications.Post;
+import com.louay.projects.model.chains.communications.account.AccountMessage;
+import com.louay.projects.model.chains.member.Member;
+import com.louay.projects.model.chains.member.Request;
+import com.louay.projects.model.chains.accounts.Users;
+import com.louay.projects.model.chains.accounts.activity.AccountStatus;
+import com.louay.projects.model.chains.accounts.activity.SignInDate;
 
 public interface DeleteUserDAO {
 
@@ -16,13 +14,13 @@ public interface DeleteUserDAO {
 
     int deleteAccountDetailByUsername(Users user);
 
-    int deleteAccountTextPostByIdPost(AccountTextPost post);
+    int deleteAccountTextPostByIdPost(Post post);
 
-    int deleteAccountImgPost(AccountImgPost post);
+    int deleteAccountImgPostByIdPost(Post post);
 
     int deleteAccountMessageByIdMessage(AccountMessage message);
 
-    int deleteAccountPictureByUsername(AccountPicture picture);
+    int deleteAccountPictureByUsername(Users picture);
 
     int deleteAccountStatusByUsername(AccountStatus status);
 
@@ -30,16 +28,16 @@ public interface DeleteUserDAO {
 
     int deleteSignInDateByUsernameAndDate(SignInDate signInDate);
 
-    int deleteFriendRequestBySenderAndReceiver(FriendRequest request);
+    int deleteFriendRequestBySenderAndReceiver(Request request);
 
-    int deleteFriendRequestBySenderAndDate(FriendRequest request);
+    int deleteFriendRequestBySenderAndDate(Request request);
 
-    int deleteFriendRequestByReceiverAndDate(FriendRequest request);
+    int deleteFriendRequestByReceiverAndDate(Request request);
 
-    int deleteUserFriendByUsernameAndFriend(UserFriend friend);
+    int deleteUserFriendByUsernameAndFriend(Member friend);
 
-    int deleteUserFriendByUsernameAndDate(UserFriend friend);
+    int deleteUserFriendByUsernameAndDate(Member friend);
 
-    int deleteUserFriendByFriendAndDate(UserFriend friend);
+    int deleteUserFriendByFriendAndDate(Member friend);
 
 }

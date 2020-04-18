@@ -1,14 +1,13 @@
 package com.louay.projects.model.dao;
 
-import com.louay.projects.model.chains.communications.group.GroupImgPost;
-import com.louay.projects.model.chains.communications.group.GroupTextPost;
-import com.louay.projects.model.chains.communications.group.GroupPicture;
+import com.louay.projects.model.chains.accounts.group.Groups;
+import com.louay.projects.model.chains.communications.Post;
 
 public interface UpdateGroupPostDAO {
 
-    int updateGroupTextPostByIdComment(GroupTextPost post);
+    int updateGroupTextPostByIdPost(Post post);
 
-    int updateGroupImgPostByIdComment(GroupImgPost post);
+    int updateGroupImgPostByIdPost(Post post);
 
-    int updateGroupPictureByIdGroup(GroupPicture picture);
+    int updateGroupPictureByIdGroup(Groups picture);
 }

@@ -1,18 +1,16 @@
 package com.louay.projects.model.chains.member.group;
 
+import com.louay.projects.model.chains.member.Request;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.sql.Timestamp;
 
 @Configuration
 @Component
 @Scope("prototype")
-public class GroupRequest {
+public class GroupRequest extends Request {
     private String idGroup;
-    private String requestTarget;
-    private java.sql.Timestamp sentDate;
 
     public GroupRequest() {
     }
@@ -25,28 +23,10 @@ public class GroupRequest {
         this.idGroup = idGroup;
     }
 
-    public String getRequestTarget() {
-        return requestTarget;
-    }
-
-    public void setRequestTarget(String requestTarget) {
-        this.requestTarget = requestTarget;
-    }
-
-    public Timestamp getSentDate() {
-        return sentDate;
-    }
-
-    public void setSentDate(Timestamp sentDate) {
-        this.sentDate = sentDate;
-    }
-
     @Override
     public String toString() {
-        return "GroupRequest{" +
+        return super.toString()+", GroupRequest{" +
                 "idGroup='" + idGroup + '\'' +
-                ", requestTarget='" + requestTarget + '\'' +
-                ", sentDate=" + sentDate +
                 '}';
     }
 }

@@ -1,26 +1,25 @@
 package com.louay.projects.model.chains.communications.group;
 
-import java.sql.Blob;
-import java.sql.Timestamp;
-import java.util.Objects;
+import com.louay.projects.model.chains.communications.Post;
+import com.louay.projects.model.chains.communications.constant.PostClassName;
+import com.louay.projects.model.chains.communications.constant.PostType;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
-public class GroupImgPost {
-    Long idPost;
-    String idGroup;
-    String username;
-    java.sql.Blob image;
-    String fileName;
-    java.sql.Timestamp dateUpload;
+import java.sql.Blob;
+import java.sql.SQLException;
+import java.util.Base64;
+
+@Configuration
+@Component
+@Scope("prototype")
+public class GroupImgPost extends Post {
+    private String idGroup;
+    private java.sql.Blob image;
+    private String fileName;
 
     public GroupImgPost() {
-    }
-
-    public Long getIdPost() {
-        return idPost;
-    }
-
-    public void setIdPost(Long idPost) {
-        this.idPost = idPost;
     }
 
     public String getIdGroup() {
@@ -29,14 +28,6 @@ public class GroupImgPost {
 
     public void setIdGroup(String idGroup) {
         this.idGroup = idGroup;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     public Blob getImage() {
@@ -55,36 +46,34 @@ public class GroupImgPost {
         this.fileName = fileName;
     }
 
-    public Timestamp getDateUpload() {
-        return dateUpload;
-    }
-
-    public void setDateUpload(Timestamp dateUpload) {
-        this.dateUpload = dateUpload;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof GroupImgPost)) return false;
-        GroupImgPost that = (GroupImgPost) o;
-        return getIdPost().compareTo(that.getIdPost()) == 0;
+    public StringBuilder getBase64(){
+        StringBuilder stringBase46 = new StringBuilder();
+        int size;
+        try {
+            size = (int) this.image.length();
+            stringBase46.append(Base64.getEncoder().encodeToString(this.image.getBytes(1, size)));
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return stringBase46;
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(getIdPost());
+    public PostType getType() {
+        return PostType.IMG_POST;
+    }
+
+    @Override
+    public PostClassName getClassName() {
+        return PostClassName.GROUP_IMG_POST;
     }
 
     @Override
     public String toString() {
-        return "GroupImgPost{" +
-                "idPost=" + idPost +
-                ", idGroup='" + idGroup + '\'' +
-                ", username='" + username + '\'' +
+        return super.toString()+",GroupImgPost{" +
+                "idGroup='" + idGroup + '\'' +
                 ", image=" + image +
                 ", fileName='" + fileName + '\'' +
-                ", dateUpload=" + dateUpload +
                 '}';
     }
 }
