@@ -48,6 +48,7 @@ com\louay\projects\model\dao\impl\GroupDAOImpl.class
 com\louay\projects\model\dao\CirclesUsersDAO.class
 com\louay\projects\model\chains\accounts\group\Groups.class
 com\louay\projects\model\chains\communications\account\AccountImgPost.class
+com\louay\projects\model\chains\communications\GroupPost.class
 com\louay\projects\model\dao\CreateGroupsDAO.class
 com\louay\projects\model\chains\communications\account\AccountMessage.class
 com\louay\projects\model\dao\DeleteUserDAO.class

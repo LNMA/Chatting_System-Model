@@ -1,19 +1,23 @@
 package com.louay.projects.model.chains.member;
 
+import com.louay.projects.model.chains.accounts.Client;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import java.sql.Timestamp;
 
 public abstract class Member {
-    private String friendMember;
+    @Autowired
+    private Client friendMember;
     private java.sql.Timestamp friendMemberSince;
 
     public Member() {
     }
 
-    public String getFriendMember() {
+    public Client getFriendMember() {
         return friendMember;
     }
 
-    public void setFriendMember(String friendMember) {
+    public void setFriendMember(Client friendMember) {
         this.friendMember = friendMember;
     }
 

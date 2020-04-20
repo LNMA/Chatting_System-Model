@@ -1,6 +1,6 @@
 package com.louay.projects.model.chains.communications.group;
 
-import com.louay.projects.model.chains.communications.Post;
+import com.louay.projects.model.chains.communications.GroupPost;
 import com.louay.projects.model.chains.communications.constant.PostClassName;
 import com.louay.projects.model.chains.communications.constant.PostType;
 import org.springframework.context.annotation.Configuration;
@@ -11,19 +11,10 @@ import org.springframework.stereotype.Component;
 @Configuration
 @Component
 @Scope("prototype")
-public class GroupTextPost extends Post {
-    private String idGroup;
+public class GroupTextPost extends GroupPost {
     private StringBuilder post;
 
     public GroupTextPost() {
-    }
-
-    public String getIdGroup() {
-        return idGroup;
-    }
-
-    public void setIdGroup(String idGroup) {
-        this.idGroup = idGroup;
     }
 
     public StringBuilder getPost() {
@@ -35,7 +26,7 @@ public class GroupTextPost extends Post {
     }
 
     public void setPostStringBuilder(StringBuilder post){
-        this.post = new StringBuilder(post);
+        this.post = post;
     }
 
     public void setEditPost(StringBuilder post){
@@ -55,9 +46,8 @@ public class GroupTextPost extends Post {
 
     @Override
     public String toString() {
-        return super.toString()+",GroupTextPost{" +
-                "idGroup='" + idGroup + '\'' +
-                ", post=" + post +
+        return super.toString()+", GroupTextPost{" +
+                "post=" + post +
                 '}';
     }
 }

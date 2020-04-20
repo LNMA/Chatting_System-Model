@@ -14,7 +14,7 @@ import java.util.Base64;
 @Configuration
 @Component
 @Scope("prototype")
-public class AccountImgPost extends Post{
+public class AccountImgPost extends Post {
     java.sql.Blob image;
     String fileName;
 

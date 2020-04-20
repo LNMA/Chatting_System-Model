@@ -8,12 +8,14 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.io.Serializable;
+import java.util.Comparator;
 import java.util.Objects;
 
 @Configuration
 @Component
 @Scope("prototype")
-public class Groups extends Accounts {
+public class Groups extends Accounts implements Comparator<Groups>, Serializable {
     private String idGroup;
     private String groupPrivacy;
     private String groupActivity;
@@ -53,6 +55,11 @@ public class Groups extends Accounts {
     @Override
     public AccountClassName getAccountClassName() {
         return AccountClassName.GROUPS;
+    }
+
+    @Override
+    public int compare(Groups o1, Groups o2) {
+        return o1.getIdGroup().compareTo(o2.getIdGroup());
     }
 
     @Override

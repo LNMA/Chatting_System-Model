@@ -43,6 +43,10 @@ public interface SelectUsersDAO {
 
     Collection<AccountMessage> findUserMessageByReceiver(AccountMessage message);
 
+    Collection<AccountMessage> findUserMessageAndPicBySender(AccountMessage message);
+
+    Collection<AccountMessage> findUserMessageAndNumNotSeenBySender(AccountMessage message);
+
     Collection<Users> findPictureByUsername(Users picture);
 
     Collection<AccountStatus> findUserStatusByUsername(AccountStatus status);

@@ -47,8 +47,9 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
     public int insertUser(Users user) {
         int result = 0;
         try {
-            result = this.pool.updateQuery("INSERT INTO `account`(`username`, `password`, `dateCreate`, `accountPermission`) " +
-                    "VALUES(?, ?, ?, ?);", user.getUsername(), user.getPassword(), user.getDateCreate(), user.getAccountPermission());
+            result = this.pool.updateQuery("INSERT INTO `account`(`username`, `password`, `dateCreate`, " +
+                    "`accountPermission`) VALUES(?, ?, ?, ?);", user.getUsername(), user.getPassword(),
+                    user.getDateCreate(), user.getAccountPermission());
         } catch (SQLIntegrityConstraintViolationException e) {
             return -404;
         } catch (SQLException e) {
@@ -87,7 +88,7 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
             ConnectionWrapper wrapper = this.pool.getConnection();
             PreparedStatement insert = wrapper.getConnection().prepareStatement("INSERT INTO `account_post`(`username`" +
                     ", `post`, `postDate`) VALUES (?, ?, ?);", Statement.RETURN_GENERATED_KEYS);
-            insert.setString(1, textPost.getUsername());
+            insert.setString(1, textPost.getUser().getUsername());
             insert.setString(2, textPost.getPost().toString());
             insert.setTimestamp(3, textPost.getDatePost());
             insert.executeUpdate();
@@ -113,7 +114,7 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
             ConnectionWrapper wrapper = this.pool.getConnection();
             PreparedStatement insert = wrapper.getConnection().prepareStatement("INSERT INTO `account_img_post`" +
                     "(`username`, `img`, `fileName`, `dateUpload`) VALUES (?, ?, ?, ?);", Statement.RETURN_GENERATED_KEYS);
-            insert.setString(1, imgPost.getUsername());
+            insert.setString(1, imgPost.getUser().getUsername());
             insert.setBlob(2, imgPost.getImage());
             insert.setString(3, imgPost.getFileName());
             insert.setTimestamp(4, imgPost.getDatePost());
@@ -137,9 +138,9 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
             PreparedStatement insert = wrapper.getConnection().prepareStatement("INSERT INTO `account_message`" +
                             "(`source`, `massage`, `target`, `sentDate`, `isSeen`) VALUES (?, ?, ?, ?, ?);",
                     Statement.RETURN_GENERATED_KEYS);
-            insert.setString(1, message.getSourceUser());
+            insert.setString(1, message.getSourceUser().getUsername());
             insert.setString(2, message.getMessage().toString());
-            insert.setString(3, message.getTargetUser());
+            insert.setString(3, message.getTargetUser().getUsername());
             insert.setTimestamp(4, message.getSentDate());
             insert.setBoolean(5, message.getSeen());
             insert.executeUpdate();
@@ -201,7 +202,8 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
         int result = 0;
         try {
             result = this.pool.updateQuery("INSERT INTO `friend_request`(`username`, `requestTarget`, `requestDate`) " +
-                    "VALUES (?, ?, ?);", friendRequest.getUsername(), friendRequest.getTargetAccount(), request.getRequestDate());
+                    "VALUES (?, ?, ?);", friendRequest.getSourceAccount().getUsername(),
+                    friendRequest.getTargetAccount().getUsername(), request.getRequestDate());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -217,7 +219,8 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
         int result = 0;
         try {
             result = this.pool.updateQuery("INSERT INTO `user_friend`(`username`, `friend`, `friendSince`) VALUES " +
-                    "(?, ?, ?);", friendRequest.getUsername(), friendRequest.getFriendMember(), friend.getFriendMemberSince());
+                    "(?, ?, ?);", friendRequest.getUser().getUsername(), friendRequest.getFriendMember().getUsername(),
+                    friend.getFriendMemberSince());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -267,8 +270,8 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
         int result = 0;
         try {
             result = this.pool.updateQuery("UPDATE `account_post` SET `username` = ?, `post` = ?, " +
-                            "`postDate` = ? WHERE `idPost` = ?;", textPost.getUsername(), textPost.getPost().toString(),
-                    textPost.getDatePost(), textPost.getIdPost());
+                            "`postDate` = ? WHERE `idPost` = ?;", textPost.getUser().getUsername(),
+                    textPost.getPost().toString(), textPost.getDatePost(), textPost.getIdPost());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -284,8 +287,8 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
         int result = 0;
         try {
             result = this.pool.updateQuery("UPDATE `account_img_post` SET `username` = ?, `img` = ?, " +
-                            "`fileName` = ?, `dateUpload` = ?  WHERE `idPost` = ?;", imgPost.getUsername(), imgPost.getImage(),
-                    imgPost.getFileName(), imgPost.getDatePost(), imgPost.getIdPost());
+                            "`fileName` = ?, `dateUpload` = ?  WHERE `idPost` = ?;", imgPost.getUser().getUsername(),
+                    imgPost.getImage(), imgPost.getFileName(), imgPost.getDatePost(), imgPost.getIdPost());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -297,9 +300,9 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
         int result = 0;
         try {
             result = this.pool.updateQuery("UPDATE `account_message` SET `source` = ?, `massage` = ?, " +
-                            "`target` = ?, `sentDate` = ?, `isSeen` = ? WHERE `idMessage` = ?;", message.getSourceUser(),
-                    message.getMessage().toString(), message.getTargetUser(), message.getSentDate(), message.getSeen(),
-                    message.getIdMessage());
+                            "`target` = ?, `sentDate` = ?, `isSeen` = ? WHERE `idMessage` = ?;",
+                    message.getSourceUser().getUsername(), message.getMessage().toString(), message.getTargetUser().getUsername(),
+                    message.getSentDate(), message.getSeen(), message.getIdMessage());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -311,8 +314,8 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
         int result = 0;
         try {
             result = this.pool.updateQuery("UPDATE `account_pic` SET `pic` = ?, `picName` = ?,  " +
-                            "`uploadDate` = ? WHERE `username` = ?;", picture.getPicture(),
-                    picture.getPictureName(), picture.getDateCreate(), picture.getUsername());
+                            "`uploadDate` = ? WHERE `username` = ?;", picture.getPicture(), picture.getPictureName(),
+                    picture.getDateCreate(), picture.getUsername());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -340,8 +343,7 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
         int result = 0;
         try {
             result = this.pool.updateQuery("UPDATE `friend_request` SET `requestTarget` = ? WHERE `requestDate` = ? " +
-                            "AND `username` = ?;", friendRequest.getTargetAccount(), friendRequest.getRequestDate(),
-                    friendRequest.getUsername());
+                            "AND `username` = ?;", friendRequest.getTargetAccount().getUsername(), friendRequest.getRequestDate());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -357,8 +359,8 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
         int result = 0;
         try {
             result = this.pool.updateQuery("UPDATE `user_friend` SET `friend` = ? WHERE `friendSince` = ? AND " +
-                            "`username` = ?;", userFriend.getFriendMember(), userFriend.getFriendMemberSince(),
-                    userFriend.getUsername());
+                            "`username` = ?;", userFriend.getFriendMember().getUsername(), userFriend.getFriendMemberSince(),
+                    userFriend.getUser().getUsername());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -502,9 +504,10 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
 
     private AccountTextPost buildAccountTextPost(ResultSet resultSet) {
         AccountTextPost post = ac.getBean(AccountTextPost.class);
+        Users users = post.getUser();
         try {
             post.setIdPost(resultSet.getLong(1));
-            post.setUsername(resultSet.getString(2));
+            users.setUsername(resultSet.getString(2));
             post.setPost(resultSet.getString(3));
             post.setDatePost(resultSet.getTimestamp(4));
         } catch (SQLException e) {
@@ -547,7 +550,7 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
         Collection<AccountTextPost> container = (Collection<AccountTextPost>) ac.getBean("postContainer");
         try {
             ResultSet resultSet = this.pool.selectResult("SELECT * FROM `account_post` WHERE `username` = ?;",
-                    textPost.getUsername());
+                    textPost.getUser().getUsername());
             buildAccountTextPostContainer(resultSet, container);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -567,7 +570,7 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
             ResultSet resultSet = this.pool.selectResult("SELECT `account_post`.`idPost`, `account_post`.`username`, " +
                     "`account_post`.`post`, `account_post`.`postDate` FROM `account_post` INNER JOIN `user_friend` ON " +
                     "`account_post`.`username` = `user_friend`.`friend` WHERE `user_friend`.`username` = ?;",
-                    textPost.getUsername());
+                    textPost.getUser().getUsername());
             buildAccountTextPostContainer(resultSet, container);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -577,9 +580,10 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
 
     private AccountImgPost buildAccountImgPost(ResultSet resultSet) {
         AccountImgPost post = ac.getBean(AccountImgPost.class);
+        Users users = post.getUser();
         try {
             post.setIdPost(resultSet.getLong(1));
-            post.setUsername(resultSet.getString(2));
+            users.setUsername(resultSet.getString(2));
             post.setImage(resultSet.getBlob(3));
             post.setFileName(resultSet.getString(4));
             post.setDatePost(resultSet.getTimestamp(5));
@@ -627,7 +631,7 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
         Collection<AccountImgPost> container = (Collection<AccountImgPost>) ac.getBean("postContainer");
         try {
             ResultSet resultSet = this.pool.selectResult("SELECT * FROM `account_img_post` WHERE `username` = ?;",
-                    imgPost.getUsername());
+                    imgPost.getUser().getUsername());
             buildAccountImgPostContainer(resultSet, container);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -648,7 +652,7 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
                     "`account_img_post`.`username`, `account_img_post`.`img`, `account_img_post`.`fileName`, " +
                     "`account_img_post`.`dateUpload` FROM `account_img_post` INNER JOIN `user_friend` ON " +
                     "`account_img_post`.`username` = `user_friend`.`friend` WHERE `user_friend`.`username` = ?;",
-                    imgPost.getUsername());
+                    imgPost.getUser().getUsername());
             buildAccountImgPostContainer(resultSet, container);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -657,11 +661,14 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
 
     private AccountMessage buildAccountMessage(ResultSet resultSet) {
         AccountMessage message = ac.getBean(AccountMessage.class);
+        Users sourceUser = message.getSourceUser();
+        Users targetUser = message.getTargetUser();
+
         try {
             message.setIdMessage(resultSet.getLong(1));
-            message.setSourceUser(resultSet.getString(2));
+            sourceUser.setUsername(resultSet.getString(2));
             message.setMessage(resultSet.getString(3));
-            message.setTargetUser(resultSet.getString(4));
+            targetUser.setUsername(resultSet.getString(4));
             message.setSentDate(resultSet.getTimestamp(5));
             message.setSeen(resultSet.getBoolean(6));
         } catch (SQLException e) {
@@ -700,7 +707,7 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
         Collection<AccountMessage> container = (Collection<AccountMessage>) ac.getBean("accountMessageContainer");
         try {
             ResultSet resultSet = this.pool.selectResult("SELECT * FROM `account_message` WHERE `source` = ? " +
-                    "ORDER BY `account_message`.`sentDate` DESC;", message.getSourceUser());
+                    "ORDER BY `account_message`.`sentDate` DESC;", message.getSourceUser().getUsername());
             buildAccountMessageContainer(resultSet, container);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -714,13 +721,98 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
         Collection<AccountMessage> container = (Collection<AccountMessage>) ac.getBean("accountMessageContainer");
         try {
             ResultSet resultSet = this.pool.selectResult("SELECT * FROM `account_message` WHERE `target` = ? " +
-                    "ORDER BY `account_message`.`sentDate` DESC;", message.getTargetUser());
+                    "ORDER BY `account_message`.`sentDate` DESC;", message.getTargetUser().getUsername());
             buildAccountMessageContainer(resultSet, container);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
         return container;
     }
+
+    private AccountMessage buildAccountMessageAndPic(ResultSet resultSet) {
+        AccountMessage message = ac.getBean(AccountMessage.class);
+        Users sourceUser = message.getSourceUser();
+        Users targetUser = message.getTargetUser();
+
+        try {
+            message.setIdMessage(resultSet.getLong(1));
+            sourceUser.setUsername(resultSet.getString(2));
+            message.setMessage(resultSet.getString(3));
+            targetUser.setUsername(resultSet.getString(4));
+            message.setSentDate(resultSet.getTimestamp(5));
+            message.setSeen(resultSet.getBoolean(6));
+            targetUser.setPicture(resultSet.getBlob(7));
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return message;
+    }
+
+    public void buildAccountMessageAndPicContainer(ResultSet resultSet, Collection<AccountMessage> container) {
+        try {
+            while (resultSet.next()) {
+                container.add(buildAccountMessageAndPic(resultSet));
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    @Override
+    public Collection<AccountMessage> findUserMessageAndPicBySender(AccountMessage message) {
+        @SuppressWarnings(value = "unchecked")
+        Collection<AccountMessage> container = (Collection<AccountMessage>) ac.getBean("accountMessageContainer");
+        try {
+            ResultSet resultSet = this.pool.selectResult("SELECT `account_message`.`idMessage`, " +
+                    "`account_message`.`source`, `account_message`.`massage`, `account_message`.`target`, " +
+                    "`account_message`.`sentDate`, `account_message`.`isSeen`,  `account_pic`.`pic` " +
+                    "FROM `account_message` Inner join `account_pic` ON `account_message`.`target` = `account_pic`.`username` " +
+                    "WHERE `account_message`.`source` = ? ORDER BY `account_message`.`sentDate` DESC;",
+                    message.getSourceUser().getUsername());
+            buildAccountMessageAndPicContainer(resultSet, container);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return container;
+    }
+
+    private AccountMessage buildAccountMessageAndNumNotSeen(ResultSet resultSet) {
+        AccountMessage message = ac.getBean(AccountMessage.class);
+        Users sourceUser = message.getSourceUser();
+        Users targetUser = message.getTargetUser();
+
+        try {
+            sourceUser.setUsername(resultSet.getString(1));
+            targetUser.setUsername(resultSet.getString(2));
+            message.setNumberOfNotSeen(resultSet.getInt(3));
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return message;
+    }
+
+    public void buildAccountMessageAndNumNotSeenContainer(ResultSet resultSet, Collection<AccountMessage> container) {
+        try {
+            while (resultSet.next()) {
+                container.add(buildAccountMessageAndNumNotSeen(resultSet));
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    @Override
+    public Collection<AccountMessage> findUserMessageAndNumNotSeenBySender(AccountMessage message) {
+        @SuppressWarnings(value = "unchecked")
+        Collection<AccountMessage> container = (Collection<AccountMessage>) ac.getBean("accountMessageContainer");
+        try {
+            ResultSet resultSet = this.pool.selectResult("SELECT `source`, `target`, COUNT(*) FROM `account_message`" +
+                            " WHERE `source` = ? AND `isSeen` = 0 GROUP BY `target`", message.getSourceUser().getUsername());
+            buildAccountMessageAndNumNotSeenContainer(resultSet, container);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return container;    }
 
     private Users buildAccountPicture(ResultSet resultSet) {
         Users picture = ac.getBean(Admin.class);
@@ -812,9 +904,11 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
 
     private FriendRequest buildFriendRequest(ResultSet resultSet) {
         FriendRequest request = ac.getBean(FriendRequest.class);
+        Users sourceAccount = request.getSourceAccount();
+        Users targetAccount = request.getTargetAccount();
         try {
-            request.setUsername(resultSet.getString(1));
-            request.setTargetAccount(resultSet.getString(2));
+            sourceAccount.setUsername(resultSet.getString(1));
+            targetAccount.setUsername(resultSet.getString(2));
             request.setRequestDate(resultSet.getTimestamp(3));
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -844,7 +938,7 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
         Map<Long, FriendRequest> container = (Map<Long, FriendRequest>) ac.getBean("requestContainer");
         try {
             ResultSet resultSet = this.pool.selectResult("SELECT * FROM `friend_request` WHERE `username` = ? " +
-                    "ORDER BY `friend_request`.`requestDate` DESC;", friendRequest.getUsername());
+                    "ORDER BY `friend_request`.`requestDate` DESC;", friendRequest.getSourceAccount().getUsername());
             buildFriendRequestContainer(resultSet, container);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -862,7 +956,7 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
         Map<Long, FriendRequest> container = (Map<Long, FriendRequest>) ac.getBean("requestContainer");
         try {
             ResultSet resultSet = this.pool.selectResult("SELECT * FROM `friend_request` WHERE `requestTarget` = ? " +
-                    "ORDER BY `friend_request`.`requestDate` DESC;", friendRequest.getTargetAccount());
+                    "ORDER BY `friend_request`.`requestDate` DESC;", friendRequest.getTargetAccount().getUsername());
             buildFriendRequestContainer(resultSet, container);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -909,9 +1003,11 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
 
     private UserFriend buildUserFriend(ResultSet resultSet) {
         UserFriend friend = ac.getBean(UserFriend.class);
+        Users users = friend.getUser();
+        Users friendUser = friend.getFriendMember();
         try {
-            friend.setUsername(resultSet.getString(1));
-            friend.setFriendMember(resultSet.getString(2));
+            users.setUsername(resultSet.getString(1));
+            friendUser.setUsername(resultSet.getString(2));
             friend.setFriendMemberSince(resultSet.getTimestamp(3));
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -941,7 +1037,7 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
         Map<Long, UserFriend> container = (Map<Long, UserFriend>) ac.getBean("memberContainer");
         try {
             ResultSet resultSet = this.pool.selectResult("SELECT * FROM `user_friend` WHERE `username` = ? ORDER " +
-                    "BY `user_friend`.`friendSince` DESC;", member.getUsername());
+                    "BY `user_friend`.`friendSince` DESC;", member.getUser().getUsername());
             buildUserFriendContainer(resultSet, container);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -959,7 +1055,7 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
         Map<Long, UserFriend> container = (Map<Long, UserFriend>) ac.getBean("memberContainer");
         try {
             ResultSet resultSet = this.pool.selectResult("SELECT * FROM `user_friend` WHERE `friend` = ? ORDER " +
-                    "BY `user_friend`.`friendSince` DESC;", member.getUsername());
+                    "BY `user_friend`.`friendSince` DESC;", member.getFriendMember().getUsername());
             buildUserFriendContainer(resultSet, container);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -1082,7 +1178,7 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
         int result = 0;
         try {
             result = this.pool.updateQuery("DELETE FROM `friend_request` WHERE `username` = ? AND `requestTarget` = ?;",
-                    friendRequest.getUsername(), friendRequest.getTargetAccount());
+                    friendRequest.getSourceAccount().getUsername(), friendRequest.getTargetAccount().getUsername());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -1098,7 +1194,7 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
         int result = 0;
         try {
             result = this.pool.updateQuery("DELETE FROM `friend_request` WHERE `username` = ? AND `requestDate` = ?;",
-                    friendRequest.getUsername(), friendRequest.getRequestDate());
+                    friendRequest.getSourceAccount().getUsername(), friendRequest.getRequestDate());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -1114,7 +1210,7 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
         int result = 0;
         try {
             result = this.pool.updateQuery("DELETE FROM `friend_request` WHERE `requestTarget` = ? AND " +
-                    "`requestDate` = ?;", friendRequest.getUsername(), friendRequest.getRequestDate());
+                    "`requestDate` = ?;", friendRequest.getTargetAccount().getUsername(), friendRequest.getRequestDate());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -1130,7 +1226,7 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
         int result = 0;
         try {
             result = this.pool.updateQuery("DELETE FROM `user_friend` WHERE `username` = ? AND `friend` = ?;",
-                    userFriend.getUsername(), userFriend.getFriendMember());
+                    userFriend.getUser().getUsername(), userFriend.getFriendMember().getUsername());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -1146,7 +1242,7 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
         int result = 0;
         try {
             result = this.pool.updateQuery("DELETE FROM `user_friend` WHERE `username` = ? AND `friendSince` = ?;",
-                    userFriend.getUsername(), userFriend.getFriendMember());
+                    userFriend.getUser().getUsername(), userFriend.getFriendMemberSince());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -1162,7 +1258,7 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
         int result = 0;
         try {
             result = this.pool.updateQuery("DELETE FROM `user_friend` WHERE `friend` = ? AND `friendSince` = ?;",
-                    userFriend.getFriendMember(), userFriend.getFriendMemberSince());
+                    userFriend.getFriendMember().getUsername(), userFriend.getFriendMemberSince());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }

@@ -1,5 +1,6 @@
 package com.louay.projects.model.chains.member.group;
 
+import com.louay.projects.model.chains.accounts.group.Groups;
 import com.louay.projects.model.chains.member.Member;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
@@ -10,23 +11,24 @@ import org.springframework.stereotype.Component;
 @Component
 @Scope("prototype")
 public class GroupMembers extends Member {
-    private String idGroup;
+    private Groups group;
 
     public GroupMembers() {
     }
 
-    public String getIdGroup() {
-        return idGroup;
+    public Groups getGroup() {
+        return group;
     }
 
-    public void setIdGroup(String idGroup) {
-        this.idGroup = idGroup;
+    public void setGroup(Groups group) {
+        this.group = group;
     }
 
     @Override
     public String toString() {
-        return super.toString()+", GroupMembers{" +
-                "idGroup='" + idGroup + '\'' +
+        return super.toString()+",GroupMembers{" +
+                "group=" + group +
                 '}';
     }
 }
+

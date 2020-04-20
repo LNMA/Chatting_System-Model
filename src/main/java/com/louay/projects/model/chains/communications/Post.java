@@ -1,7 +1,9 @@
 package com.louay.projects.model.chains.communications;
 
+import com.louay.projects.model.chains.accounts.Client;
 import com.louay.projects.model.chains.communications.constant.PostClassName;
 import com.louay.projects.model.chains.communications.constant.PostType;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
@@ -10,7 +12,8 @@ import java.util.Objects;
 
 public abstract class Post implements Comparator<Post>, Serializable, Comparable<Post> {
     private Long idPost;
-    private String username;
+    @Autowired
+    private Client user;
     private java.sql.Timestamp datePost;
 
     public Post() {
@@ -24,12 +27,12 @@ public abstract class Post implements Comparator<Post>, Serializable, Comparable
         this.idPost = idPost;
     }
 
-    public String getUsername() {
-        return username;
+    public Client getUser() {
+        return user;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setUser(Client user) {
+        this.user = user;
     }
 
     public Timestamp getDatePost() {
@@ -84,7 +87,7 @@ public abstract class Post implements Comparator<Post>, Serializable, Comparable
     public String toString() {
         return "Post{" +
                 "idPost=" + idPost +
-                ", username='" + username + '\'' +
+                ", user=" + user +
                 ", datePost=" + datePost +
                 '}';
     }

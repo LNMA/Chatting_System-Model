@@ -1,5 +1,6 @@
 package com.louay.projects.model.dao.impl;
 
+import com.louay.projects.model.chains.accounts.Users;
 import com.louay.projects.model.chains.communications.Post;
 import com.louay.projects.model.chains.communications.group.GroupImgPost;
 import com.louay.projects.model.chains.communications.group.GroupTextPost;
@@ -56,17 +57,17 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
     }
 
     @Override
-    public Long insertGroupTextPost(Post GroupTextPost) {
-        if (!(GroupTextPost instanceof GroupTextPost)){
+    public Long insertGroupTextPost(Post groupPost) {
+        if (!(groupPost instanceof GroupTextPost)){
             throw new IllegalArgumentException("Need GroupTextPost.");
         }
-        GroupTextPost post = (GroupTextPost) GroupTextPost;
+        GroupTextPost post = (GroupTextPost) groupPost;
         try {
             ConnectionWrapper wrapper = this.pool.getConnection();
             PreparedStatement insert = wrapper.getConnection().prepareStatement("INSERT INTO `group_post`(`idGroupe`, " +
                     "`username`, `post`, `postDate`) VALUES (?, ?, ?,?);", Statement.RETURN_GENERATED_KEYS);
-            insert.setString(1, post.getIdGroup());
-            insert.setString(2, post.getUsername());
+            insert.setString(1, post.getGroups().getIdGroup());
+            insert.setString(2, post.getUser().getUsername());
             insert.setString(3, post.getPost().toString());
             insert.setTimestamp(4, post.getDatePost());
             insert.executeUpdate();
@@ -92,8 +93,8 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
             ConnectionWrapper wrapper = this.pool.getConnection();
             PreparedStatement insert = wrapper.getConnection().prepareStatement("INSERT INTO `group_img_post`(`idGroup`, " +
                     "`username`, `img`, `fileName`, `dateUpload`) VALUES (?, ?, ?, ?, ?);", Statement.RETURN_GENERATED_KEYS);
-            insert.setString(1, post.getIdGroup());
-            insert.setString(2, post.getUsername());
+            insert.setString(1, post.getGroups().getIdGroup());
+            insert.setString(2, post.getUser().getUsername());
             insert.setBlob(3, post.getImage());
             insert.setString(4, post.getFileName());
             insert.setTimestamp(5, post.getDatePost());
@@ -129,7 +130,8 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
         int result = 0;
         try {
             result = this.pool.updateQuery("INSERT INTO `group_invite`(`source`, `target`, `inviteDate`) VALUES " +
-                    "(?, ? ,?);", invite.getSourceIdGroup(), invite.getTargetAccount(), invite.getInviteDate());
+                    "(?, ? ,?);", invite.getSourceGroup().getIdGroup(), invite.getTargetAccount().getUsername(),
+                    invite.getInviteDate());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -145,7 +147,8 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
         int result = 0;
         try {
             result = this.pool.updateQuery("INSERT INTO `group_member`(`idGroup`, `member`, `joinDate`) VALUES " +
-                    "(?, ?, ?);", members.getIdGroup(), members.getFriendMember(), members.getFriendMemberSince());
+                    "(?, ?, ?);", members.getGroup().getIdGroup(), members.getFriendMember().getUsername(),
+                    members.getFriendMemberSince());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -161,7 +164,8 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
         int result = 0;
         try {
             result = this.pool.updateQuery("INSERT INTO `group_request`(`idGroup`, `requestTarget`, `sentDate`) " +
-                    "VALUES (?, ?, ?);", request.getIdGroup(), request.getTargetAccount(), request.getRequestDate());
+                    "VALUES (?, ?, ?);", request.getSourceGroup().getIdGroup(), request.getTargetAccount().getUsername(),
+                    request.getRequestDate());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -190,8 +194,8 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
         int result = 0;
         try {
             result = this.pool.updateQuery("UPDATE `group_post` SET `idGroupe` = ?, `username` = ?, " +
-                            "`post` = ?, `postDate` = ? WHERE `idPost` = ?;", post.getIdGroup(), post.getUsername(),
-                    post.getPost().toString(), post.getDatePost(), post.getIdPost());
+                            "`post` = ?, `postDate` = ? WHERE `idPost` = ?;", post.getGroups().getIdGroup(),
+                    post.getUser().getUsername(), post.getPost().toString(), post.getDatePost(), post.getIdPost());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -207,8 +211,8 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
         int result = 0;
         try {
             result = this.pool.updateQuery("UPDATE `group_img_post` SET `idGroup` = ?, `username` = ?, " +
-                            "`img` = ?, `fileName` = ?, `dateUpload` = ?  WHERE `idPost` = ?;", post.getIdGroup(), post.getUsername(),
-                        post.getImage(), post.getFileName(), post.getDatePost(), post.getIdPost());
+                            "`img` = ?, `fileName` = ?, `dateUpload` = ?  WHERE `idPost` = ?;", post.getGroups().getIdGroup()
+                    , post.getUser().getUsername(), post.getImage(), post.getFileName(), post.getDatePost(), post.getIdPost());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -233,7 +237,8 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
         int result = 0;
         try {
             result = this.pool.updateQuery("UPDATE `group_invite` SET `target` = ? WHERE `source` = ? AND " +
-                    "`inviteDate` = ?;", invite.getTargetAccount(), invite.getSourceIdGroup(), invite.getInviteDate());
+                    "`inviteDate` = ?;", invite.getTargetAccount().getUsername(), invite.getSourceGroup().getIdGroup(),
+                    invite.getInviteDate());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -249,7 +254,8 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
         int result = 0;
         try {
             result = this.pool.updateQuery("UPDATE `group_member` SET `member` = ? WHERE `idGroup` = ? AND " +
-                    "`joinDate` = ?;", members.getFriendMember(), members.getIdGroup(), members.getFriendMemberSince());
+                    "`joinDate` = ?;", members.getFriendMember().getUsername(), members.getGroup().getIdGroup(),
+                    members.getFriendMemberSince());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -265,7 +271,8 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
         int result = 0;
         try {
             result = this.pool.updateQuery("UPDATE `group_request` SET `idGroup` = ? WHERE `requestTarget` = ? AND " +
-                    "`sentDate` = ?;", request.getIdGroup(), request.getTargetAccount(), request.getRequestDate());
+                    "`sentDate` = ?;", request.getSourceGroup().getIdGroup(), request.getTargetAccount().getUsername(),
+                    request.getRequestDate());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -353,10 +360,12 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
 
     private GroupTextPost buildGroupTextPost(ResultSet resultSet) {
         GroupTextPost post = ac.getBean(GroupTextPost.class);
+        Groups groups = post.getGroups();
+        Users users = post.getUser();
         try {
             post.setIdPost(resultSet.getLong(1));
-            post.setIdGroup(resultSet.getString(2));
-            post.setUsername(resultSet.getString(3));
+            groups.setIdGroup(resultSet.getString(2));
+            users.setUsername(resultSet.getString(3));
             post.setPost(resultSet.getString(3));
             post.setDatePost(resultSet.getTimestamp(4));
         } catch (SQLException e) {
@@ -403,7 +412,7 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
         Collection<GroupTextPost> container = (Collection<GroupTextPost>) ac.getBean("postContainer");
         try {
             ResultSet resultSet = this.pool.selectResult("SELECT * FROM `group_post` WHERE `idGroupe` = ?;",
-                    post.getIdGroup());
+                    post.getGroups().getIdGroup());
             buildGroupTextPostContainer(resultSet, container);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -421,7 +430,7 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
         Collection<GroupTextPost> container = (Collection<GroupTextPost>) ac.getBean("postContainer");
         try {
             ResultSet resultSet = this.pool.selectResult("SELECT * FROM `group_post` WHERE `username` = ? ;",
-                    post.getUsername());
+                    post.getUser().getUsername());
             buildGroupTextPostContainer(resultSet, container);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -439,8 +448,7 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
         Collection<GroupTextPost> container = (Collection<GroupTextPost>) ac.getBean("postContainer");
         try {
             ResultSet resultSet = this.pool.selectResult("SELECT * FROM `group_post` WHERE `username` = ? " +
-                            "AND `idGroupe` = ?;", post.getUsername(),
-                    post.getIdGroup());
+                            "AND `idGroupe` = ?;", post.getUser().getUsername(), post.getGroups().getIdGroup());
             buildGroupTextPostContainer(resultSet, container);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -450,10 +458,12 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
 
     private GroupImgPost buildGroupImgPost(ResultSet resultSet) {
         GroupImgPost post = ac.getBean(GroupImgPost.class);
+        Groups groups = post.getGroups();
+        Users users = post.getUser();
         try {
             post.setIdPost(resultSet.getLong(1));
-            post.setIdGroup(resultSet.getString(2));
-            post.setUsername(resultSet.getString(3));
+            groups.setIdGroup(resultSet.getString(2));
+            users.setUsername(resultSet.getString(3));
             post.setImage(resultSet.getBlob(4));
             post.setFileName(resultSet.getString(5));
             post.setDatePost(resultSet.getTimestamp(6));
@@ -501,7 +511,7 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
         Collection<GroupImgPost> container = (Collection<GroupImgPost>) ac.getBean("postContainer");
         try {
             ResultSet resultSet = this.pool.selectResult("SELECT * FROM `group_img_post` WHERE `username` = ?;",
-                    post.getUsername());
+                    post.getUser().getUsername());
             buildGroupImgPostContainer(resultSet, container);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -511,9 +521,11 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
 
     private GroupInvite buildGroupInvite(ResultSet resultSet) {
         GroupInvite invite = ac.getBean(GroupInvite.class);
+        Groups groups = invite.getSourceGroup();
+        Users users = invite.getTargetAccount();
         try {
-            invite.setSourceIdGroup(resultSet.getString(1));
-            invite.setTargetAccount(resultSet.getString(2));
+            groups.setIdGroup(resultSet.getString(1));
+            users.setUsername(resultSet.getString(2));
             invite.setInviteDate(resultSet.getTimestamp(3));
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -539,7 +551,7 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
         Map<Long, GroupInvite> container = (Map<Long, GroupInvite>) ac.getBean("groupInviteContainer");
         try {
             ResultSet resultSet = this.pool.selectResult("SELECT * FROM `group_invite` WHERE `source` = ? ORDER BY " +
-                    "`group_invite`.`inviteDate` DESC;", invite.getSourceIdGroup());
+                    "`group_invite`.`inviteDate` DESC;", invite.getSourceGroup().getIdGroup());
             buildGroupInviteContainer(resultSet, container);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -553,7 +565,7 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
         Map<Long, GroupInvite> container = (Map<Long, GroupInvite>) ac.getBean("groupInviteContainer");
         try {
             ResultSet resultSet = this.pool.selectResult("SELECT * FROM `group_invite` WHERE `target` = ? ORDER BY " +
-                    "`group_invite`.`inviteDate` DESC;", invite.getTargetAccount());
+                    "`group_invite`.`inviteDate` DESC;", invite.getTargetAccount().getUsername());
             buildGroupInviteContainer(resultSet, container);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -563,9 +575,11 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
 
     private GroupMembers buildGroupMembers(ResultSet resultSet) {
         GroupMembers member = ac.getBean(GroupMembers.class);
+        Groups groups = member.getGroup();
+        Users users = member.getFriendMember();
         try {
-            member.setIdGroup(resultSet.getString(1));
-            member.setFriendMember(resultSet.getString(2));
+            groups.setIdGroup(resultSet.getString(1));
+            users.setUsername(resultSet.getString(2));
             member.setFriendMemberSince(resultSet.getTimestamp(3));
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -595,7 +609,7 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
         Map<Long, GroupMembers> container = (Map<Long, GroupMembers>) ac.getBean("memberContainer");
         try {
             ResultSet resultSet = this.pool.selectResult("SELECT * FROM `group_member` WHERE `idGroup` = ? ORDER " +
-                    "BY `group_member`.`joinDate` DESC;", member.getIdGroup());
+                    "BY `group_member`.`joinDate` DESC;", member.getGroup().getIdGroup());
             buildGroupMemberContainer(resultSet, container);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -613,7 +627,7 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
         Map<Long, GroupMembers> container = (Map<Long, GroupMembers>) ac.getBean("memberContainer");
         try {
             ResultSet resultSet = this.pool.selectResult("SELECT * FROM `group_member` WHERE `member` = ? ORDER " +
-                    "BY `group_member`.`joinDate` DESC;", member.getFriendMember());
+                    "BY `group_member`.`joinDate` DESC;", member.getFriendMember().getUsername());
             buildGroupMemberContainer(resultSet, container);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -660,9 +674,11 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
 
     private GroupRequest buildGroupRequest(ResultSet resultSet) {
         GroupRequest request = ac.getBean(GroupRequest.class);
+        Groups groups = request.getSourceGroup();
+        Users users = request.getTargetAccount();
         try {
-            request.setIdGroup(resultSet.getString(1));
-            request.setTargetAccount(resultSet.getString(2));
+            groups.setIdGroup(resultSet.getString(1));
+            users.setUsername(resultSet.getString(2));
             request.setRequestDate(resultSet.getTimestamp(3));
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -692,7 +708,7 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
         Map<Long, GroupRequest> container = (Map<Long, GroupRequest>) ac.getBean("requestContainer");
         try {
             ResultSet resultSet = this.pool.selectResult("SELECT * FROM `group_request` WHERE `idGroup` = ? ORDER " +
-                    "BY `group_request`.`sentDate` DESC;", request.getIdGroup());
+                    "BY `group_request`.`sentDate` DESC;", request.getSourceGroup().getIdGroup());
             buildGroupRequestContainer(resultSet, container);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -710,7 +726,7 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
         Map<Long, GroupRequest> container = (Map<Long, GroupRequest>) ac.getBean("requestContainer");
         try {
             ResultSet resultSet = this.pool.selectResult("SELECT * FROM `group_request` WHERE `requestTarget` = ? " +
-                    "ORDER BY `group_request`.`sentDate` DESC;", request.getTargetAccount());
+                    "ORDER BY `group_request`.`sentDate` DESC;", request.getTargetAccount().getUsername());
             buildGroupRequestContainer(resultSet, container);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -757,7 +773,7 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
         int result = 0;
         try {
             result = this.pool.updateQuery("DELETE FROM `group_invite` WHERE `source` = ? AND `target` = ? ;",
-                    invite.getSourceIdGroup(), invite.getTargetAccount());
+                    invite.getSourceGroup().getIdGroup(), invite.getTargetAccount());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -769,7 +785,7 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
         int result = 0;
         try {
             result = this.pool.updateQuery("DELETE FROM `group_invite` WHERE `source` = ? AND `inviteDate` = ? ;",
-                    invite.getSourceIdGroup(), invite.getInviteDate());
+                    invite.getSourceGroup().getIdGroup(), invite.getInviteDate());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -781,7 +797,7 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
         int result = 0;
         try {
             result = this.pool.updateQuery("DELETE FROM `group_invite` WHERE `target` = ? AND `inviteDate` = ? ;",
-                    invite.getTargetAccount(), invite.getInviteDate());
+                    invite.getTargetAccount().getUsername(), invite.getInviteDate());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -797,7 +813,7 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
         int result = 0;
         try {
             result = this.pool.updateQuery("DELETE FROM `group_member` WHERE `idGroup` = ? AND `member` = ? ;",
-                    member.getIdGroup(), member.getFriendMember());
+                    member.getGroup().getIdGroup(), member.getFriendMember().getUsername());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -824,7 +840,7 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
         int result = 0;
         try {
             result = this.pool.updateQuery("DELETE FROM `group_request` WHERE `idGroup` = ? AND `requestTarget` = ?;",
-                    request.getIdGroup(), request.getTargetAccount());
+                    request.getSourceGroup().getIdGroup(), request.getTargetAccount());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -840,7 +856,7 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
         int result = 0;
         try {
             result = this.pool.updateQuery("DELETE FROM `group_request` WHERE `idGroup` = ? AND `sentDate` = ?;",
-                    request.getIdGroup(), request.getRequestDate());
+                    request.getSourceGroup().getIdGroup(), request.getRequestDate());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -856,7 +872,7 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
         int result = 0;
         try {
             result = this.pool.updateQuery("DELETE FROM `group_request` WHERE `requestTarget` = ? AND `sentDate` = ?;",
-                    request.getTargetAccount(), request.getRequestDate());
+                    request.getTargetAccount().getUsername(), request.getRequestDate());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }

@@ -26,7 +26,7 @@ public class AccountTextPost extends Post {
     }
 
     public void setPostStringBuilder(StringBuilder post){
-        this.post = new StringBuilder(post);
+        this.post = post;
     }
 
     public void setEditPost(StringBuilder post){

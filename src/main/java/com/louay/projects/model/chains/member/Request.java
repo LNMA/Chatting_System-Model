@@ -1,19 +1,23 @@
 package com.louay.projects.model.chains.member;
 
+import com.louay.projects.model.chains.accounts.Client;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import java.sql.Timestamp;
 
 public abstract class Request {
-    private String targetAccount;
+    @Autowired
+    private Client targetAccount;
     private java.sql.Timestamp requestDate;
 
     public Request() {
     }
 
-    public String getTargetAccount() {
+    public Client getTargetAccount() {
         return targetAccount;
     }
 
-    public void setTargetAccount(String targetAccount) {
+    public void setTargetAccount(Client targetAccount) {
         this.targetAccount = targetAccount;
     }
 

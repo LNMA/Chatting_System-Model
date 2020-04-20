@@ -1,34 +1,36 @@
 package com.louay.projects.model.chains.member.account;
 
+import com.louay.projects.model.chains.accounts.Client;
 import com.louay.projects.model.chains.member.Member;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.sql.Timestamp;
 
 @Configuration
 @Component
 @Scope("prototype")
 public class UserFriend extends Member {
-    private String username;
+    @Autowired
+    private Client user;
 
 
     public UserFriend() {
     }
 
-    public String getUsername() {
-        return username;
+    public Client getUser() {
+        return user;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setUser(Client user) {
+        this.user = user;
     }
 
     @Override
     public String toString() {
-        return super.toString()+", UserFriend{" +
-                "username='" + username + '\'' +
+        return super.toString()+",UserFriend{" +
+                "user=" + user +
                 '}';
     }
 }

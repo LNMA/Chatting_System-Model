@@ -1,6 +1,6 @@
 package com.louay.projects.model.chains.communications.group;
 
-import com.louay.projects.model.chains.communications.Post;
+import com.louay.projects.model.chains.communications.GroupPost;
 import com.louay.projects.model.chains.communications.constant.PostClassName;
 import com.louay.projects.model.chains.communications.constant.PostType;
 import org.springframework.context.annotation.Configuration;
@@ -14,20 +14,11 @@ import java.util.Base64;
 @Configuration
 @Component
 @Scope("prototype")
-public class GroupImgPost extends Post {
-    private String idGroup;
+public class GroupImgPost extends GroupPost {
     private java.sql.Blob image;
     private String fileName;
 
     public GroupImgPost() {
-    }
-
-    public String getIdGroup() {
-        return idGroup;
-    }
-
-    public void setIdGroup(String idGroup) {
-        this.idGroup = idGroup;
     }
 
     public Blob getImage() {
@@ -70,9 +61,8 @@ public class GroupImgPost extends Post {
 
     @Override
     public String toString() {
-        return super.toString()+",GroupImgPost{" +
-                "idGroup='" + idGroup + '\'' +
-                ", image=" + image +
+        return super.toString()+", GroupImgPost{" +
+                "image=" + image +
                 ", fileName='" + fileName + '\'' +
                 '}';
     }

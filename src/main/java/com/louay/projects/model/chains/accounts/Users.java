@@ -2,9 +2,11 @@ package com.louay.projects.model.chains.accounts;
 
 import com.louay.projects.model.chains.accounts.constant.UserType;
 
+import java.io.Serializable;
+import java.util.Comparator;
 import java.util.Objects;
 
-public abstract class Users extends Accounts{
+public abstract class Users extends Accounts implements Comparator<Users>, Serializable {
     private String username;
     private String password;
     private String accountPermission;
@@ -37,6 +39,11 @@ public abstract class Users extends Accounts{
     }
 
     public abstract UserType getUserType();
+
+    @Override
+    public int compare(Users o1, Users o2) {
+        return o1.getUsername().compareTo(o2.getUsername());
+    }
 
     @Override
     public boolean equals(Object o) {
