@@ -310,6 +310,18 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
     }
 
     @Override
+    public int updateAccountMassageSeenBySenderAndReceiver(AccountMessage message) {
+        int result = 0;
+        try {
+            result = this.pool.updateQuery("UPDATE `account_message` SET `isSeen` = ? WHERE `source` = ? " +
+                            "AND `target` = ? ;", message.getSeen(), message.getSourceUser().getUsername(),
+                    message.getTargetUser().getUsername());
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return result;    }
+
+    @Override
     public int updateAccountPictureByUsername(Users picture) {
         int result = 0;
         try {
@@ -661,8 +673,8 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
 
     private AccountMessage buildAccountMessage(ResultSet resultSet) {
         AccountMessage message = ac.getBean(AccountMessage.class);
-        Users sourceUser = message.getSourceUser();
-        Users targetUser = message.getTargetUser();
+        Client sourceUser = message.getSourceUser();
+        Client targetUser = message.getTargetUser();
 
         try {
             message.setIdMessage(resultSet.getLong(1));
@@ -671,6 +683,8 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
             targetUser.setUsername(resultSet.getString(4));
             message.setSentDate(resultSet.getTimestamp(5));
             message.setSeen(resultSet.getBoolean(6));
+            targetUser.setFirstName(resultSet.getString(7));
+            targetUser.setLastName(resultSet.getString(8));
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -702,12 +716,18 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
     }
 
     @Override
-    public Collection<AccountMessage> findUserMessageBySender(AccountMessage message) {
+    public Collection<AccountMessage> findUserMessageBySenderAndReceiver(AccountMessage message) {
         @SuppressWarnings(value = "unchecked")
         Collection<AccountMessage> container = (Collection<AccountMessage>) ac.getBean("accountMessageContainer");
         try {
-            ResultSet resultSet = this.pool.selectResult("SELECT * FROM `account_message` WHERE `source` = ? " +
-                    "ORDER BY `account_message`.`sentDate` DESC;", message.getSourceUser().getUsername());
+            ResultSet resultSet = this.pool.selectResult("SELECT `account_message`.`idMessage`, " +
+                            "`account_message`.`source`, `account_message`.`massage`, `account_message`.`target`, " +
+                            "`account_message`.`sentDate`, `account_message`.`isSeen`, `account_detail`.`firstName`, " +
+                            "`account_detail`.`lastName` FROM `account_message` INNER JOIN `account_detail` " +
+                            "ON `account_detail`.`username` = `account_message`.`source` WHERE " +
+                            "`account_message`.`source` = ? AND `account_message`.`target` = ?;",
+                             message.getSourceUser().getUsername(), message.getTargetUser().getUsername());
+
             buildAccountMessageContainer(resultSet, container);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -720,8 +740,12 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
         @SuppressWarnings(value = "unchecked")
         Collection<AccountMessage> container = (Collection<AccountMessage>) ac.getBean("accountMessageContainer");
         try {
-            ResultSet resultSet = this.pool.selectResult("SELECT * FROM `account_message` WHERE `target` = ? " +
-                    "ORDER BY `account_message`.`sentDate` DESC;", message.getTargetUser().getUsername());
+            ResultSet resultSet = this.pool.selectResult("SELECT `account_message`.`idMessage`, " +
+            "`account_message`.`source`, `account_message`.`massage`, `account_message`.`target`, " +
+                    "`account_message`.`sentDate`, `account_message`.`isSeen`, `account_detail`.`firstName`, " +
+                    "`account_detail`.`lastName` FROM `account_message` INNER JOIN `account_detail` " +
+                    "ON `account_detail`.`username` = `account_message`.`target` WHERE " +
+                    "`account_message`.`target` = ?;", message.getTargetUser().getUsername());
             buildAccountMessageContainer(resultSet, container);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -731,8 +755,8 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
 
     private AccountMessage buildAccountMessageAndPic(ResultSet resultSet) {
         AccountMessage message = ac.getBean(AccountMessage.class);
-        Users sourceUser = message.getSourceUser();
-        Users targetUser = message.getTargetUser();
+        Client sourceUser = message.getSourceUser();
+        Client targetUser = message.getTargetUser();
 
         try {
             message.setIdMessage(resultSet.getLong(1));
@@ -741,7 +765,9 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
             targetUser.setUsername(resultSet.getString(4));
             message.setSentDate(resultSet.getTimestamp(5));
             message.setSeen(resultSet.getBoolean(6));
-            targetUser.setPicture(resultSet.getBlob(7));
+            sourceUser.setPicture(resultSet.getBlob(7));
+            sourceUser.setFirstName(resultSet.getString(8));
+            sourceUser.setLastName(resultSet.getString(9));
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -759,16 +785,19 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
     }
 
     @Override
-    public Collection<AccountMessage> findUserMessageAndPicBySender(AccountMessage message) {
+    public Collection<AccountMessage> findUserMessageAndTargetPicBySenderAndReceiver(AccountMessage message) {
         @SuppressWarnings(value = "unchecked")
         Collection<AccountMessage> container = (Collection<AccountMessage>) ac.getBean("accountMessageContainer");
         try {
             ResultSet resultSet = this.pool.selectResult("SELECT `account_message`.`idMessage`, " +
-                    "`account_message`.`source`, `account_message`.`massage`, `account_message`.`target`, " +
-                    "`account_message`.`sentDate`, `account_message`.`isSeen`,  `account_pic`.`pic` " +
-                    "FROM `account_message` Inner join `account_pic` ON `account_message`.`target` = `account_pic`.`username` " +
-                    "WHERE `account_message`.`source` = ? ORDER BY `account_message`.`sentDate` DESC;",
-                    message.getSourceUser().getUsername());
+                            "`account_message`.`source`, `account_message`.`massage`, `account_message`." +
+                            "`target`, `account_message`.`sentDate`, `account_message`.`isSeen`,  `account_pic`.`pic` ," +
+                            "`account_detail`.`firstName`, `account_detail`.`lastName` FROM `account_message` " +
+                            "Inner join `account_pic` ON `account_message`.`source` = `account_pic`.`username` " +
+                            "Inner join `account_detail` ON `account_message`.`source` = `account_detail`.`username` " +
+                            "WHERE `account_message`.`source` = ? AND `account_message`.`target` = ?;",
+                    message.getSourceUser().getUsername(), message.getTargetUser().getUsername());
+
             buildAccountMessageAndPicContainer(resultSet, container);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -779,12 +808,15 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
     private AccountMessage buildAccountMessageAndNumNotSeen(ResultSet resultSet) {
         AccountMessage message = ac.getBean(AccountMessage.class);
         Users sourceUser = message.getSourceUser();
-        Users targetUser = message.getTargetUser();
+        Client targetUser = message.getTargetUser();
 
         try {
             sourceUser.setUsername(resultSet.getString(1));
             targetUser.setUsername(resultSet.getString(2));
-            message.setNumberOfNotSeen(resultSet.getInt(3));
+            targetUser.setFirstName(resultSet.getString(3));
+            targetUser.setLastName(resultSet.getString(4));
+            message.setNumberOfAllMessage(resultSet.getInt(5));
+            message.setNumberOfSeen(resultSet.getInt(6));
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -802,17 +834,39 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
     }
 
     @Override
-    public Collection<AccountMessage> findUserMessageAndNumNotSeenBySender(AccountMessage message) {
+    public Collection<AccountMessage> findUserMessageAndNumNotSeenByReceiver(AccountMessage message) {
         @SuppressWarnings(value = "unchecked")
         Collection<AccountMessage> container = (Collection<AccountMessage>) ac.getBean("accountMessageContainer");
         try {
-            ResultSet resultSet = this.pool.selectResult("SELECT `source`, `target`, COUNT(*) FROM `account_message`" +
-                            " WHERE `source` = ? AND `isSeen` = 0 GROUP BY `target`", message.getSourceUser().getUsername());
+            ResultSet resultSet = this.pool.selectResult("SELECT `account_message`.`source`, " +
+                    "`account_message`.`target`, `account_detail`.`firstName`, `account_detail`.`lastName`, " +
+                    "COUNT(*), SUM(`isSeen`)  FROM `account_message` INNER JOIN `account_detail` ON " +
+                    "`account_detail`.`username` = `account_message`.`source` WHERE `account_message`.`target` = ?" +
+                    "GROUP BY `account_message`.`target`", message.getSourceUser().getUsername());
             buildAccountMessageAndNumNotSeenContainer(resultSet, container);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-        return container;    }
+        return container;
+    }
+
+    @Override
+    public Collection<AccountMessage> findUserMessageAndNumNotSeenBySenderAndReceiver(AccountMessage message) {
+        @SuppressWarnings(value = "unchecked")
+        Collection<AccountMessage> container = (Collection<AccountMessage>) ac.getBean("accountMessageContainer");
+        try {
+            ResultSet resultSet = this.pool.selectResult("SELECT `account_message`.`source`, " +
+                    "`account_message`.`target`, `account_detail`.`firstName`, `account_detail`.`lastName`, " +
+                    "COUNT(*), SUM(`isSeen`)  FROM `account_message` INNER JOIN `account_detail` ON " +
+                    "`account_detail`.`username` = `account_message`.`target` WHERE `account_message`.`source` = ? " +
+                    "AND `account_message`.`target` = ? GROUP BY `account_message`.`target`",
+                    message.getSourceUser().getUsername(), message.getTargetUser().getUsername());
+            buildAccountMessageAndNumNotSeenContainer(resultSet, container);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return container;
+    }
 
     private Users buildAccountPicture(ResultSet resultSet) {
         Users picture = ac.getBean(Admin.class);

@@ -114,7 +114,7 @@ public class BeansFactory {
     @Bean(name = "accountMessageContainer")
     @Scope("prototype")
     public Collection<AccountMessage> getAccountMessageContainer(){
-        return new LinkedHashSet<>();
+        return new HashSet<>();
     }
 
     @Bean(name = "groupInviteContainer")

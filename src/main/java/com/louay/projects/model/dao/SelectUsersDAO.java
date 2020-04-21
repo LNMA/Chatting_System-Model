@@ -39,13 +39,15 @@ public interface SelectUsersDAO {
 
     Collection<AccountMessage> findUserMessageByIdMessage(AccountMessage message);
 
-    Collection<AccountMessage> findUserMessageBySender(AccountMessage message);
+    Collection<AccountMessage> findUserMessageBySenderAndReceiver(AccountMessage message);
 
     Collection<AccountMessage> findUserMessageByReceiver(AccountMessage message);
 
-    Collection<AccountMessage> findUserMessageAndPicBySender(AccountMessage message);
+    Collection<AccountMessage> findUserMessageAndTargetPicBySenderAndReceiver(AccountMessage message);
 
-    Collection<AccountMessage> findUserMessageAndNumNotSeenBySender(AccountMessage message);
+    Collection<AccountMessage> findUserMessageAndNumNotSeenByReceiver(AccountMessage message);
+
+    Collection<AccountMessage> findUserMessageAndNumNotSeenBySenderAndReceiver(AccountMessage message);
 
     Collection<Users> findPictureByUsername(Users picture);
 

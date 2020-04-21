@@ -24,7 +24,8 @@ public class AccountMessage implements Comparable<AccountMessage>, Comparator<Ac
     private Client targetUser;
     private java.sql.Timestamp sentDate;
     private Boolean isSeen;
-    private int numberOfNotSeen;
+    private int numberOfSeen;
+    private int numberOfAllMessage;
 
     public AccountMessage() {
     }
@@ -81,12 +82,24 @@ public class AccountMessage implements Comparable<AccountMessage>, Comparator<Ac
         isSeen = seen;
     }
 
-    public int getNumberOfNotSeen() {
-        return numberOfNotSeen;
+    public int getNumberOfSeen() {
+        return numberOfSeen;
     }
 
-    public void setNumberOfNotSeen(int numberOfNotSeen) {
-        this.numberOfNotSeen = numberOfNotSeen;
+    public void setNumberOfSeen(int numberOfSeen) {
+        this.numberOfSeen = numberOfSeen;
+    }
+
+    public int getNumberOfAllMessage() {
+        return numberOfAllMessage;
+    }
+
+    public void setNumberOfAllMessage(int numberOfAllMessage) {
+        this.numberOfAllMessage = numberOfAllMessage;
+    }
+
+    public int getNumOfNotSeen(){
+        return this.numberOfAllMessage - this.numberOfSeen;
     }
 
     @Override
@@ -132,7 +145,8 @@ public class AccountMessage implements Comparable<AccountMessage>, Comparator<Ac
                 ", targetUser=" + targetUser +
                 ", sentDate=" + sentDate +
                 ", isSeen=" + isSeen +
-                ", numberOfNotSeen=" + numberOfNotSeen +
+                ", numberOfSeen=" + numberOfSeen +
+                ", numberOfAllMessage=" + numberOfAllMessage +
                 '}';
     }
 }
