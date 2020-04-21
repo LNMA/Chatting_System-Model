@@ -578,6 +578,21 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
         return container;
     }
 
+    @Override
+    public Map<Long, GroupInvite> findGroupInviteByUsernameAndIdGroup(GroupInvite invite) {
+        @SuppressWarnings(value = "unchecked")
+        Map<Long, GroupInvite> container = (Map<Long, GroupInvite>) ac.getBean("groupInviteContainer");
+        try {
+            ResultSet resultSet = this.pool.selectResult("SELECT * FROM `group_invite` WHERE `source` = ? AND " +
+                    "`target` = ? ORDER BY `group_invite`.`inviteDate` DESC;", invite.getSourceGroup().getIdGroup(),
+                    invite.getTargetAccount().getUsername());
+            buildGroupInviteContainer(resultSet, container);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return container;
+    }
+
     private GroupMembers buildGroupMembers(ResultSet resultSet) {
         GroupMembers member = ac.getBean(GroupMembers.class);
         Groups groups = member.getGroup();
@@ -633,6 +648,25 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
         try {
             ResultSet resultSet = this.pool.selectResult("SELECT * FROM `group_member` WHERE `member` = ? ORDER " +
                     "BY `group_member`.`joinDate` DESC;", member.getFriendMember().getUsername());
+            buildGroupMemberContainer(resultSet, container);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return container;
+    }
+
+    @Override
+    public Map<Long, GroupMembers> findGroupMemberByUsernameAndIdGroup(Member groupMembers) {
+        if (!(groupMembers instanceof GroupMembers)){
+            throw new IllegalArgumentException("Need GroupMembers.");
+        }
+        GroupMembers member = (GroupMembers) groupMembers;
+        @SuppressWarnings(value = "unchecked")
+        Map<Long, GroupMembers> container = (Map<Long, GroupMembers>) ac.getBean("memberContainer");
+        try {
+            ResultSet resultSet = this.pool.selectResult("SELECT * FROM `group_member` WHERE `member` = ? AND" +
+                    "`idGroup` = ? ORDER BY `group_member`.`joinDate` DESC;", member.getFriendMember().getUsername(),
+                    member.getGroup().getIdGroup());
             buildGroupMemberContainer(resultSet, container);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -732,6 +766,24 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
         try {
             ResultSet resultSet = this.pool.selectResult("SELECT * FROM `group_request` WHERE `requestTarget` = ? " +
                     "ORDER BY `group_request`.`sentDate` DESC;", request.getTargetAccount().getUsername());
+            buildGroupRequestContainer(resultSet, container);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return container;
+    }
+
+    @Override
+    public Map<Long, GroupRequest> findGroupRequestByUsernameAndIdGroup(Request groupRequest) {
+        if (!(groupRequest instanceof GroupRequest)){
+            throw new IllegalArgumentException("Need GroupRequest.");
+        }
+        GroupRequest request = (GroupRequest) groupRequest;
+        @SuppressWarnings(value = "unchecked")
+        Map<Long, GroupRequest> container = (Map<Long, GroupRequest>) ac.getBean("requestContainer");
+        try {
+            ResultSet resultSet = this.pool.selectResult("SELECT * FROM `group_request` WHERE `idGroup` = ? AND " +
+                    "`requestTarget` = ? ORDER BY `group_request`.`sentDate` DESC;", request.getTargetAccount().getUsername());
             buildGroupRequestContainer(resultSet, container);
         } catch (SQLException e) {
             System.out.println(e.getMessage());

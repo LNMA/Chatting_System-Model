@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import java.sql.Blob;
 import java.sql.SQLException;
 import java.util.Base64;
+import java.util.Objects;
 
 @Configuration
 @Component
@@ -57,6 +58,21 @@ public class GroupImgPost extends GroupPost {
     @Override
     public PostClassName getClassName() {
         return PostClassName.GROUP_IMG_POST;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof GroupImgPost)) return false;
+        if (!super.equals(o)) return false;
+        GroupImgPost that = (GroupImgPost) o;
+        return getImage() == (that.getImage()) &&
+                getFileName().compareTo(that.getFileName()) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), getImage(), getFileName());
     }
 
     @Override

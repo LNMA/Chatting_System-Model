@@ -7,6 +7,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
+
 
 @Configuration
 @Component
@@ -25,6 +27,20 @@ public class UserFriend extends Member {
 
     public void setUser(Client user) {
         this.user = user;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof UserFriend)) return false;
+        if (!super.equals(o)) return false;
+        UserFriend that = (UserFriend) o;
+        return getUser().compareTo(that.getUser()) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), getUser());
     }
 
     @Override

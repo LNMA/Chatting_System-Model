@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.Objects;
 
 @Configuration
 @Component
@@ -130,6 +131,29 @@ public class Client extends Users {
     @Override
     public AccountClassName getAccountClassName() {
         return AccountClassName.CLIENT;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Client)) return false;
+        if (!super.equals(o)) return false;
+        Client client = (Client) o;
+        return getFirstName().compareTo(client.getFirstName()) == 0 &&
+                getLastName().compareTo(client.getLastName()) == 0 &&
+                getBirthday().compareTo(client.getBirthday()) == 0 &&
+                getAge().compareTo(client.getAge()) == 0 &&
+                getGender().compareTo(client.getGender()) == 0 &&
+                getTelephone().compareTo(client.getTelephone()) == 0 &&
+                getEmail().compareTo(client.getEmail()) == 0 &&
+                getCountry().compareTo(client.getCountry()) == 0 &&
+                getState().compareTo(client.getState()) == 0 &&
+                getAddress().compareTo(client.getAddress()) == 0 ;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), getFirstName(), getLastName(), getBirthday(), getAge(), getGender(), getTelephone(), getEmail(), getCountry(), getState(), getAddress());
     }
 
     @Override

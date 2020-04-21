@@ -35,13 +35,21 @@ public interface SelectGroupDAO {
 
     Map<Long, GroupInvite> findGroupInviteByUsername(GroupInvite invite);
 
+    Map<Long, GroupInvite> findGroupInviteByUsernameAndIdGroup(GroupInvite invite);
+
     Map<Long, GroupMembers> findGroupMemberByIdGroup(Member member);
 
     Map<Long, GroupMembers> findGroupMemberByUsername(Member member);
+
+    Map<Long, GroupMembers> findGroupMemberByUsernameAndIdGroup(Member groupMembers);
 
     Collection<Groups> findGroupPictureByIdGroup(Groups picture);
 
     Map<Long, GroupRequest> findGroupRequestByIdGroup(Request request);
 
     Map<Long, GroupRequest> findGroupRequestByUsername(Request request);
+
+    Map<Long, GroupRequest> findGroupRequestByUsernameAndIdGroup(Request groupRequest);
+
+
 }

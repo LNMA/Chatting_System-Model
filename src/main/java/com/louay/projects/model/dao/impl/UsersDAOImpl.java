@@ -855,7 +855,7 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
                     "`account_message`.`target`, `account_detail`.`firstName`, `account_detail`.`lastName`, " +
                     "COUNT(*), SUM(`isSeen`)  FROM `account_message` INNER JOIN `account_detail` ON " +
                     "`account_detail`.`username` = `account_message`.`source` WHERE `account_message`.`target` = ?" +
-                    "GROUP BY `account_message`.`target`", message.getSourceUser().getUsername());
+                    "GROUP BY `account_message`.`target`", message.getTargetUser().getUsername());
             buildAccountMessageAndNumNotSeenContainer(resultSet, container);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -1031,6 +1031,25 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
         return container;
     }
 
+    @Override
+    public Map<Long, FriendRequest> findFriendRequestBySenderAndReceiver(Request request) {
+        if (!(request instanceof FriendRequest)) {
+            throw new IllegalArgumentException("Need FriendRequest.");
+        }
+        FriendRequest friendRequest = (FriendRequest) request;
+        @SuppressWarnings(value = "unchecked")
+        Map<Long, FriendRequest> container = (Map<Long, FriendRequest>) ac.getBean("requestContainer");
+        try {
+            ResultSet resultSet = this.pool.selectResult("SELECT * FROM `friend_request` WHERE `username` = ? AND" +
+                    "`requestTarget` = ? ORDER BY `friend_request`.`requestDate` DESC;",
+                    friendRequest.getSourceAccount().getUsername(), friendRequest.getTargetAccount().getUsername());
+            buildFriendRequestContainer(resultSet, container);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return container;
+    }
+
     private SignInDate buildSignInDate(ResultSet resultSet) {
         SignInDate signInDate = ac.getBean(SignInDate.class);
         try {
@@ -1111,6 +1130,26 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
         }
         return container;
     }
+
+    @Override
+    public Map<Long, UserFriend> findUserFriendByUserAndFriend(Member friend){
+        if (!(friend instanceof UserFriend)) {
+            throw new IllegalArgumentException("Need Member.");
+        }
+        UserFriend member = (UserFriend) friend;
+        @SuppressWarnings(value = "unchecked")
+        Map<Long, UserFriend> container = (Map<Long, UserFriend>) ac.getBean("memberContainer");
+        try {
+            ResultSet resultSet = this.pool.selectResult("SELECT * FROM `user_friend` WHERE `username` = ? AND " +
+                    "`friend` = ? ORDER BY `user_friend`.`friendSince` DESC;", member.getUser().getUsername(),
+                    member.getFriendMember().getUsername());
+            buildUserFriendContainer(resultSet, container);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return container;
+    }
+
 
     @Override
     public Map<Long, UserFriend> findUserFriendByFriend(Member friend) {

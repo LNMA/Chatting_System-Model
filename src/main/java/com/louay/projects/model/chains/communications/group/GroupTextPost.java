@@ -7,6 +7,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
+
 
 @Configuration
 @Component
@@ -42,6 +44,20 @@ public class GroupTextPost extends GroupPost {
     @Override
     public PostType getType() {
         return PostType.TEXT_POST;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof GroupTextPost)) return false;
+        if (!super.equals(o)) return false;
+        GroupTextPost that = (GroupTextPost) o;
+        return getPost() == (that.getPost());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), getPost());
     }
 
     @Override

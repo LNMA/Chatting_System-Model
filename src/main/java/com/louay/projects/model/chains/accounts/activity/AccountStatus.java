@@ -46,12 +46,14 @@ public class AccountStatus {
         if (this == o) return true;
         if (!(o instanceof AccountStatus)) return false;
         AccountStatus that = (AccountStatus) o;
-        return getUsername().compareTo(that.getUsername()) == 0;
+        return getUsername().compareTo(that.getUsername()) == 0 &&
+                isSignIn.compareTo(that.isSignIn)  == 0&&
+                isValid.compareTo(that.isValid) == 0;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getUsername());
+        return Objects.hash(getUsername(), isSignIn, isValid);
     }
 
     @Override

@@ -7,6 +7,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
+
 
 @Configuration
 @Component
@@ -24,6 +26,20 @@ public class GroupRequest extends Request {
 
     public void setSourceGroup(Groups sourceGroup) {
         this.sourceGroup = sourceGroup;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof GroupRequest)) return false;
+        if (!super.equals(o)) return false;
+        GroupRequest request = (GroupRequest) o;
+        return getSourceGroup().compareTo(request.getSourceGroup()) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), getSourceGroup());
     }
 
     @Override

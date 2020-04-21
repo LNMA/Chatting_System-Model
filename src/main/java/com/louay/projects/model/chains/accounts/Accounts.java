@@ -7,6 +7,7 @@ import java.sql.Blob;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Base64;
+import java.util.Objects;
 
 public abstract class Accounts {
     private java.sql.Blob picture;
@@ -55,6 +56,20 @@ public abstract class Accounts {
     public abstract AccountType getAccountType();
 
     public abstract AccountClassName getAccountClassName();
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Accounts)) return false;
+        Accounts accounts = (Accounts) o;
+        return  getPictureName().compareTo(accounts.getPictureName()) == 0 &&
+                getDateCreate().compareTo(accounts.getDateCreate()) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getPicture(), getPictureName(), getDateCreate());
+    }
 
     @Override
     public String toString() {

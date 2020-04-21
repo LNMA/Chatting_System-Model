@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.sql.Timestamp;
+import java.util.Objects;
 
 @Configuration
 @Component
@@ -44,6 +45,21 @@ public class GroupInvite {
 
     public void setInviteDate(Timestamp inviteDate) {
         this.inviteDate = inviteDate;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof GroupInvite)) return false;
+        GroupInvite that = (GroupInvite) o;
+        return getSourceGroup().compareTo(that.getSourceGroup()) == 0 &&
+                getTargetAccount().compareTo(that.getTargetAccount()) == 0 &&
+                getInviteDate().compareTo(that.getInviteDate()) == 0 ;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getSourceGroup(), getTargetAccount(), getInviteDate());
     }
 
     @Override

@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.util.Comparator;
 import java.util.Objects;
 
-public abstract class Users extends Accounts implements Comparator<Users>, Serializable {
+public abstract class Users extends Accounts implements Comparator<Users>, Serializable, Comparable<Users> {
     private String username;
     private String password;
     private String accountPermission;
@@ -46,16 +46,22 @@ public abstract class Users extends Accounts implements Comparator<Users>, Seria
     }
 
     @Override
+    public int compareTo(Users o) {
+        return this.getUsername().compareTo(o.getUsername());
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Users)) return false;
+        if (!super.equals(o)) return false;
         Users users = (Users) o;
-        return this.getUsername().compareTo(users.getUsername()) == 0;
+        return getUsername().compareTo(users.getUsername()) == 0;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getUsername());
+        return Objects.hash(super.hashCode(), getUsername());
     }
 
     @Override

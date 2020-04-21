@@ -11,6 +11,7 @@ import com.louay.projects.model.chains.member.account.UserFriend;
 import com.louay.projects.model.chains.accounts.Users;
 import com.louay.projects.model.chains.accounts.activity.AccountStatus;
 import com.louay.projects.model.chains.accounts.activity.SignInDate;
+import com.louay.projects.model.chains.member.group.GroupMembers;
 
 import java.util.Collection;
 import java.util.Map;
@@ -59,10 +60,13 @@ public interface SelectUsersDAO {
 
     Map<Long, FriendRequest>  findFriendRequestByReceiver(Request request);
 
+    Map<Long, FriendRequest> findFriendRequestBySenderAndReceiver(Request request);
+
     Map<Long, SignInDate> findSignInDateByUsername(SignInDate signInDate);
 
     Map<Long ,UserFriend> findUserFriendByUsername(Member friend);
 
     Map<Long ,UserFriend> findUserFriendByFriend(Member friend);
 
+    Map<Long, UserFriend> findUserFriendByUserAndFriend(Member friend);
 }
