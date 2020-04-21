@@ -423,6 +423,8 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
             user.setDateCreate(resultSet.getTimestamp(2));
             user.setPicture(resultSet.getBlob(3));
             user.setPictureName(resultSet.getString(4));
+            user.setFirstName(resultSet.getString(5));
+            user.setLastName(resultSet.getString(6));
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -446,9 +448,11 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
         Collection<Users> container = (Collection<Users>) this.ac.getBean("usersContainer");
         try {
             ResultSet resultSet = this.pool.selectResult("SELECT `account`.`username`, `account`.`dateCreate`, " +
-                            "`account_pic`.`pic`, `account_pic`.`picName` FROM `account` INNER JOIN `account_pic` ON " +
-                            "`account`.`username` = `account_pic`.`username` WHERE `account`.`accountPermission` = 'client'" +
-                            " AND `account`.`username` LIKE ?;", (users.getUsername()+"%"));
+                    "`account_pic`.`pic`, `account_pic`.`picName`, `account_detail`.`firstName`, " +
+                    "`account_detail`.`lastName` FROM `account` INNER JOIN `account_pic` ON " +
+                    "`account`.`username` = `account_pic`.`username` INNER JOIN `account_detail` ON " +
+                    "`account`.`username` = `account_detail`.`username` WHERE `account`.`accountPermission` = 'client' " +
+                    "AND `account`.`username` LIKE ?;", (users.getUsername()+"%"));
             buildClientSearchPurposeContainer(resultSet, container);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -474,16 +478,19 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
         Client user = ac.getBean(Client.class);
         try {
             user.setUsername(resultSet.getString(1));
-            user.setFirstName(resultSet.getString(2));
-            user.setLastName(resultSet.getString(3));
-            user.setBirthday(resultSet.getDate(4));
-            user.setAge(resultSet.getString(5));
-            user.setGender(resultSet.getString(6));
-            user.setTelephone(resultSet.getString(7));
-            user.setEmail(resultSet.getString(8));
-            user.setCountry(resultSet.getString(9));
-            user.setState(resultSet.getString(10));
-            user.setAddress(resultSet.getString(11));
+            user.setDateCreate(resultSet.getTimestamp(2));
+            user.setFirstName(resultSet.getString(3));
+            user.setLastName(resultSet.getString(4));
+            user.setBirthday(resultSet.getDate(5));
+            user.setAge(resultSet.getString(6));
+            user.setGender(resultSet.getString(7));
+            user.setTelephone(resultSet.getString(8));
+            user.setEmail(resultSet.getString(9));
+            user.setCountry(resultSet.getString(10));
+            user.setState(resultSet.getString(11));
+            user.setAddress(resultSet.getString(12));
+            user.setPicture(resultSet.getBlob(13));
+            user.setPictureName(resultSet.getString(14));
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -505,8 +512,14 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
         @SuppressWarnings(value = "unchecked")
         Collection<Users> container = (Collection<Users>) this.ac.getBean("usersContainer");
         try {
-            ResultSet resultSet = this.pool.selectResult("SELECT * FROM `account_detail` WHERE `username` = ?;",
-                    user.getUsername());
+            ResultSet resultSet = this.pool.selectResult("SELECT `account`.`username`, `account`.`dateCreate`, " +
+                            "`account_detail`.`firstName`, `account_detail`.`lastName`, `account_detail`.`birthday`, " +
+                            "`account_detail`.`age`, `account_detail`.`gender`, `account_detail`.`telephone`, " +
+                            "`account_detail`.`email`, `account_detail`.`country`, `account_detail`.`state`, " +
+                            "`account_detail`.`address`, `account_pic`.`pic`, `account_pic`.`picName` FROM `account` " +
+                            "INNER JOIN `account_detail` ON `account_detail`.`username` = `account`.`username` " +
+                            "INNER JOIN `account_pic` ON `account_pic`.`username` = `account`.`username` WHERE " +
+                            "`account`.`accountPermission` = 'client' AND `account`.`username` = ?;", user.getUsername());
             buildClientContainer(resultSet, container);
         } catch (SQLException e) {
             System.out.println(e.getMessage());

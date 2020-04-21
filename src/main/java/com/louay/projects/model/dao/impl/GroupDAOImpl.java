@@ -286,6 +286,8 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
             group.setGroupPrivacy(resultSet.getString(2));
             group.setDateCreate(resultSet.getTimestamp(3));
             group.setGroupActivity(resultSet.getString(4));
+            group.setPicture(resultSet.getBlob(5));
+            group.setPictureName(resultSet.getString(6));
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -307,8 +309,11 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
         @SuppressWarnings(value = "unchecked")
         Collection<Groups> container = (Collection<Groups>) ac.getBean("groupContainer");
         try {
-            ResultSet resultSet = this.pool.selectResult("SELECT * FROM `group_detail` WHERE `idGroup` = ?;",
-                    groups.getIdGroup());
+            ResultSet resultSet = this.pool.selectResult("SELECT `group_detail`.`idGroup`, " +
+                            "`group_detail`.`groupPrivacy`, `group_detail`.`groupCreateDate`, " +
+                            "`group_detail`.`groupActivity`, `group_pic`.`pic`, `group_pic`.`picName` FROM " +
+                            "`group_detail` INNER JOIN `group_pic` ON `group_pic`.`idGroup` = `group_detail`.`idGroup` " +
+                            "WHERE `group_detail`.`idGroup` = ?;", groups.getIdGroup());
             buildGroupDetailContainer(resultSet, container);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
