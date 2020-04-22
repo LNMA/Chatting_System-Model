@@ -820,16 +820,17 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
 
     private AccountMessage buildAccountMessageAndNumNotSeen(ResultSet resultSet) {
         AccountMessage message = ac.getBean(AccountMessage.class);
-        Users sourceUser = message.getSourceUser();
+        Client sourceUser = message.getSourceUser();
         Client targetUser = message.getTargetUser();
 
         try {
-            sourceUser.setUsername(resultSet.getString(1));
-            targetUser.setUsername(resultSet.getString(2));
-            targetUser.setFirstName(resultSet.getString(3));
-            targetUser.setLastName(resultSet.getString(4));
-            message.setNumberOfAllMessage(resultSet.getInt(5));
-            message.setNumberOfSeen(resultSet.getInt(6));
+            message.setIdMessage(resultSet.getLong(1));
+            sourceUser.setUsername(resultSet.getString(2));
+            targetUser.setUsername(resultSet.getString(3));
+            sourceUser.setFirstName(resultSet.getString(4));
+            sourceUser.setLastName(resultSet.getString(5));
+            message.setNumberOfAllMessage(resultSet.getInt(6));
+            message.setNumberOfSeen(resultSet.getInt(7));
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -851,11 +852,30 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
         @SuppressWarnings(value = "unchecked")
         Collection<AccountMessage> container = (Collection<AccountMessage>) ac.getBean("accountMessageContainer");
         try {
-            ResultSet resultSet = this.pool.selectResult("SELECT `account_message`.`source`, " +
-                    "`account_message`.`target`, `account_detail`.`firstName`, `account_detail`.`lastName`, " +
-                    "COUNT(*), SUM(`isSeen`)  FROM `account_message` INNER JOIN `account_detail` ON " +
-                    "`account_detail`.`username` = `account_message`.`source` WHERE `account_message`.`target` = ?" +
-                    "GROUP BY `account_message`.`target`", message.getTargetUser().getUsername());
+            ResultSet resultSet = this.pool.selectResult("SELECT `account_message`.`idMessage`, " +
+                    "`account_message`.`source`, `account_message`.`target`, `account_detail`.`firstName`, " +
+                    "`account_detail`.`lastName`, COUNT(*), SUM(`isSeen`)  FROM `account_message` INNER JOIN " +
+                    "`account_detail` ON `account_detail`.`username` = `account_message`.`source` WHERE " +
+                    "`account_message`.`target` = ? GROUP BY `account_message`.`source`",
+                    message.getTargetUser().getUsername());
+            buildAccountMessageAndNumNotSeenContainer(resultSet, container);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return container;
+    }
+
+    @Override
+    public Collection<AccountMessage> findUserMessageAndNumNotSeenBySender(AccountMessage message) {
+        @SuppressWarnings(value = "unchecked")
+        Collection<AccountMessage> container = (Collection<AccountMessage>) ac.getBean("accountMessageContainer");
+        try {
+            ResultSet resultSet = this.pool.selectResult("SELECT `account_message`.`idMessage`," +
+                    "`account_message`.`source`, `account_message`.`target`, `account_detail`.`firstName`, " +
+                    "`account_detail`.`lastName`, COUNT(*), SUM(`isSeen`)  FROM `account_message` INNER JOIN " +
+                    "`account_detail` ON `account_detail`.`username` = `account_message`.`target` WHERE " +
+                    "`account_message`.`source` = ? GROUP BY `account_message`.`target`",
+                    message.getSourceUser().getUsername());
             buildAccountMessageAndNumNotSeenContainer(resultSet, container);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -868,11 +888,11 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
         @SuppressWarnings(value = "unchecked")
         Collection<AccountMessage> container = (Collection<AccountMessage>) ac.getBean("accountMessageContainer");
         try {
-            ResultSet resultSet = this.pool.selectResult("SELECT `account_message`.`source`, " +
-                    "`account_message`.`target`, `account_detail`.`firstName`, `account_detail`.`lastName`, " +
-                    "COUNT(*), SUM(`isSeen`)  FROM `account_message` INNER JOIN `account_detail` ON " +
-                    "`account_detail`.`username` = `account_message`.`target` WHERE `account_message`.`source` = ? " +
-                    "AND `account_message`.`target` = ? GROUP BY `account_message`.`target`",
+            ResultSet resultSet = this.pool.selectResult("SELECT `account_message`.`idMessage`, " +
+                    "`account_message`.`source`, `account_message`.`target`, `account_detail`.`firstName`," +
+                    "`account_detail`.`lastName`, COUNT(*), SUM(`isSeen`)  FROM `account_message` INNER JOIN " +
+                    "`account_detail` ON `account_detail`.`username` = `account_message`.`target` WHERE " +
+                    "`account_message`.`source` = ? AND `account_message`.`target` = ? GROUP BY `account_message`.`target`",
                     message.getSourceUser().getUsername(), message.getTargetUser().getUsername());
             buildAccountMessageAndNumNotSeenContainer(resultSet, container);
         } catch (SQLException e) {

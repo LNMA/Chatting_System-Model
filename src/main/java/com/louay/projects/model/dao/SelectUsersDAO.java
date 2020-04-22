@@ -48,6 +48,8 @@ public interface SelectUsersDAO {
 
     Collection<AccountMessage> findUserMessageAndNumNotSeenByReceiver(AccountMessage message);
 
+    Collection<AccountMessage> findUserMessageAndNumNotSeenBySender(AccountMessage message);
+
     Collection<AccountMessage> findUserMessageAndNumNotSeenBySenderAndReceiver(AccountMessage message);
 
     Collection<Users> findPictureByUsername(Users picture);

@@ -128,12 +128,15 @@ public class AccountMessage implements Comparable<AccountMessage>, Comparator<Ac
         if (this == o) return true;
         if (!(o instanceof AccountMessage)) return false;
         AccountMessage that = (AccountMessage) o;
-        return getIdMessage().compareTo(that.getIdMessage()) == 0;
+        return getIdMessage().compareTo(that.getIdMessage()) == 0 &&
+                getSourceUser().compareTo(that.getSourceUser()) == 0 &&
+                getTargetUser().compareTo(that.getTargetUser()) == 0 &&
+                getSentDate().compareTo(that.getSentDate()) == 0;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getIdMessage());
+        return Objects.hash(getIdMessage(), getSourceUser(), getTargetUser(), getSentDate());
     }
 
     @Override
