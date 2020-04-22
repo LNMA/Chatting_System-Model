@@ -96,7 +96,7 @@ public class BeansFactory {
     @Bean(name = "requestContainer")
     @Scope("prototype")
     public Map<Long, Request> getRequestContainer(){
-        return new LinkedHashMap<>();
+        return new HashMap<>();
     }
 
     @Bean(name = "statusContainer")

@@ -64,6 +64,10 @@ public interface SelectUsersDAO {
 
     Map<Long, FriendRequest> findFriendRequestBySenderAndReceiver(Request request);
 
+    Map<Long, FriendRequest> findFriendRequestAndPicByReceiver(Request request);
+
+    Map<Long, FriendRequest> findFriendRequestAndPicBySender(Request request);
+
     Map<Long, SignInDate> findSignInDateByUsername(SignInDate signInDate);
 
     Map<Long ,UserFriend> findUserFriendByUsername(Member friend);

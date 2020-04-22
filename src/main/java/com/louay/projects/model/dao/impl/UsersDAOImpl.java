@@ -1070,6 +1070,83 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
         return container;
     }
 
+    private FriendRequest buildFriendRequestAndPic(ResultSet resultSet) {
+        FriendRequest request = ac.getBean(FriendRequest.class);
+        Client sourceAccount = request.getSourceAccount();
+        Client targetAccount = request.getTargetAccount();
+        try {
+            sourceAccount.setUsername(resultSet.getString(1));
+            targetAccount.setUsername(resultSet.getString(2));
+            request.setRequestDate(resultSet.getTimestamp(3));
+            sourceAccount.setFirstName(resultSet.getString(4));
+            sourceAccount.setLastName(resultSet.getString(5));
+            sourceAccount.setPicture(resultSet.getBlob(6));
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return request;
+    }
+
+    public void buildFriendRequestAndPicContainer(ResultSet resultSet, Map<Long, FriendRequest> container) {
+        long i = 0;
+        try {
+            while (resultSet.next()) {
+                container.put(i, buildFriendRequestAndPic(resultSet));
+                i++;
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    @Override
+    public Map<Long, FriendRequest> findFriendRequestAndPicByReceiver(Request request) {
+        if (!(request instanceof FriendRequest)) {
+            throw new IllegalArgumentException("Need FriendRequest.");
+        }
+        FriendRequest friendRequest = (FriendRequest) request;
+        @SuppressWarnings(value = "unchecked")
+        Map<Long, FriendRequest> container = (Map<Long, FriendRequest>) ac.getBean("requestContainer");
+        try {
+            ResultSet resultSet = this.pool.selectResult("SELECT `friend_request`.`username`, " +
+                    "`friend_request`.`requestTarget`, `friend_request`.`requestDate`, " +
+                    "`account_detail`.`firstName`, `account_detail`.`lastName`, `account_pic`.`pic` " +
+                    "FROM `friend_request` INNER JOIN `account_detail` ON " +
+                    "`account_detail`.`username` = `friend_request`.`username` INNER JOIN `account_pic` ON " +
+                    "`account_pic`.`username` = `friend_request`.`username` WHERE `friend_request`.`requestTarget` = ?;",
+                    friendRequest.getTargetAccount().getUsername());
+
+            buildFriendRequestAndPicContainer(resultSet, container);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return container;
+    }
+
+    @Override
+    public Map<Long, FriendRequest> findFriendRequestAndPicBySender(Request request) {
+        if (!(request instanceof FriendRequest)) {
+            throw new IllegalArgumentException("Need FriendRequest.");
+        }
+        FriendRequest friendRequest = (FriendRequest) request;
+        @SuppressWarnings(value = "unchecked")
+        Map<Long, FriendRequest> container = (Map<Long, FriendRequest>) ac.getBean("requestContainer");
+        try {
+            ResultSet resultSet = this.pool.selectResult("SELECT `friend_request`.`username`, " +
+                            "`friend_request`.`requestTarget`, `friend_request`.`requestDate`, " +
+                            "`account_detail`.`firstName`, `account_detail`.`lastName`, `account_pic`.`pic` " +
+                            "FROM `friend_request` INNER JOIN `account_detail` ON " +
+                            "`account_detail`.`username` = `friend_request`.`requestTarget` INNER JOIN `account_pic` ON " +
+                            "`account_pic`.`username` = `friend_request`.`requestTarget` WHERE " +
+                            "`friend_request`.`username` = ?;",friendRequest.getSourceAccount().getUsername());
+
+            buildFriendRequestAndPicContainer(resultSet, container);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return container;
+    }
+
     private SignInDate buildSignInDate(ResultSet resultSet) {
         SignInDate signInDate = ac.getBean(SignInDate.class);
         try {
