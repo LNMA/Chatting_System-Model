@@ -1,5 +1,6 @@
 package com.louay.projects.model.dao.impl;
 
+import com.louay.projects.model.chains.accounts.Client;
 import com.louay.projects.model.chains.accounts.Users;
 import com.louay.projects.model.chains.communications.Post;
 import com.louay.projects.model.chains.communications.group.GroupImgPost;
@@ -22,10 +23,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.Collection;
 import java.util.Map;
 
@@ -48,8 +46,10 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
         int result = 0;
         try {
             result = this.pool.updateQuery("INSERT INTO `group_detail`(`idGroup`, `groupPrivacy`, `groupCreateDate`, " +
-                            "`groupActivity`) VALUES (?, ?, ?, ?);", groups.getIdGroup(), groups.getDateCreate(),
-                    groups.getGroupPrivacy(), groups.getGroupActivity());
+                            "`groupActivity`) VALUES (?, ?, ?, ?);", groups.getIdGroup(), groups.getGroupPrivacy(),
+                    groups.getDateCreate(),groups.getGroupActivity());
+        } catch (SQLIntegrityConstraintViolationException e) {
+            return -404;
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -668,6 +668,55 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
                     "`idGroup` = ? ORDER BY `group_member`.`joinDate` DESC;", member.getFriendMember().getUsername(),
                     member.getGroup().getIdGroup());
             buildGroupMemberContainer(resultSet, container);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return container;
+    }
+
+    private GroupMembers buildGroupAndPicAndUser(ResultSet resultSet) {
+        GroupMembers members = ac.getBean(GroupMembers.class);
+        Groups groups = members.getGroup();
+        Client client = members.getFriendMember();
+        try {
+            groups.setIdGroup(resultSet.getString(1));
+            groups.setGroupPrivacy(resultSet.getString(2));
+            groups.setGroupActivity(resultSet.getString(3));
+            groups.setPicture(resultSet.getBlob(4));
+            groups.setPictureName(resultSet.getString(5));
+            client.setUsername(resultSet.getString(6));
+            members.setGroupMemberType(resultSet.getString(7));
+            members.setFriendMemberSince(resultSet.getTimestamp(8));
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return members;
+    }
+
+    public void buildGroupAndPicAndUserContainer(ResultSet resultSet, Map<Long, GroupMembers> container) {
+        long i = 0;
+        try {
+            while (resultSet.next()) {
+                container.put(i, buildGroupAndPicAndUser(resultSet));
+                i++;
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    @Override
+    public Map<Long, GroupMembers>  findGroupAndPicAndUserByUsername(Users users) {
+        @SuppressWarnings(value = "unchecked")
+        Map<Long, GroupMembers> container = (Map<Long, GroupMembers>) ac.getBean("memberContainer");
+        try {
+            ResultSet resultSet = this.pool.selectResult("SELECT `group_detail`.`idGroup`, " +
+                    "`group_detail`.`groupPrivacy`, `group_detail`.`groupActivity`, `group_pic`.`pic`, " +
+                    "`group_pic`.`picName`, `group_member`.`member`, `group_member`.`memberType`, `group_member`.`joinDate` " +
+                    "FROM `group_detail` INNER JOIN `group_member` ON `group_member`.`idGroup` = `group_detail`.`idGroup` " +
+                    "INNER JOIN `group_pic` ON `group_pic`.`idGroup` = `group_detail`.`idGroup` " +
+                    "WHERE `group_member`.`member` = ?", users.getUsername());
+            buildGroupAndPicAndUserContainer(resultSet, container);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
