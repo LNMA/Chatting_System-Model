@@ -146,9 +146,9 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
         GroupMembers members = (GroupMembers) groupMembers;
         int result = 0;
         try {
-            result = this.pool.updateQuery("INSERT INTO `group_member`(`idGroup`, `member`, `joinDate`) VALUES " +
-                    "(?, ?, ?);", members.getGroup().getIdGroup(), members.getFriendMember().getUsername(),
-                    members.getFriendMemberSince());
+            result = this.pool.updateQuery("INSERT INTO `group_member`(`idGroup`, `member`, `memberType`, `joinDate`) " +
+                            "VALUES (?, ?, ?, ?);", members.getGroup().getIdGroup(), members.getFriendMember().getUsername(),
+                             members.getGroupMemberType(), members.getFriendMemberSince());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -461,6 +461,58 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
         return container;
     }
 
+    private GroupTextPost buildGroupTextPostAndUserInfo(ResultSet resultSet) {
+        GroupTextPost post = ac.getBean(GroupTextPost.class);
+        Groups groups = post.getGroups();
+        Client users = post.getUser();
+        try {
+            post.setIdPost(resultSet.getLong(1));
+            groups.setIdGroup(resultSet.getString(2));
+            users.setUsername(resultSet.getString(3));
+            post.setPost(resultSet.getString(4));
+            post.setDatePost(resultSet.getTimestamp(5));
+            users.setFirstName(resultSet.getString(6));
+            users.setLastName(resultSet.getString(7));
+            users.setPicture(resultSet.getBlob(8));
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return post;
+    }
+
+    public void buildGroupTextPostAndUserInfoContainer(ResultSet resultSet, Collection<GroupTextPost> container) {
+        try {
+            while (resultSet.next()) {
+                container.add(buildGroupTextPostAndUserInfo(resultSet));
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    @Override
+    public Collection<GroupTextPost> findGroupTextPostAndUserInfoByIdGroup(Post groupTextPost) {
+        if (!(groupTextPost instanceof GroupTextPost)){
+            throw new IllegalArgumentException("Need GroupTextPost.");
+        }
+        GroupTextPost post = (GroupTextPost) groupTextPost;
+        @SuppressWarnings(value = "unchecked")
+        Collection<GroupTextPost> container = (Collection<GroupTextPost>) ac.getBean("postContainer");
+        try {
+            ResultSet resultSet = this.pool.selectResult("SELECT `group_post`.`idPost`, `group_post`.`idGroupe`, " +
+                    "`group_post`.`username`, `group_post`.`post`,`group_post`.`postDate`,  `account_detail`.`firstName`, " +
+                    "`account_detail`.`lastName`, `account_pic`.`pic` FROM `group_post`" +
+                    "INNER JOIN `account_detail` ON `account_detail`.`username` = `group_post`.`username`" +
+                    "INNER JOIN `account_pic` ON `account_pic`.`username` = `group_post`.`username`" +
+                    "WHERE `group_post`.`idGroupe` = ?;", post.getGroups().getIdGroup());
+
+            buildGroupTextPostAndUserInfoContainer(resultSet, container);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return container;
+    }
+
     private GroupImgPost buildGroupImgPost(ResultSet resultSet) {
         GroupImgPost post = ac.getBean(GroupImgPost.class);
         Groups groups = post.getGroups();
@@ -518,6 +570,60 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
             ResultSet resultSet = this.pool.selectResult("SELECT * FROM `group_img_post` WHERE `username` = ?;",
                     post.getUser().getUsername());
             buildGroupImgPostContainer(resultSet, container);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return container;
+    }
+
+    private GroupImgPost buildGroupImgPostAndUserInfo(ResultSet resultSet) {
+        GroupImgPost post = ac.getBean(GroupImgPost.class);
+        Groups groups = post.getGroups();
+        Client users = post.getUser();
+        try {
+            post.setIdPost(resultSet.getLong(1));
+            groups.setIdGroup(resultSet.getString(2));
+            users.setUsername(resultSet.getString(3));
+            post.setImage(resultSet.getBlob(4));
+            post.setFileName(resultSet.getString(5));
+            post.setDatePost(resultSet.getTimestamp(6));
+            users.setFirstName(resultSet.getString(6));
+            users.setLastName(resultSet.getString(7));
+            users.setPicture(resultSet.getBlob(8));
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return post;
+    }
+
+    public void buildGroupImgPostAndUserInfoContainer(ResultSet resultSet, Collection<GroupImgPost> container) {
+        try {
+            while (resultSet.next()) {
+                container.add(buildGroupImgPostAndUserInfo(resultSet));
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    @Override
+    public Collection<GroupImgPost> findGroupImgPostAndUserInfoByIdGroup(Post groupImgPost) {
+        if (!(groupImgPost instanceof GroupImgPost)){
+            throw new IllegalArgumentException("Need GroupImgPost.");
+        }
+        GroupImgPost post = (GroupImgPost) groupImgPost;
+        @SuppressWarnings(value = "unchecked")
+        Collection<GroupImgPost> container = (Collection<GroupImgPost>) ac.getBean("postContainer");
+        try {
+            ResultSet resultSet = this.pool.selectResult("SELECT `group_img_post`.`idPost`, " +
+                    "`group_img_post`.`idGroup`, `group_img_post`.`username`, `group_img_post`.`img`, " +
+                    "`group_img_post`.`fileName`, `group_img_post`.`dateUpload`, `account_detail`.`firstName`, " +
+                    "`account_detail`.`lastName`, `account_pic`.`pic` FROM `group_img_post` " +
+                    "INNER JOIN `account_detail` ON `account_detail`.`username` = `group_img_post`.`username` " +
+                    "INNER JOIN `account_pic` ON `account_pic`.`username` = `group_img_post`.`username` " +
+                    "WHERE `group_img_post`.`idGroup` = ?;", post.getGroups().getIdGroup());
+
+            buildGroupImgPostAndUserInfoContainer(resultSet, container);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
