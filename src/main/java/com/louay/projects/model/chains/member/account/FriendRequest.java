@@ -2,6 +2,7 @@ package com.louay.projects.model.chains.member.account;
 
 import com.louay.projects.model.chains.accounts.Client;
 import com.louay.projects.model.chains.member.Request;
+import com.louay.projects.model.chains.member.constant.RequestClassName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
@@ -41,6 +42,11 @@ public class FriendRequest extends Request {
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), getSourceAccount());
+    }
+
+    @Override
+    public RequestClassName getRequestClassName() {
+        return RequestClassName.FRIEND_REQUEST;
     }
 
     @Override

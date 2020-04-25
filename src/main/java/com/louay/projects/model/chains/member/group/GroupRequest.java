@@ -2,6 +2,7 @@ package com.louay.projects.model.chains.member.group;
 
 import com.louay.projects.model.chains.accounts.group.Groups;
 import com.louay.projects.model.chains.member.Request;
+import com.louay.projects.model.chains.member.constant.RequestClassName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
@@ -40,6 +41,11 @@ public class GroupRequest extends Request {
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), getSourceGroup());
+    }
+
+    @Override
+    public RequestClassName getRequestClassName() {
+        return RequestClassName.GROUP_REQUEST;
     }
 
     @Override

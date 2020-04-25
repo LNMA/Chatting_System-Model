@@ -2,12 +2,12 @@ package com.louay.projects.model.chains.member.group;
 
 import com.louay.projects.model.chains.accounts.group.Groups;
 import com.louay.projects.model.chains.member.Request;
+import com.louay.projects.model.chains.member.constant.RequestClassName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.sql.Timestamp;
 import java.util.Objects;
 
 @Configuration
@@ -16,7 +16,6 @@ import java.util.Objects;
 public class GroupInvite extends Request {
     @Autowired
     private Groups sourceGroup;
-    private java.sql.Timestamp inviteDate;
 
     public GroupInvite() {
     }
@@ -27,14 +26,6 @@ public class GroupInvite extends Request {
 
     public void setSourceGroup(Groups sourceGroup) {
         this.sourceGroup = sourceGroup;
-    }
-
-    public Timestamp getInviteDate() {
-        return inviteDate;
-    }
-
-    public void setInviteDate(Timestamp inviteDate) {
-        this.inviteDate = inviteDate;
     }
 
     @Override
@@ -52,10 +43,14 @@ public class GroupInvite extends Request {
     }
 
     @Override
+    public RequestClassName getRequestClassName() {
+        return RequestClassName.GROUP_INVITE;
+    }
+
+    @Override
     public String toString() {
         return super.toString()+", GroupInvite{" +
                 "sourceGroup=" + sourceGroup +
-                ", inviteDate=" + inviteDate +
                 '}';
     }
 }
