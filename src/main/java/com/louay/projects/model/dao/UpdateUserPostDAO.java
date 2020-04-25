@@ -10,6 +10,8 @@ public interface UpdateUserPostDAO {
 
     int updateAccountMassageByIdMessage(AccountMessage message);
 
+    int updateAccountMassageSeenBySenderAndReceiver(AccountMessage message);
+
     int updateAccountPictureByUsername(Users picture);
 
     int updateAccountImgPostByIdPost(Post post);

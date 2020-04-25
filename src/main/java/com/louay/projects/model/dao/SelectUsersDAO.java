@@ -11,6 +11,7 @@ import com.louay.projects.model.chains.member.account.UserFriend;
 import com.louay.projects.model.chains.accounts.Users;
 import com.louay.projects.model.chains.accounts.activity.AccountStatus;
 import com.louay.projects.model.chains.accounts.activity.SignInDate;
+import com.louay.projects.model.chains.member.group.GroupMembers;
 
 import java.util.Collection;
 import java.util.Map;
@@ -39,9 +40,17 @@ public interface SelectUsersDAO {
 
     Collection<AccountMessage> findUserMessageByIdMessage(AccountMessage message);
 
-    Collection<AccountMessage> findUserMessageBySender(AccountMessage message);
+    Collection<AccountMessage> findUserMessageBySenderAndReceiver(AccountMessage message);
 
     Collection<AccountMessage> findUserMessageByReceiver(AccountMessage message);
+
+    Collection<AccountMessage> findUserMessageAndTargetPicBySenderAndReceiver(AccountMessage message);
+
+    Collection<AccountMessage> findUserMessageAndNumNotSeenByReceiver(AccountMessage message);
+
+    Collection<AccountMessage> findUserMessageAndNumNotSeenBySender(AccountMessage message);
+
+    Collection<AccountMessage> findUserMessageAndNumNotSeenBySenderAndReceiver(AccountMessage message);
 
     Collection<Users> findPictureByUsername(Users picture);
 
@@ -53,10 +62,17 @@ public interface SelectUsersDAO {
 
     Map<Long, FriendRequest>  findFriendRequestByReceiver(Request request);
 
+    Map<Long, FriendRequest> findFriendRequestBySenderAndReceiver(Request request);
+
+    Map<Long, FriendRequest> findFriendRequestAndPicByReceiver(Request request);
+
+    Map<Long, FriendRequest> findFriendRequestAndPicBySender(Request request);
+
     Map<Long, SignInDate> findSignInDateByUsername(SignInDate signInDate);
 
     Map<Long ,UserFriend> findUserFriendByUsername(Member friend);
 
     Map<Long ,UserFriend> findUserFriendByFriend(Member friend);
 
+    Map<Long, UserFriend> findUserFriendByUserAndFriend(Member friend);
 }

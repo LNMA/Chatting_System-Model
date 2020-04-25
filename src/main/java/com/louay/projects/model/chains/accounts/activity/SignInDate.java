@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.sql.Timestamp;
+import java.util.Objects;
 
 @Configuration
 @Component
@@ -30,6 +31,20 @@ public class SignInDate {
 
     public void setSignInDate(Timestamp signInDate) {
         this.signInDate = signInDate;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof SignInDate)) return false;
+        SignInDate that = (SignInDate) o;
+        return getUsername().compareTo(that.getUsername()) == 0&&
+                getSignInDate().compareTo(that.getSignInDate()) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getUsername(), getSignInDate());
     }
 
     @Override

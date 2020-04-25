@@ -6,7 +6,6 @@ import com.louay.projects.model.chains.communications.Post;
 import com.louay.projects.model.chains.communications.account.AccountMessage;
 import com.louay.projects.model.chains.member.Member;
 import com.louay.projects.model.chains.member.Request;
-import com.louay.projects.model.chains.member.group.GroupInvite;
 import com.louay.projects.model.chains.accounts.Users;
 import com.louay.projects.model.chains.accounts.activity.AccountStatus;
 import com.louay.projects.model.chains.accounts.activity.SignInDate;
@@ -96,7 +95,7 @@ public class BeansFactory {
     @Bean(name = "requestContainer")
     @Scope("prototype")
     public Map<Long, Request> getRequestContainer(){
-        return new LinkedHashMap<>();
+        return new HashMap<>();
     }
 
     @Bean(name = "statusContainer")
@@ -114,13 +113,7 @@ public class BeansFactory {
     @Bean(name = "accountMessageContainer")
     @Scope("prototype")
     public Collection<AccountMessage> getAccountMessageContainer(){
-        return new LinkedHashSet<>();
-    }
-
-    @Bean(name = "groupInviteContainer")
-    @Scope("prototype")
-    public Map<Long, GroupInvite> getGroupInviteContainer(){
-        return new LinkedHashMap<>();
+        return new HashSet<>();
     }
 
     @Bean(name = "groupContainer")

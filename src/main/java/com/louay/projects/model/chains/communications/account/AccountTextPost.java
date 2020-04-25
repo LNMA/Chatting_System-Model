@@ -7,6 +7,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
+
 
 @Configuration
 @Component
@@ -26,7 +28,7 @@ public class AccountTextPost extends Post {
     }
 
     public void setPostStringBuilder(StringBuilder post){
-        this.post = new StringBuilder(post);
+        this.post = post;
     }
 
     public void setEditPost(StringBuilder post){
@@ -42,6 +44,20 @@ public class AccountTextPost extends Post {
     @Override
     public PostClassName getClassName() {
         return PostClassName.ACCOUNT_TEX_POST;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof AccountTextPost)) return false;
+        if (!super.equals(o)) return false;
+        AccountTextPost that = (AccountTextPost) o;
+        return getPost() == (that.getPost());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), getPost());
     }
 
     @Override

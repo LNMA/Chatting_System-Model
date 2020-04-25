@@ -10,11 +10,12 @@ import org.springframework.stereotype.Component;
 import java.sql.Blob;
 import java.sql.SQLException;
 import java.util.Base64;
+import java.util.Objects;
 
 @Configuration
 @Component
 @Scope("prototype")
-public class AccountImgPost extends Post{
+public class AccountImgPost extends Post {
     java.sql.Blob image;
     String fileName;
 
@@ -57,6 +58,21 @@ public class AccountImgPost extends Post{
     @Override
     public PostClassName getClassName() {
         return PostClassName.ACCOUNT_IMG_POST;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof AccountImgPost)) return false;
+        if (!super.equals(o)) return false;
+        AccountImgPost imgPost = (AccountImgPost) o;
+        return getImage() == (imgPost.getImage()) &&
+                getFileName().compareTo(imgPost.getFileName()) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), getImage(), getFileName());
     }
 
     @Override
