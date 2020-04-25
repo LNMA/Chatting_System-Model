@@ -371,8 +371,8 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
             post.setIdPost(resultSet.getLong(1));
             groups.setIdGroup(resultSet.getString(2));
             users.setUsername(resultSet.getString(3));
-            post.setPost(resultSet.getString(3));
-            post.setDatePost(resultSet.getTimestamp(4));
+            post.setPost(resultSet.getString(4));
+            post.setDatePost(resultSet.getTimestamp(5));
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -587,9 +587,9 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
             post.setImage(resultSet.getBlob(4));
             post.setFileName(resultSet.getString(5));
             post.setDatePost(resultSet.getTimestamp(6));
-            users.setFirstName(resultSet.getString(6));
-            users.setLastName(resultSet.getString(7));
-            users.setPicture(resultSet.getBlob(8));
+            users.setFirstName(resultSet.getString(7));
+            users.setLastName(resultSet.getString(8));
+            users.setPicture(resultSet.getBlob(9));
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -659,7 +659,7 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
     @Override
     public Map<Long, GroupInvite> findGroupInviteByIdGroup(GroupInvite invite) {
         @SuppressWarnings(value = "unchecked")
-        Map<Long, GroupInvite> container = (Map<Long, GroupInvite>) ac.getBean("groupInviteContainer");
+        Map<Long, GroupInvite> container = (Map<Long, GroupInvite>) ac.getBean("requestContainer");
         try {
             ResultSet resultSet = this.pool.selectResult("SELECT * FROM `group_invite` WHERE `source` = ? ORDER BY " +
                     "`group_invite`.`inviteDate` DESC;", invite.getSourceGroup().getIdGroup());
@@ -673,7 +673,7 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
     @Override
     public Map<Long, GroupInvite> findGroupInviteByUsername(GroupInvite invite) {
         @SuppressWarnings(value = "unchecked")
-        Map<Long, GroupInvite> container = (Map<Long, GroupInvite>) ac.getBean("groupInviteContainer");
+        Map<Long, GroupInvite> container = (Map<Long, GroupInvite>) ac.getBean("requestContainer");
         try {
             ResultSet resultSet = this.pool.selectResult("SELECT * FROM `group_invite` WHERE `target` = ? ORDER BY " +
                     "`group_invite`.`inviteDate` DESC;", invite.getTargetAccount().getUsername());
@@ -687,12 +687,104 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
     @Override
     public Map<Long, GroupInvite> findGroupInviteByUsernameAndIdGroup(GroupInvite invite) {
         @SuppressWarnings(value = "unchecked")
-        Map<Long, GroupInvite> container = (Map<Long, GroupInvite>) ac.getBean("groupInviteContainer");
+        Map<Long, GroupInvite> container = (Map<Long, GroupInvite>) ac.getBean("requestContainer");
         try {
             ResultSet resultSet = this.pool.selectResult("SELECT * FROM `group_invite` WHERE `source` = ? AND " +
                     "`target` = ? ORDER BY `group_invite`.`inviteDate` DESC;", invite.getSourceGroup().getIdGroup(),
                     invite.getTargetAccount().getUsername());
             buildGroupInviteContainer(resultSet, container);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return container;
+    }
+
+    private GroupInvite buildGroupInviteAndTargetInfo(ResultSet resultSet) {
+        GroupInvite invite = ac.getBean(GroupInvite.class);
+        Groups groups = invite.getSourceGroup();
+        Client target = invite.getTargetAccount();
+        try {
+            groups.setIdGroup(resultSet.getString(1));
+            target.setUsername(resultSet.getString(2));
+            invite.setInviteDate(resultSet.getTimestamp(3));
+            target.setFirstName(resultSet.getString(4));
+            target.setLastName(resultSet.getString(5));
+            target.setPicture(resultSet.getBlob(6));
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return invite;
+    }
+
+    public void buildGroupInviteAndTargetInfoContainer(ResultSet resultSet, Map<Long, GroupInvite> container) {
+        long i = 0;
+        try {
+            while (resultSet.next()) {
+                container.put(i, buildGroupInviteAndTargetInfo(resultSet));
+                i++;
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    @Override
+    public Map<Long, GroupInvite> findGroupInviteAndTargetInfoByUsername(GroupInvite invite) {
+        @SuppressWarnings(value = "unchecked")
+        Map<Long, GroupInvite> container = (Map<Long, GroupInvite>) ac.getBean("requestContainer");
+        try {
+            ResultSet resultSet = this.pool.selectResult("SELECT `group_invite`.`source`, `group_invite`.`target`, " +
+                            "`group_invite`.`inviteDate`, `account_detail`.`firstName`, `account_detail`.`lastName`, " +
+                            "`account_pic`.`pic` FROM `group_invite` INNER JOIN `account_detail` ON " +
+                            "`account_detail`.`username` = `group_invite`.`target` INNER JOIN `account_pic` ON " +
+                            "`account_pic`.`username` = `group_invite`.`target` WHERE `group_invite`.`target` = ? ;",
+                            invite.getTargetAccount().getUsername());
+
+            buildGroupInviteAndTargetInfoContainer(resultSet, container);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return container;
+    }
+
+    private GroupInvite buildGroupInviteAndGroupPic(ResultSet resultSet) {
+        GroupInvite invite = ac.getBean(GroupInvite.class);
+        Groups groups = invite.getSourceGroup();
+        Client target = invite.getTargetAccount();
+        try {
+            groups.setIdGroup(resultSet.getString(1));
+            target.setUsername(resultSet.getString(2));
+            invite.setInviteDate(resultSet.getTimestamp(3));
+            groups.setPicture(resultSet.getBlob(4));
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return invite;
+    }
+
+    public void buildGroupInviteAndGroupPicContainer(ResultSet resultSet, Map<Long, GroupInvite> container) {
+        long i = 0;
+        try {
+            while (resultSet.next()) {
+                container.put(i, buildGroupInviteAndGroupPic(resultSet));
+                i++;
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    @Override
+    public Map<Long, GroupInvite> findGroupInviteAndGroupPicByUsername(GroupInvite invite) {
+        @SuppressWarnings(value = "unchecked")
+        Map<Long, GroupInvite> container = (Map<Long, GroupInvite>) ac.getBean("requestContainer");
+        try {
+            ResultSet resultSet = this.pool.selectResult("SELECT `group_invite`.`source`, `group_invite`.`target`, " +
+                    "`group_invite`.`inviteDate`, `group_pic`.`pic` FROM `group_invite` " +
+                    "INNER JOIN `group_pic` ON `group_pic`.`idGroup` = `group_invite`.`source` " +
+                    "WHERE `group_invite`.`target` = ?;", invite.getTargetAccount().getUsername());
+
+            buildGroupInviteAndGroupPicContainer(resultSet, container);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -821,8 +913,57 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
                     "`group_pic`.`picName`, `group_member`.`member`, `group_member`.`memberType`, `group_member`.`joinDate` " +
                     "FROM `group_detail` INNER JOIN `group_member` ON `group_member`.`idGroup` = `group_detail`.`idGroup` " +
                     "INNER JOIN `group_pic` ON `group_pic`.`idGroup` = `group_detail`.`idGroup` " +
-                    "WHERE `group_member`.`member` = ?", users.getUsername());
+                    "WHERE `group_member`.`member` = ?;", users.getUsername());
             buildGroupAndPicAndUserContainer(resultSet, container);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return container;
+    }
+
+    private GroupMembers buildGroupMemberAndInfo(ResultSet resultSet) {
+        GroupMembers members = ac.getBean(GroupMembers.class);
+        Groups groups = members.getGroup();
+        Client client = members.getFriendMember();
+        try {
+            groups.setIdGroup(resultSet.getString(1));
+            client.setUsername(resultSet.getString(2));
+            members.setGroupMemberType(resultSet.getString(3));
+            members.setFriendMemberSince(resultSet.getTimestamp(4));
+            client.setFirstName(resultSet.getString(5));
+            client.setLastName(resultSet.getString(6));
+            client.setPicture(resultSet.getBlob(7));
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return members;
+    }
+
+    public void buildGroupMemberAndInfoContainer(ResultSet resultSet, Map<Long, GroupMembers> container) {
+        long i = 0;
+        try {
+            while (resultSet.next()) {
+                container.put(i, buildGroupMemberAndInfo(resultSet));
+                i++;
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    @Override
+    public Map<Long, GroupMembers>  findGroupMemberAndInfoByIdGroup(Groups groups) {
+        @SuppressWarnings(value = "unchecked")
+        Map<Long, GroupMembers> container = (Map<Long, GroupMembers>) ac.getBean("memberContainer");
+        try {
+            ResultSet resultSet = this.pool.selectResult("SELECT `group_member`.`idGroup`, `group_member`.`member`, " +
+                    "`group_member`.`memberType`, `group_member`.`joinDate`,  `account_detail`.`firstName`, " +
+                    "`account_detail`.`lastName`, `account_pic`.`pic` FROM `group_member` " +
+                    "INNER JOIN `account_detail` ON `group_member`.`member` = `account_detail`.`username` " +
+                    "INNER JOIN `account_pic` ON `account_pic`.`username` = `group_member`.`member` " +
+                    "WHERE `group_member`.`idGroup` = ?;", groups.getIdGroup());
+
+            buildGroupMemberAndInfoContainer(resultSet, container);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -901,8 +1042,8 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
         @SuppressWarnings(value = "unchecked")
         Map<Long, GroupRequest> container = (Map<Long, GroupRequest>) ac.getBean("requestContainer");
         try {
-            ResultSet resultSet = this.pool.selectResult("SELECT * FROM `group_request` WHERE `idGroup` = ? ORDER " +
-                    "BY `group_request`.`sentDate` DESC;", request.getSourceGroup().getIdGroup());
+            ResultSet resultSet = this.pool.selectResult("SELECT * FROM `group_request` WHERE `idGroup` = ? ;",
+                    request.getSourceGroup().getIdGroup());
             buildGroupRequestContainer(resultSet, container);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -919,8 +1060,8 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
         @SuppressWarnings(value = "unchecked")
         Map<Long, GroupRequest> container = (Map<Long, GroupRequest>) ac.getBean("requestContainer");
         try {
-            ResultSet resultSet = this.pool.selectResult("SELECT * FROM `group_request` WHERE `requestTarget` = ? " +
-                    "ORDER BY `group_request`.`sentDate` DESC;", request.getTargetAccount().getUsername());
+            ResultSet resultSet = this.pool.selectResult("SELECT * FROM `group_request` WHERE `requestTarget` = ? ;",
+                    request.getTargetAccount().getUsername());
             buildGroupRequestContainer(resultSet, container);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -938,8 +1079,83 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
         Map<Long, GroupRequest> container = (Map<Long, GroupRequest>) ac.getBean("requestContainer");
         try {
             ResultSet resultSet = this.pool.selectResult("SELECT * FROM `group_request` WHERE `idGroup` = ? AND " +
-                    "`requestTarget` = ? ORDER BY `group_request`.`sentDate` DESC;", request.getTargetAccount().getUsername());
+                    "`requestTarget` = ?;", request.getTargetAccount().getUsername());
             buildGroupRequestContainer(resultSet, container);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return container;
+    }
+
+    private GroupRequest buildGroupRequestAndInfo(ResultSet resultSet) {
+        GroupRequest request = ac.getBean(GroupRequest.class);
+        Groups groups = request.getSourceGroup();
+        Client client = request.getTargetAccount();
+        try {
+            groups.setIdGroup(resultSet.getString(1));
+            client.setUsername(resultSet.getString(2));
+            request.setRequestDate(resultSet.getTimestamp(3));
+            client.setFirstName(resultSet.getString(4));
+            client.setLastName(resultSet.getString(5));
+            client.setPicture(resultSet.getBlob(6));
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return request;
+    }
+
+    public void buildGroupRequestAndInfoContainer(ResultSet resultSet, Map<Long, GroupRequest> container) {
+        long i = 0;
+        try {
+            while (resultSet.next()) {
+                container.put(i, buildGroupRequestAndInfo(resultSet));
+                i++;
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    @Override
+    public Map<Long, GroupRequest> findGroupRequestAndInfoByUsername(Request groupRequest) {
+        if (!(groupRequest instanceof GroupRequest)){
+            throw new IllegalArgumentException("Need GroupRequest.");
+        }
+        GroupRequest request = (GroupRequest) groupRequest;
+        @SuppressWarnings(value = "unchecked")
+        Map<Long, GroupRequest> container = (Map<Long, GroupRequest>) ac.getBean("requestContainer");
+        try {
+            ResultSet resultSet = this.pool.selectResult("SELECT `group_request`.`idGroup`, " +
+                    "`group_request`.`requestTarget`, `group_request`.`sentDate`, `account_detail`.`firstName`, " +
+                    "`account_detail`.`lastName`, `account_pic`.`pic` FROM `group_request` " +
+                    "INNER JOIN `account_detail` ON `account_detail`.`username` = `group_request`.`requestTarget` " +
+                    "INNER JOIN `account_pic` ON `account_pic`.`username` = `group_request`.`requestTarget` " +
+                    "WHERE `group_request`.`requestTarget` = ?;", request.getTargetAccount().getUsername());
+
+            buildGroupRequestAndInfoContainer(resultSet, container);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return container;
+    }
+
+    @Override
+    public Map<Long, GroupRequest> findGroupRequestAndInfoByIdGroup(Request groupRequest) {
+        if (!(groupRequest instanceof GroupRequest)){
+            throw new IllegalArgumentException("Need GroupRequest.");
+        }
+        GroupRequest request = (GroupRequest) groupRequest;
+        @SuppressWarnings(value = "unchecked")
+        Map<Long, GroupRequest> container = (Map<Long, GroupRequest>) ac.getBean("requestContainer");
+        try {
+            ResultSet resultSet = this.pool.selectResult("SELECT `group_request`.`idGroup`, " +
+                    "`group_request`.`requestTarget`, `group_request`.`sentDate`, `account_detail`.`firstName`, " +
+                    "`account_detail`.`lastName`, `account_pic`.`pic` FROM `group_request` " +
+                    "INNER JOIN `account_detail` ON `account_detail`.`username` = `group_request`.`requestTarget` " +
+                    "INNER JOIN `account_pic` ON `account_pic`.`username` = `group_request`.`requestTarget` " +
+                    "WHERE `group_request`.`idGroup` = ?;", request.getSourceGroup().getIdGroup());
+
+            buildGroupRequestAndInfoContainer(resultSet, container);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }

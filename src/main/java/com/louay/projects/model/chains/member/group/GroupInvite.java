@@ -1,7 +1,7 @@
 package com.louay.projects.model.chains.member.group;
 
-import com.louay.projects.model.chains.accounts.Client;
 import com.louay.projects.model.chains.accounts.group.Groups;
+import com.louay.projects.model.chains.member.Request;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
@@ -13,11 +13,9 @@ import java.util.Objects;
 @Configuration
 @Component
 @Scope("prototype")
-public class GroupInvite {
+public class GroupInvite extends Request {
     @Autowired
     private Groups sourceGroup;
-    @Autowired
-    private Client targetAccount;
     private java.sql.Timestamp inviteDate;
 
     public GroupInvite() {
@@ -29,14 +27,6 @@ public class GroupInvite {
 
     public void setSourceGroup(Groups sourceGroup) {
         this.sourceGroup = sourceGroup;
-    }
-
-    public Client getTargetAccount() {
-        return targetAccount;
-    }
-
-    public void setTargetAccount(Client targetAccount) {
-        this.targetAccount = targetAccount;
     }
 
     public Timestamp getInviteDate() {
@@ -51,22 +41,20 @@ public class GroupInvite {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof GroupInvite)) return false;
-        GroupInvite that = (GroupInvite) o;
-        return getSourceGroup().compareTo(that.getSourceGroup()) == 0 &&
-                getTargetAccount().compareTo(that.getTargetAccount()) == 0 &&
-                getInviteDate().compareTo(that.getInviteDate()) == 0 ;
+        if (!super.equals(o)) return false;
+        GroupInvite invite = (GroupInvite) o;
+        return getSourceGroup().equals(invite.getSourceGroup());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getSourceGroup(), getTargetAccount(), getInviteDate());
+        return Objects.hash(super.hashCode(), getSourceGroup());
     }
 
     @Override
     public String toString() {
-        return "GroupInvite{" +
+        return super.toString()+", GroupInvite{" +
                 "sourceGroup=" + sourceGroup +
-                ", targetAccount=" + targetAccount +
                 ", inviteDate=" + inviteDate +
                 '}';
     }

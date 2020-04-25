@@ -42,15 +42,21 @@ public interface SelectGroupDAO {
 
     Map<Long, GroupInvite> findGroupInviteByUsernameAndIdGroup(GroupInvite invite);
 
+    Map<Long, GroupInvite> findGroupInviteAndTargetInfoByUsername(GroupInvite invite);
+
+    Map<Long, GroupInvite> findGroupInviteAndGroupPicByUsername(GroupInvite invite);
+
     Map<Long, GroupMembers> findGroupMemberByIdGroup(Member member);
 
     Map<Long, GroupMembers> findGroupMemberByUsername(Member member);
+
+    Map<Long, GroupMembers>  findGroupMemberAndInfoByIdGroup(Groups groups);
 
     Map<Long, GroupMembers>  findGroupAndPicAndUserByUsername(Users users);
 
     Map<Long, GroupMembers> findGroupMemberByUsernameAndIdGroup(Member groupMembers);
 
-    Collection<Groups> findGroupPictureByIdGroup(Groups picture);
+    Collection <Groups> findGroupPictureByIdGroup(Groups picture);
 
     Map<Long, GroupRequest> findGroupRequestByIdGroup(Request request);
 
@@ -58,5 +64,7 @@ public interface SelectGroupDAO {
 
     Map<Long, GroupRequest> findGroupRequestByUsernameAndIdGroup(Request groupRequest);
 
+    Map<Long, GroupRequest> findGroupRequestAndInfoByUsername(Request groupRequest);
 
+    Map<Long, GroupRequest> findGroupRequestAndInfoByIdGroup(Request groupRequest);
 }
