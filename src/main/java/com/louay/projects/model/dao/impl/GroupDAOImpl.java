@@ -353,7 +353,7 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
             ResultSet resultSet = this.pool.selectResult("SELECT `group_detail`.`idGroup`, " +
                     "`group_detail`.`groupCreateDate`, `group_pic`.`pic`, `group_pic`.`picName` FROM `group_detail` " +
                     "INNER JOIN `group_pic` ON `group_detail`.`idGroup` = `group_pic`.`idGroup` WHERE " +
-                    "`group_detail`.`groupPrivacy` IN ('hidden') AND `group_detail`.`idGroup` LIKE ?;",
+                    "`group_detail`.`groupPrivacy` <> 'hidden' AND `group_detail`.`idGroup` LIKE ?;",
                     (groups.getIdGroup()+"%"));
             buildGroupSearchPurposeContainer(resultSet, container);
         } catch (SQLException e) {
@@ -781,8 +781,8 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
         return invite;
     }
 
-    public void buildGroupInviteAndGroupPicContainer(ResultSet resultSet, Map<Long, GroupInvite> container) {
-        long i = 0;
+    public void buildGroupInviteAndGroupPicContainer(ResultSet resultSet, Map<Long, GroupInvite> container, long startKey) {
+        long i = startKey;
         try {
             while (resultSet.next()) {
                 container.put(i, buildGroupInviteAndGroupPic(resultSet));
@@ -794,7 +794,7 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
     }
 
     @Override
-    public Map<Long, GroupInvite> findGroupInviteAndGroupPicByUsername(GroupInvite invite) {
+    public Map<Long, GroupInvite> findGroupInviteAndGroupPicByUsername(GroupInvite invite, long startKey) {
         @SuppressWarnings(value = "unchecked")
         Map<Long, GroupInvite> container = (Map<Long, GroupInvite>) ac.getBean("requestContainer");
         try {
@@ -803,7 +803,7 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
                     "INNER JOIN `group_pic` ON `group_pic`.`idGroup` = `group_invite`.`source` " +
                     "WHERE `group_invite`.`target` = ?;", invite.getTargetAccount().getUsername());
 
-            buildGroupInviteAndGroupPicContainer(resultSet, container);
+            buildGroupInviteAndGroupPicContainer(resultSet, container, startKey);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -1098,7 +1098,7 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
         Map<Long, GroupRequest> container = (Map<Long, GroupRequest>) ac.getBean("requestContainer");
         try {
             ResultSet resultSet = this.pool.selectResult("SELECT * FROM `group_request` WHERE `idGroup` = ? AND " +
-                    "`requestTarget` = ?;", request.getTargetAccount().getUsername());
+                    "`requestTarget` = ?;", request.getSourceGroup().getIdGroup(), request.getTargetAccount().getUsername());
             buildGroupRequestContainer(resultSet, container);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -1220,7 +1220,7 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
         int result = 0;
         try {
             result = this.pool.updateQuery("DELETE FROM `group_invite` WHERE `source` = ? AND `target` = ? ;",
-                    invite.getSourceGroup().getIdGroup(), invite.getTargetAccount());
+                    invite.getSourceGroup().getIdGroup(), invite.getTargetAccount().getUsername());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }

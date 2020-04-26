@@ -6,9 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.Comparator;
 import java.util.Objects;
 
-public abstract class Request implements Comparable<Request>, Serializable {
+public abstract class Request implements Comparator<Request> , Serializable, Comparable<Request>{
     @Autowired
     private Client targetAccount;
     private java.sql.Timestamp requestDate;
@@ -46,6 +47,13 @@ public abstract class Request implements Comparable<Request>, Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(getTargetAccount(), getRequestDate());
+    }
+
+    @Override
+    public int compare(Request o1, Request o2) {
+        java.sql.Timestamp date1 = o1.getRequestDate();
+        java.sql.Timestamp date2 = o2.getRequestDate();
+        return date1.compareTo(date2);
     }
 
     @Override

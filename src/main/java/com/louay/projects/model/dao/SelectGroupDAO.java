@@ -46,7 +46,7 @@ public interface SelectGroupDAO {
 
     Map<Long, GroupInvite> findGroupInviteAndTargetInfoByIdGroup(GroupInvite invite);
 
-    Map<Long, GroupInvite> findGroupInviteAndGroupPicByUsername(GroupInvite invite);
+    Map<Long, GroupInvite> findGroupInviteAndGroupPicByUsername(GroupInvite invite, long startKey);
 
     Map<Long, GroupMembers> findGroupMemberByIdGroup(Member member);
 

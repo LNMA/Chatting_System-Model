@@ -34,7 +34,7 @@ public class GroupInvite extends Request {
         if (!(o instanceof GroupInvite)) return false;
         if (!super.equals(o)) return false;
         GroupInvite invite = (GroupInvite) o;
-        return getSourceGroup().equals(invite.getSourceGroup());
+        return getSourceGroup().compareTo(invite.getSourceGroup()) == 0;
     }
 
     @Override
