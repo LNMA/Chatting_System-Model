@@ -32,6 +32,8 @@ public interface SelectGroupDAO {
 
     Collection<GroupImgPost> findGroupImgPostByUsername(Post post);
 
+    Collection<GroupImgPost> findGroupImgPostByIdGroup(Post groupImgPost);
+
     Collection<GroupImgPost> findGroupImgPostByIdPost(Post post);
 
     Collection<GroupImgPost> findGroupImgPostAndUserInfoByIdGroup(Post groupImgPost);
@@ -69,4 +71,6 @@ public interface SelectGroupDAO {
     Map<Long, GroupRequest> findGroupRequestAndInfoByUsername(Request groupRequest);
 
     Map<Long, GroupRequest> findGroupRequestAndInfoByIdGroup(Request groupRequest);
+
+    Map<Long, GroupRequest> findGroupRequestAndGroupPicByUsername(Request groupRequest, long startKey);
 }

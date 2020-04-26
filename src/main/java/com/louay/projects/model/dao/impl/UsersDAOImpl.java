@@ -938,21 +938,6 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
         return container;
     }
 
-    @Override
-    public Collection<Users> findFriendAndPictureByUsername(Users users) {
-        @SuppressWarnings(value = "unchecked")
-        Collection<Users> container = (Collection<Users>) ac.getBean("usersContainer");
-        try {
-            ResultSet resultSet = this.pool.selectResult("SELECT `account_pic`.* FROM `account_pic` INNER JOIN `user_friend` ON " +
-                            "`account_pic`.`username` = `user_friend`.`friend` WHERE `user_friend`.`username` = ?;"
-                    , users.getUsername());
-            buildAccountPicture(resultSet, container);
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-        return container;
-    }
-
     private AccountStatus buildAccountStatus(ResultSet resultSet) {
         AccountStatus status = ac.getBean(AccountStatus.class);
         try {
@@ -1260,6 +1245,58 @@ public class UsersDAOImpl implements CreateUsersDAO, InsertUserPostDAO, AccountS
             ResultSet resultSet = this.pool.selectResult("SELECT * FROM `user_friend` WHERE `friend` = ? ORDER " +
                     "BY `user_friend`.`friendSince` DESC;", member.getFriendMember().getUsername());
             buildUserFriendContainer(resultSet, container);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return container;
+    }
+
+    private UserFriend buildUserFriendAndInfo(ResultSet resultSet) {
+        UserFriend friend = ac.getBean(UserFriend.class);
+        Client users = friend.getUser();
+        Client friendUser = friend.getFriendMember();
+        try {
+            users.setUsername(resultSet.getString(1));
+            friendUser.setUsername(resultSet.getString(2));
+            friend.setFriendMemberSince(resultSet.getTimestamp(3));
+            friendUser.setFirstName(resultSet.getString(4));
+            friendUser.setLastName(resultSet.getString(5));
+            friendUser.setPicture(resultSet.getBlob(6));
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return friend;
+    }
+
+    public void buildUserFriendAndInfoContainer(ResultSet resultSet, Map<Long, UserFriend> container) {
+        long i = 0;
+        try {
+            while (resultSet.next()) {
+                container.put(i, buildUserFriendAndInfo(resultSet));
+                i++;
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    @Override
+    public Map<Long, UserFriend> findUserFriendAndInfoByUsername(Member friend) {
+        if (!(friend instanceof UserFriend)) {
+            throw new IllegalArgumentException("Need Member.");
+        }
+        UserFriend member = (UserFriend) friend;
+        @SuppressWarnings(value = "unchecked")
+        Map<Long, UserFriend> container = (Map<Long, UserFriend>) ac.getBean("memberContainer");
+        try {
+            ResultSet resultSet = this.pool.selectResult("SELECT `user_friend`.`username`, `user_friend`.`friend`, " +
+                            "`user_friend`.`friendSince`, `account_detail`.`firstName`, `account_detail`.`lastName`, " +
+                            "`account_pic`.`pic` FROM `user_friend` " +
+                            "INNER JOIN `account_detail` ON `account_detail`.`username` = `user_friend`.`friend` " +
+                            "INNER JOIN `account_pic` ON `account_pic`.`username` = `user_friend`.`friend` " +
+                            "WHERE `user_friend`.`username` = ?;"
+                            , member.getUser().getUsername());
+            buildUserFriendAndInfoContainer(resultSet, container);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }

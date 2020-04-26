@@ -56,8 +56,6 @@ public interface SelectUsersDAO {
 
     Collection<AccountStatus> findUserStatusByUsername(AccountStatus status);
 
-    Collection<Users> findFriendAndPictureByUsername(Users users);
-
     Map<Long, FriendRequest> findFriendRequestBySender(Request request);
 
     Map<Long, FriendRequest>  findFriendRequestByReceiver(Request request);
@@ -75,4 +73,7 @@ public interface SelectUsersDAO {
     Map<Long ,UserFriend> findUserFriendByFriend(Member friend);
 
     Map<Long, UserFriend> findUserFriendByUserAndFriend(Member friend);
+
+    Map<Long, UserFriend> findUserFriendAndInfoByUsername(Member friend);
+
 }
