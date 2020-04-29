@@ -1039,7 +1039,8 @@ public class GroupDAOImpl implements CreateGroupsDAO, InsertGroupPostDAO, Circle
         try {
             groups.setIdGroup(resultSet.getString(1));
             users.setUsername(resultSet.getString(2));
-            member.setFriendMemberSince(resultSet.getTimestamp(3));
+            member.setGroupMemberType(resultSet.getString(3));
+            member.setFriendMemberSince(resultSet.getTimestamp(4));
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
