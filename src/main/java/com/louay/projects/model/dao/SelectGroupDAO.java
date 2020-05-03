@@ -18,6 +18,8 @@ public interface SelectGroupDAO {
 
     Collection<Groups> findGroupDetailByIdGroup(Groups groups);
 
+    Collection<Groups> findGroupNoPicByIdGroup(Groups groups);
+
     Collection<Groups> findGroupDetailByLikeIdGroup(Groups groups);
 
     Collection<GroupTextPost> findGroupTextPostByIdPost(Post post);
@@ -28,11 +30,21 @@ public interface SelectGroupDAO {
 
     Collection<GroupTextPost> findGroupTextPostByUsernameAndIdGroup(Post post);
 
+    Collection<GroupTextPost> findGroupTextPostAndUserGroupInfoByUsername(Post groupTextPost);
+
+    Collection<GroupTextPost> findUserFiendGroupTextPostAndUserGroupInfoByUsername(Post groupTextPost);
+
     Collection<GroupTextPost> findGroupTextPostAndUserInfoByIdGroup(Post groupTextPost);
 
     Collection<GroupImgPost> findGroupImgPostByUsername(Post post);
 
+    Collection<GroupImgPost> findGroupImgPostByIdGroup(Post groupImgPost);
+
     Collection<GroupImgPost> findGroupImgPostByIdPost(Post post);
+
+    Collection<GroupImgPost> findGroupImgPostAndUserGroupInfoByUsername(Post groupImgPost);
+
+    Collection<GroupImgPost> findUserFriendGroupImgPostAndUserGroupInfoByUsername(Post groupImgPost);
 
     Collection<GroupImgPost> findGroupImgPostAndUserInfoByIdGroup(Post groupImgPost);
 
@@ -44,7 +56,9 @@ public interface SelectGroupDAO {
 
     Map<Long, GroupInvite> findGroupInviteAndTargetInfoByUsername(GroupInvite invite);
 
-    Map<Long, GroupInvite> findGroupInviteAndGroupPicByUsername(GroupInvite invite);
+    Map<Long, GroupInvite> findGroupInviteAndTargetInfoByIdGroup(GroupInvite invite);
+
+    Map<Long, GroupInvite> findGroupInviteAndGroupPicByUsername(GroupInvite invite, long startKey);
 
     Map<Long, GroupMembers> findGroupMemberByIdGroup(Member member);
 
@@ -67,4 +81,6 @@ public interface SelectGroupDAO {
     Map<Long, GroupRequest> findGroupRequestAndInfoByUsername(Request groupRequest);
 
     Map<Long, GroupRequest> findGroupRequestAndInfoByIdGroup(Request groupRequest);
+
+    Map<Long, GroupRequest> findGroupRequestAndGroupPicByUsername(Request groupRequest, long startKey);
 }

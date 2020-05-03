@@ -11,7 +11,6 @@ import com.louay.projects.model.chains.member.account.UserFriend;
 import com.louay.projects.model.chains.accounts.Users;
 import com.louay.projects.model.chains.accounts.activity.AccountStatus;
 import com.louay.projects.model.chains.accounts.activity.SignInDate;
-import com.louay.projects.model.chains.member.group.GroupMembers;
 
 import java.util.Collection;
 import java.util.Map;
@@ -20,23 +19,29 @@ public interface SelectUsersDAO {
 
     Collection<Users> findUserInAccountByUsername(Users user);
 
+    Collection<Users> findClientAllInfoByUsername(Users user);
+
     Collection<Users> findUserInAccountByLikeUsername(Users users);
 
     Collection<Users> findUserInAccountDetailByUsername(Users user);
+
+    Collection<Users> findClientInAccountDetailByUsername(Users user);
 
     Collection<Users> findUserByUsernameAndPassword(Users users);
 
     Collection<AccountTextPost> findUserTextPostByIdPost(Post post);
 
-    Collection<AccountTextPost> findUserTextPostByUsername(Post post);
+    Collection<AccountTextPost> findUserTextPostAndInfoByUsername(Post post);
 
-    Collection<AccountTextPost> findUserFriendTextPostByUsername(Post post);
-
-    Collection<AccountImgPost> findUserImgPostByUsername(Post post);
+    Collection<AccountTextPost> findUserFriendTextPostAndInfoByUsername(Post post);
 
     Collection<AccountImgPost> findUserImgPostByIdPost(Post post);
 
-    Collection<AccountImgPost> findUserFriendImgPostByUsername(Post post);
+    Collection<AccountImgPost> findUserImgPostByUsername(Post post);
+
+    Collection<AccountImgPost> findUserImgPostAndInfoByUsername(Post post);
+
+    Collection<AccountImgPost> findUserFriendImgPostAndInfoByUsername(Post post);
 
     Collection<AccountMessage> findUserMessageByIdMessage(AccountMessage message);
 
@@ -56,8 +61,6 @@ public interface SelectUsersDAO {
 
     Collection<AccountStatus> findUserStatusByUsername(AccountStatus status);
 
-    Collection<Users> findFriendAndPictureByUsername(Users users);
-
     Map<Long, FriendRequest> findFriendRequestBySender(Request request);
 
     Map<Long, FriendRequest>  findFriendRequestByReceiver(Request request);
@@ -75,4 +78,7 @@ public interface SelectUsersDAO {
     Map<Long ,UserFriend> findUserFriendByFriend(Member friend);
 
     Map<Long, UserFriend> findUserFriendByUserAndFriend(Member friend);
+
+    Map<Long, UserFriend> findUserFriendAndInfoByUsername(Member friend);
+
 }
